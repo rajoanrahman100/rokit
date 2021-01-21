@@ -14,4 +14,5 @@ text_StyleRoboto(Color color, double size,FontWeight fontWeight,{decoration}){
   );}
 
   var appBack=Colors.grey[100];
+  var headerColor=Color(0xFF080724);
 

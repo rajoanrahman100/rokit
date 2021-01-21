@@ -7,40 +7,67 @@ class TextFormWidget extends StatelessWidget {
   final String hintText;
   final String prefixText;
   final Widget suffix;
+  final Widget prefix;
   final Function onChanged;
   final Function validator;
   TextInputType textInputType;
   final double height;
   final num maxLines;
   final bool obsecureText;
+  final bool isPassword;
+  final bool isEmail;
+  final bool isNumber;
+  final Widget icon;
+  final String errorText;
+  final TextStyle hintStyle;
   final List<TextInputFormatter> inputFormatter;
 
-
   TextFormWidget(
-      {this.controller, this.hintText, this.prefixText, this.suffix, this.onChanged, this.validator, this.textInputType, this.height, this.maxLines, this.obsecureText, this.inputFormatter});
+      {this.controller,
+      this.hintText,
+      this.prefixText,
+      this.suffix,
+      this.prefix,
+      this.onChanged,
+      this.validator,
+      this.textInputType,
+      this.height,
+      this.maxLines,
+      this.obsecureText,
+      this.isPassword = false,
+      this.isEmail = false,
+      this.isNumber = false,
+      this.icon,
+        this.errorText,this.hintStyle,
+      this.inputFormatter});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: height == null ? 65.0 : height,
-      decoration: BoxDecoration(
-          shape: BoxShape.rectangle,
-          //color: Colors.grey[200],
-          borderRadius: BorderRadius.all(Radius.circular(8.0))),
-      child: TextFormField(
+    TextInputType textInputType;
+
+    if (isEmail) {
+      textInputType = TextInputType.emailAddress;
+    } else if (isNumber) {
+      textInputType = TextInputType.number;
+    } else {
+      textInputType = TextInputType.text;
+    }
+
+    return TextFormField(
         controller: controller,
         cursorColor: Colors.black,
         maxLines: maxLines == null ? 1 : maxLines,
-        keyboardType: textInputType == null ? TextInputType.text : textInputType,
+        keyboardType: textInputType,
         inputFormatters: inputFormatter,
         onChanged: onChanged,
         validator: validator,
+        obscureText: isPassword ? true : false,
 
-        //inputFormatters: inputFormatter==null?[FilteringTextInputFormatter.singleLineFormatter]:,
 
         decoration: new InputDecoration(
+          errorText: errorText,
             border: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.yellow, width: 2.0),
+              borderSide: BorderSide(color: Colors.black87, width: 2.0,),
               borderRadius: BorderRadius.all(
                 Radius.circular(14.0),
               ),
@@ -57,14 +84,19 @@ class TextFormWidget extends StatelessWidget {
                 Radius.circular(14.0),
               ),
             ),
-            errorBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.red)),
+            errorBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.red, width: 2.0),
+              borderRadius: BorderRadius.all(
+                Radius.circular(14.0),
+              ),
+            ),
             disabledBorder: InputBorder.none,
-            prefixText: prefixText == null ? "" : prefixText,
+            prefixIcon: prefix,
             suffix: suffix == null ? Text("") : suffix,
-            contentPadding: EdgeInsets.only(left: 15, bottom: 11, top: 11, right: 15),
-            hintStyle: text_StyleRoboto(Colors.grey, 14.0, FontWeight.normal),
+            suffixIcon: icon == null ? null : icon,
+            contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
+            hintStyle: text_StyleRoboto(Colors.grey, 16.0, FontWeight.w400),
             hintText: hintText),
-      ),
-    );
+      );
   }
 }

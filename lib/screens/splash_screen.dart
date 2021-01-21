@@ -4,8 +4,20 @@ import 'package:rokit/base/route.dart';
 import 'package:rokit/base/static_value.dart';
 import 'package:rokit/providers_class/firebase_auth_service.dart';
 import 'package:rokit/utils/styles.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
-class SplashScreen extends StatelessWidget {
+final GoogleSignIn gSignIn=GoogleSignIn();
+
+
+class SplashScreen extends StatefulWidget {
+
+  @override
+  _SplashScreenState createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+
+
 
 
   @override

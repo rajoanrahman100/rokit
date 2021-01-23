@@ -167,7 +167,6 @@ class _RegisterWithEmailState extends State<RegisterWithEmail> {
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(14.0),
                             gradient: LinearGradient(
-
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter,
                               colors: [

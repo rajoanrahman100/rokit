@@ -85,6 +85,10 @@ class _LogInWithPhoneState extends State<LogInWithPhone> {
                       SizedBox(
                         height: 20.0,
                       ),
+                      Text("We will send you an SMS with a 6 digit verification code.",style: text_StyleRoboto(Colors.grey, 16.0, FontWeight.w400),),
+                      SizedBox(
+                        height: 20.0,
+                      ),
                       GestureDetector(
                         onTap: (){
                           if (_formKey.currentState.validate()) {
@@ -109,7 +113,7 @@ class _LogInWithPhoneState extends State<LogInWithPhone> {
                             ),
                           ),
                           child: Text(
-                            "GET CODE",
+                            "CONTINUE",
                             style: text_StyleRoboto(Colors.white, 20.0, FontWeight.bold),
                           ),
                         ),

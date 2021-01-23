@@ -118,7 +118,6 @@ class _SignInWithEmailState extends State<SignInWithEmail> {
                       GestureDetector(
                         onTap: (){
                           if (_formKey.currentState.validate()) {
-
                           }
                         },
                         child: Container(

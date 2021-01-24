@@ -21,6 +21,16 @@ class _LogInWithPhoneState extends State<LogInWithPhone> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: appBack,
+      appBar: AppBar(
+        backgroundColor: Colors.grey[100],
+        elevation: 0.0,
+        centerTitle: true,
+        title:Image.asset(
+          "assets/rokitLogo.png",
+          height: 40.0,
+
+        ) ,
+      ),
       body: Container(
         height: MediaQuery.of(context).size.height,
         padding: EdgeInsets.symmetric(horizontal: 22),
@@ -29,7 +39,6 @@ class _LogInWithPhoneState extends State<LogInWithPhone> {
             key: _formKey,
             child: Column(
               children: [
-                logoWidget(),
                 SizedBox(
                   height: 80,
                 ),

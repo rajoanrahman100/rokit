@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:rokit/base/route.dart';
+import 'package:rokit/screens/phoneAuthScreen/otp_screen.dart';
 import 'package:rokit/screens/phoneAuthScreen/phoneLogIn.dart';
 import 'package:rokit/utils/styles.dart';
+import 'package:rokit/widget/custom_toast.dart';
 import 'package:rokit/widget/text_formWidget.dart';
 
 import 'emailSignInScreen/registerWithEmail.dart';
@@ -20,6 +22,16 @@ class _MainLogInPageState extends State<MainLogInPage> {
   bool showPassWord=false;
 
   final _formKey = GlobalKey<FormState>();
+
+  var phoneNumberController=TextEditingController();
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    phoneNumberController.dispose();
+
+  }
 
 
   @override
@@ -40,29 +52,15 @@ class _MainLogInPageState extends State<MainLogInPage> {
 
           body: Container(
             height: MediaQuery.of(context).size.height,
-            padding: EdgeInsets.symmetric(horizontal: 22),
+            padding: EdgeInsets.symmetric(horizontal: 25),
+
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
 
                   SizedBox(
-                    height: 40,
-                  ),
-                  Image.asset(
-                    "assets/proceed.png",
-                    height: 30.0,
-                    //width: 120.0,
-                  ),
-
-                  SizedBox(
-                    height: 10,
-                  ),
-
-                  Text("Sign In To Proceed", style: text_StyleRoboto(headerColor, 24.0, FontWeight.bold)),
-
-                  SizedBox(
-                    height: 25,
+                    height: 60,
                   ),
                   Container(
 
@@ -76,63 +74,51 @@ class _MainLogInPageState extends State<MainLogInPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
 
+                            SizedBox(
+                              height: 30,
+                            ),
+
                             Text(
-                              "Email",
-                              style: text_StyleRoboto(Colors.black, 18.0, FontWeight.w500),
+                              "Get Secured With Rokit",
+                              style: text_StyleRoboto(headerColor, 24.0, FontWeight.bold),
 
                             ),
+
                             SizedBox(
-                              height: 10.0,
-                            ),
-                            TextFormWidget(
-                              height: 55,
-                              isEmail: true,
-                              hintText: "eg. name@provider.com",
-                              validator: (String value) {
-                                if (value.isEmpty) {
-                                  return "Enter Your Mail";
-                                }
-                                if ( !value.contains("@")) {
-                                  return "Invalid Email";
-                                }
-                                _formKey.currentState.save();
-                                return null;
-                              },
-                            ),
-                            SizedBox(
-                              height: 15.0,
+                              height: 30.0,
                             ),
                             Text(
-                              "Password",
+                              "Enter Your Phone Number",
                               style: text_StyleRoboto(Colors.black, 18.0, FontWeight.w500),
                             ),
                             SizedBox(
                               height: 10.0,
                             ),
                             TextFormWidget(
-                              height: 55,
-                              icon: GestureDetector(
-                                onTap: (){
-                                  setState(() {
-                                    showPassWord=!showPassWord;
-                                    FocusScope.of(context).unfocus(); //hide keyboard
-                                  });
+                                controller: phoneNumberController,
+                                isNumber: true,
+                                hintText: "012345678911",
+                                maxLines: 1,
+                                validator: (String value) {
+                                  if (value.isEmpty) {
+                                    return "Enter Phone Number";
+                                  }
+                                  if (value.length > 11 || value.length != 11 || !value.contains("01")) {
+                                    return "Invalid Phn Number";
+                                  }
+                                  _formKey.currentState.save();
+                                  return null;
                                 },
-                                child: Icon(
-                                  showPassWord?Icons.visibility:Icons.visibility_off,color: Colors.black,
-                                ),
-                              ),
-                              isPassword: !showPassWord,
-                              obsecureText: false,
-                              hintText: "********",
-                              validator: (String value){
-                                if (value.isEmpty) {
-                                  return "Enter Your Password";
-                                }
-                                _formKey.currentState.save();
-                                return null;
-                              },
-                            ),
+
+                                prefix: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      "   +88- ",
+                                      style: text_StyleRoboto(headerColor, 18.0, FontWeight.w500),
+                                    ),
+                                  ],
+                                )),
 
                             SizedBox(
                               height: 25.0,
@@ -141,7 +127,9 @@ class _MainLogInPageState extends State<MainLogInPage> {
                             GestureDetector(
                               onTap: (){
                                 if (_formKey.currentState.validate()) {
+                                  RouteGenerator.navigatePush(context, OTPScreen(mobileNumber: phoneNumberController.text));
 
+                                  print(" ${phoneNumberController.text}");
                                 }
                               },
                               child: Container(
@@ -160,43 +148,36 @@ class _MainLogInPageState extends State<MainLogInPage> {
                                     ],
                                   ),
                                 ),
-                                child: Text("SIGN IN",style: text_StyleRoboto(Colors.white, 20.0, FontWeight.bold),),
+                                child: Text("CONTINUE",style: text_StyleRoboto(Colors.white, 20.0, FontWeight.bold),),
                               ),
                             ),
 
-                            SizedBox(
-                              height: 15.0,
-                            ),
-
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text("Forgot Password?",style: TextStyle(decoration: TextDecoration.underline,color: Colors.grey[500],fontSize: 16.0),),
-                              ],
-                            ),
 
                             SizedBox(
-                              height: 10.0,
+                              height: 25.0,
                             ),
 
                             GestureDetector(
-                              onTap: () => RouteGenerator.navigatePush(context, RegisterWithEmail()),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text.rich(
-                                    TextSpan(
-                                      text: "Don't have an account?  ",
-                                      style: text_StyleRoboto(Colors.black54, 16.0, FontWeight.w500),
-                                      children: <TextSpan>[
-                                        TextSpan(text: 'Sign Up', style: text_StyleRoboto(Colors.deepOrange, 16.0, FontWeight.w500, decoration: TextDecoration.underline)),
-                                        // can add more TextSpans here...
-                                      ],
-                                    ),
-                                  ),
-                                ],
+                              onTap: (){
+                                RouteGenerator.navigatePush(context, SignInWithEmail());
+                              },
+                              child: Container(
+                                height: 60.0,
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  color: appBack,
+                                  borderRadius: BorderRadius.circular(14.0),
+
+                                ),
+                                child: Text("Sign In or Register with Email",style: TextStyle(decoration: TextDecoration.underline,color: Colors.black,fontWeight: FontWeight.w500),),
                               ),
                             ),
+
+
+                            SizedBox(
+                              height: 30,
+                            ),
+
 
 
 
@@ -315,21 +296,21 @@ class _MainLogInPageState extends State<MainLogInPage> {
                     ),
                   ),
 
-                  GestureDetector(
-                      onTap: (){
-                        // logInUser();
-
-                        signInWithGoogle().then((value) =>{
-                          if(value!=null){
-                            RouteGenerator.navigatePush(context, SplashScreen())
-                          }
-                        });
-                      },
-                      child: Image.asset(
-                        "assets/googleIcon.png",
-                        height: 35.0,
-                        width: 35.0,
-                      )),
+                  // GestureDetector(
+                  //     onTap: (){
+                  //       // logInUser();
+                  //
+                  //       signInWithGoogle().then((value) =>{
+                  //         if(value!=null){
+                  //           RouteGenerator.navigatePush(context, SplashScreen())
+                  //         }
+                  //       });
+                  //     },
+                  //     child: Image.asset(
+                  //       "assets/googleIcon.png",
+                  //       height: 35.0,
+                  //       width: 35.0,
+                  //     )),
 
                 ],
               ),

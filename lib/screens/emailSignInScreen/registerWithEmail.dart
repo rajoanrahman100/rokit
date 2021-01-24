@@ -1,6 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 import 'package:rokit/base/route.dart';
+import 'package:rokit/screens/splash_screen.dart';
 import 'package:rokit/utils/styles.dart';
+import 'package:rokit/widget/custom_progress.dart';
+import 'package:rokit/widget/custom_toast.dart';
 import 'package:rokit/widget/text_formWidget.dart';
 import 'package:rokit/widget/widgets.dart';
 
@@ -26,35 +31,43 @@ class _RegisterWithEmailState extends State<RegisterWithEmail> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: appBack,
+      appBar: AppBar(
+        backgroundColor: Colors.grey[100],
+        elevation: 0.0,
+        centerTitle: true,
+        title: Image.asset(
+          "assets/rokitLogo.png",
+          height: 40.0,
+        ),
+      ),
       body: Container(
         height: MediaQuery.of(context).size.height,
-        padding: EdgeInsets.symmetric(horizontal: 22),
+        padding: EdgeInsets.symmetric(horizontal: 25),
         child: SingleChildScrollView(
           child: Form(
             key: _formKey,
             child: Column(
               children: [
-                logoWidget(),
                 SizedBox(
                   height: 50,
                 ),
                 Container(
                   width: MediaQuery.of(context).size.width,
-                  padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 35.0),
+                  padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 30.0),
                   decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(30.0)),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Image.asset("assets/emailBlack.png", height: 30.0),
                       SizedBox(
-                        height: 20.0,
+                        height: 10.0,
                       ),
                       Text(
                         "Sign up with your email",
                         style: text_StyleRoboto(Colors.black87, 24.0, FontWeight.bold),
                       ),
                       SizedBox(
-                        height: 40.0,
+                        height: 30.0,
                       ),
                       Text(
                         "Email",
@@ -65,6 +78,7 @@ class _RegisterWithEmailState extends State<RegisterWithEmail> {
                       ),
                       TextFormWidget(
                         height: 55,
+                        controller: emailEditingController,
                         hintText: "eg. name@provider.com",
                         validator: (String value) {
                           if (value.isEmpty) {
@@ -89,6 +103,7 @@ class _RegisterWithEmailState extends State<RegisterWithEmail> {
                       ),
 
                       TextFormWidget(
+                        controller: passwordEditingController,
                         height: 55,
                         validator: (String value){
                           if (value.isEmpty) {
@@ -127,11 +142,13 @@ class _RegisterWithEmailState extends State<RegisterWithEmail> {
                       ),
 
                       TextFormWidget(
+                        controller: confirmEditingController,
                         height: 50,
                         validator: (String value){
                           if (value.isEmpty) {
                             return "Confirm Your Password";
                           }
+
                           _formKey.currentState.save();
                           return null;
                         },
@@ -153,11 +170,18 @@ class _RegisterWithEmailState extends State<RegisterWithEmail> {
                       ),
 
                       SizedBox(
-                        height: 15.0,
+                        height: 20.0,
                       ),
                       GestureDetector(
                         onTap: (){
                           if (_formKey.currentState.validate()) {
+
+                            if(passwordEditingController.text!=confirmEditingController.text){
+                              showErrorToast("Password does not not match");
+                              return;
+                            }else{
+                              registerAccount(emailEditingController.text,passwordEditingController.text);
+                            }
 
                           }
                         },
@@ -170,6 +194,7 @@ class _RegisterWithEmailState extends State<RegisterWithEmail> {
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter,
                               colors: [
+
                                 Color(0xFFFF7957),
                                 Color(0xFFEF2F00),
 
@@ -194,5 +219,40 @@ class _RegisterWithEmailState extends State<RegisterWithEmail> {
         ),
       ),
     );
+  }
+
+  void registerAccount(email,pass)async{
+
+    ProgressDialog pasdr = ProgressDialog(context,
+        type: ProgressDialogType.Normal, isDismissible: true, showLogs: false);
+    setProgressDialog(context, pasdr, "Creating account..");
+
+    pasdr.show();
+
+    try {
+      UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: email,
+          password: pass
+      ).then((value){
+        if(value!=null){
+          pasdr.hide();
+          RouteGenerator.navigatePush(context, SplashScreen());
+        }
+        return;
+      });
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        pasdr.hide();
+
+        print('The password provided is too weak.');
+
+      } else if (e.code == 'email-already-in-use') {
+        pasdr.hide();
+
+        print('The account already exists for that email.');
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 }

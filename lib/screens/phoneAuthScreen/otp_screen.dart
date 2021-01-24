@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:rokit/base/route.dart';
 import 'package:rokit/screens/splash_screen.dart';
 import 'package:rokit/utils/styles.dart';
+import 'package:rokit/widget/custom_toast.dart';
 import 'package:rokit/widget/widgets.dart';
 
 import './otp_input.dart';
@@ -44,6 +45,7 @@ class _OTPScreenState extends State<OTPScreen> {
 
     _startTimer();
     _onVerifyCode();
+    super.initState();
   }
 
   void _startTimer() {
@@ -51,6 +53,9 @@ class _OTPScreenState extends State<OTPScreen> {
     if (_timer != null) _timer.cancel();
 
     _timer = Timer.periodic(Duration(seconds: 1), (_timer) {
+
+      if (!mounted) return;
+
       setState(() {
         if (_counter > 0)
           _counter--;
@@ -66,133 +71,26 @@ class _OTPScreenState extends State<OTPScreen> {
     print("mobile ${widget.mobileNumber}");
     return Scaffold(
       backgroundColor: appBack,
+      appBar: AppBar(
+        backgroundColor: Colors.grey[100],
+        elevation: 0.0,
+        centerTitle: true,
+        title:Image.asset(
+          "assets/rokitLogo.png",
+          height: 40.0,
 
-      /*body: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            Container(
-              padding: EdgeInsets.only(
-                  left: 10.0, right: 10.0, bottom: 16, top: 40.0),
-              color: Colors.white,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Text(
-                        "Phone Number Verification",
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.roboto(
-                            fontSize: 18.0, fontWeight: FontWeight.w500),
-                      ),
-                      SizedBox(
-                        height: 8,
-                      ),
-                      Text(
-                        "Enter the code  sent to ${widget.mobileNumber}",
-                        style: GoogleFonts.roboto(
-                            fontSize: 17.0, fontWeight: FontWeight.w500),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: PinInputTextField(
-                pinLength: 6,
-                decoration: _pinDecoration,
-                controller: _pinEditingController,
-                autoFocus: true,
-                textInputAction: TextInputAction.done,
-                onSubmit: (pin) {
-                  if (pin.length == 6) {
-                    _onFormSubmitted();
-                  } else {
-                    print("Invalidate OTP");
-                    ///Error toast will show here
-                   // showErrorToast("Invalid OTP");
-                  }
-                },
-              ),
-            ),
-            Container(
-              padding: EdgeInsets.all(16),
-              child: Center(
-                child: SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.8,
-                  child: RaisedButton(
-                    color: Colors.deepOrange,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0)),
-                    child: Text(
-                      "ENTER OTP",
-                      style: GoogleFonts.roboto(
-                          color: Colors.white,
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    onPressed: () {
-                      if (_pinEditingController.text.length == 6) {
-                        _onFormSubmitted();
-                      } else {
-                        ///Error toast will show here
-                        //showErrorToast("Invalid OTP");
-                        print("Invalidate OTP");
+        ) ,
+      ),
 
-                      }
-                    },
-                    padding: EdgeInsets.all(16.0),
-                  ),
-                ),
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  '00:$_counter',
-                  style:
-                      GoogleFonts.ubuntu(fontSize: 25.0, color: Colors.black54),
-                ),
-              ],
-            ),
-            SizedBox(
-              height: 20.0,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                (_counter > 0) ? Text("") : Text("Didn't receive the code? "),
-                (_counter > 0)
-                    ? Text("")
-                    : GestureDetector(
-                        onTap: () {
-                          _startTimer();
-                          _onVerifyCode();
-                        },
-                        child: Text(
-                          "Resend",
-                          style: GoogleFonts.ubuntu(
-                              fontSize: 18.0, color: Colors.deepOrangeAccent),
-                        ),
-                      ),
-              ],
-            ),
-          ],
-        ),
-      ),*/
       body: Container(
         height: MediaQuery.of(context).size.height,
         padding: EdgeInsets.symmetric(horizontal: 22),
         child: SingleChildScrollView(
           child: Column(
             children: [
-              logoWidget(),
+
               SizedBox(
-                height: 80,
+                height: 60,
               ),
               Container(
                 width: MediaQuery.of(context).size.width,
@@ -253,18 +151,7 @@ class _OTPScreenState extends State<OTPScreen> {
                     SizedBox(
                       height: 30.0,
                     ),
-                    // Row(
-                    //   mainAxisAlignment: MainAxisAlignment.center,
-                    //   children: <Widget>[
-                    //     Text(
-                    //       '0:$_counter',
-                    //       style: text_StyleRoboto(Colors.deepOrange, 18.0, FontWeight.w500),
-                    //     ),
-                    //   ],
-                    // ),
-                    // SizedBox(
-                    //   height: 20.0,
-                    // ),
+
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
@@ -294,7 +181,9 @@ class _OTPScreenState extends State<OTPScreen> {
                     ),
                     _pinEditingController.text.length == 6
                         ? GestureDetector(
-                      onTap: ()=>RouteGenerator.navigatePush(context, SplashScreen()),
+                      onTap: (){
+                        _onFormSubmitted();
+                      },
                           child: Container(
                               height: 55.0,
                               alignment: Alignment.center,
@@ -350,6 +239,9 @@ class _OTPScreenState extends State<OTPScreen> {
   }
 
   void _onVerifyCode() async {
+
+
+
     setState(() {
       isCodeSent = true;
     });
@@ -419,10 +311,10 @@ class _OTPScreenState extends State<OTPScreen> {
             ),
             (Route<dynamic> route) => false);
       } else {
-        showToast("Error validating OTP, try again", Colors.red);
+        showErrorToast("Error validating OTP, try again");
       }
     }).catchError((error) {
-      showToast("Something went wrong", Colors.red);
+      showErrorToast("Something went wrong");
     });
   }
 }

@@ -6,7 +6,7 @@ import 'package:rokit/providers_class/firebase_auth_service.dart';
 import 'package:rokit/utils/styles.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-final GoogleSignIn gSignIn=GoogleSignIn();
+// final GoogleSignIn gSignIn=GoogleSignIn();
 
 
 class SplashScreen extends StatefulWidget {
@@ -18,15 +18,14 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
 
 
-
-
   @override
   Widget build(BuildContext context) {
+
     final auth = Provider.of<FirebaseAuthService>(context, listen: false);
     auth.onAuthStateChanged.listen((user) async {
       await Future.delayed(Duration(seconds: 2));
       Tag("userData = ${user != null ? user.uid : "\"user not loggedIn\""} ");
-      RouteGenerator.clearBackStack(context, user != null ? MainScreenRoute : SignInScreenRoute);
+      RouteGenerator.clearBackStack(context, user != null?MainScreenRoute:SignInScreenRoute);
     });
 
     return SafeArea(

@@ -26,6 +26,8 @@ class _RegisterWithEmailState extends State<RegisterWithEmail> {
   var passwordEditingController=TextEditingController();
   var confirmEditingController=TextEditingController();
 
+  User user = FirebaseAuth.instance.currentUser;
+
 
   @override
   Widget build(BuildContext context) {
@@ -235,15 +237,17 @@ class _RegisterWithEmailState extends State<RegisterWithEmail> {
           password: pass
       ).then((value){
         if(value!=null){
+         // user.sendEmailVerification().then((value) => print("A verification link has sent to your email id"));
           pasdr.hide();
+          showSuccessToast("account created successfully");
           RouteGenerator.navigatePush(context, SplashScreen());
+
         }
         return;
       });
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         pasdr.hide();
-
         print('The password provided is too weak.');
 
       } else if (e.code == 'email-already-in-use') {

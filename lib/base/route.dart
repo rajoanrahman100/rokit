@@ -53,7 +53,7 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => LogInWithPhone());
 
       case MainScreenRoute:
-        return MaterialPageRoute(builder: (_) => RokkhiMaterialApp(home: HomeScreen()));
+        return MaterialPageRoute(builder: (_) => RokkhiMaterialApp(home: HomeScreenPage()));
       default:
         return ErrorRouteScreen();
     }

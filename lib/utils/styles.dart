@@ -18,3 +18,5 @@ text_StyleRoboto(Color color, double size,FontWeight fontWeight,{decoration}){
   var appName="Rokit";
   var appDefaultColor=Colors.deepOrange;
 
+  const String KEY_USER_ID = "KEY_USER_ID";
+

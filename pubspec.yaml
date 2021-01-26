@@ -33,6 +33,9 @@ dependencies:
   progress_dialog: ^1.2.4
   get: ^3.24.0
   image_picker: ^0.6.7+21
+  http: ^0.12.2
+  lazy_load_scrollview: 1.2.0
+  shared_preferences: ^0.5.12+4
 
   # firebase_library
   firebase_messaging: ^7.0.3

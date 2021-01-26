@@ -6,6 +6,7 @@ import 'package:rokit/base/route.dart';
 import 'package:rokit/screens/emailSignInScreen/registerWithEmail.dart';
 import 'package:rokit/screens/signInWIthGoogle/signInWithGoogle.dart';
 import 'package:rokit/screens/splash_screen.dart';
+import 'package:rokit/utils/global_config.dart';
 import 'package:rokit/utils/styles.dart';
 import 'package:rokit/widget/custom_progress.dart';
 import 'package:rokit/widget/custom_toast.dart';
@@ -23,6 +24,8 @@ class _SignInWithEmailState extends State<SignInWithEmail> {
 
   var emailEditingController=TextEditingController();
   var passwordEditingController=TextEditingController();
+
+
 
   @override
   Widget build(BuildContext context) {

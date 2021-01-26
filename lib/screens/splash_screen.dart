@@ -23,7 +23,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
     final auth = Provider.of<FirebaseAuthService>(context, listen: false);
     auth.onAuthStateChanged.listen((user) async {
-      await Future.delayed(Duration(seconds: 2));
+      await Future.delayed(Duration(seconds: 1));
       Tag("userData = ${user != null ? user.uid : "\"user not loggedIn\""} ");
       RouteGenerator.clearBackStack(context, user != null?MainScreenRoute:SignInScreenRoute);
     });

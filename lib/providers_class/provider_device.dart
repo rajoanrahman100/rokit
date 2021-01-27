@@ -32,7 +32,7 @@ class ProviderDevice extends ChangeNotifier{
 
   addDevices(deviceMacAddress,context)async{
 
-    //final prefs = await SharedPreferences.getInstance();
+    final prefs = await SharedPreferences.getInstance();
 
     // ProgressDialog pasdr = ProgressDialog(context,
     //     type: ProgressDialogType.Normal, isDismissible: true, showLogs: false);
@@ -45,7 +45,7 @@ class ProviderDevice extends ChangeNotifier{
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: jsonEncode(<String, dynamic>{
-          "userId": "",
+          "userId": prefs.getString(KEY_USER_ID),
           "deviceMacAddress":deviceMacAddress
         }));
 
@@ -72,11 +72,11 @@ class ProviderDevice extends ChangeNotifier{
 
     final prefs = await SharedPreferences.getInstance();
 
-    ProgressDialog pasdr = ProgressDialog(context,
-        type: ProgressDialogType.Normal, isDismissible: true, showLogs: false);
-    setProgressDialog(context, pasdr, "load data...");
-
-    pasdr.show();
+    // ProgressDialog pasdr = ProgressDialog(context,
+    //     type: ProgressDialogType.Normal, isDismissible: true, showLogs: false);
+    // setProgressDialog(context, pasdr, "load data...");
+    //
+    // pasdr.show();
 
     var res = await http.post(editDeviceAPI,
         headers: <String, String>{
@@ -91,20 +91,19 @@ class ProviderDevice extends ChangeNotifier{
 
       print("Success Response:"+res.body);
 
-      pasdr.hide();
+      //pasdr.hide();
 
-      showSuccessToast("Device added successfully");
+      showSuccessToast("Device updated successfully");
       return;
     }else{
       print("Error Response:"+res.body);
-      pasdr.hide();
+     // pasdr.hide();
 
       showErrorToast("Something went wrong");
       return;
     }
 
   }
-
 
   Future<DeviceDataModel> getAddedDevices()async{
 
@@ -143,6 +142,28 @@ class ProviderDevice extends ChangeNotifier{
 
     }
 
+  }
+
+
+  deleteDevice(deviceID)async{
+    var res = await http.post(deleteDeviceAPI,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, dynamic>{
+          "deviceId":deviceID
+        }
+        )
+    );
+
+    if(res.statusCode==201 || res.statusCode==200){
+      showSuccessToast("Device deleted");
+      return;
+    }else{
+      print(res.body);
+      showErrorToast("Something went wrong");
+      return;
+    }
   }
 
 

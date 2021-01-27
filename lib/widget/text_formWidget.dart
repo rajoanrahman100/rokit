@@ -10,6 +10,7 @@ class TextFormWidget extends StatelessWidget {
   final Widget prefix;
   final Function onChanged;
   final Function validator;
+  final Function onSaved;
   TextInputType textInputType;
   final double height;
   final num maxLines;
@@ -31,6 +32,7 @@ class TextFormWidget extends StatelessWidget {
       this.prefix,
       this.onChanged,
       this.validator,
+        this.onSaved,
       this.textInputType,
       this.height,
       this.maxLines,
@@ -65,6 +67,7 @@ class TextFormWidget extends StatelessWidget {
       inputFormatters: inputFormatter,
       onChanged: onChanged,
       validator: validator,
+      onSaved: onSaved,
       obscureText: isPassword ? true : false,
       decoration: new InputDecoration(
           errorText: errorText,

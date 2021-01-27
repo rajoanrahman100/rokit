@@ -41,6 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final _formKey = GlobalKey<FormState>();
 
   var _controllerMacAddress = TextEditingController();
+  var _editControllerMacAddress = TextEditingController();
 
   String _message = "";
 
@@ -58,7 +59,16 @@ class _HomeScreenState extends State<HomeScreen> {
     await prefs.setString(KEY_USER_ID, userID);
   }
 
-  getMessage() {
+  getMessage() async{
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+
+    _firebaseMessaging.getToken().then((value)async{
+      print("token value $value");
+      await prefs.setString(KEY_TOKEN_ID, value);
+    });
+
     _firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> message) async {
         print("onMessage: $message");
@@ -90,6 +100,7 @@ class _HomeScreenState extends State<HomeScreen> {
     // TODO: implement initState
 
     getUserID();
+   // getUserToken();
     getMessage();
   }
 
@@ -100,7 +111,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     //providerSensorList.getAllSensorsData();
 
-    providerDevice. getAddedDevices();
+    providerDevice.getAddedDevices();
 
     return Scaffold(
       backgroundColor: appBack,
@@ -116,11 +127,9 @@ class _HomeScreenState extends State<HomeScreen> {
           IconButton(
               icon: Icon(Icons.add),
               onPressed: () {
-                //buildShowModalBottomSheet(context, providerDevice,_controllerMacAddress,_formKey);
 
                 showModalBottomSheet(
                   isScrollControlled: true,
-
                   context: context,
 
                   builder: (context) => Padding(
@@ -140,7 +149,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
                               child: TextFormWidget(
                                 hintText: "device mac address",
-                                controller: _controllerMacAddress,
+                                text: _controllerMacAddress.text,
                                 validator: (String value) {
                                   if (value.isEmpty) {
                                     return "your device mac address";
@@ -148,6 +157,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                   _formKey.currentState.save();
                                   return null;
                                 },
+                                onSaved: (String value){
+                                  _controllerMacAddress.text=value;
+                                },
+
                               ),
                             ),
                             SizedBox(
@@ -189,9 +202,73 @@ class _HomeScreenState extends State<HomeScreen> {
                         return Column(
                           children: [
                             ListTile(
+                              leading: IconButton(icon: Icon(Icons.delete_forever), onPressed:()async{
+                               await data.deleteDevice(data.deviceDataModel.data[index].id);
+                               await data.getAddedDevices();
+                               await  data.notifyListeners();
+                              }),
                               title: Text(data.deviceDataModel.data[index].deviceMacAddress),
                               trailing: IconButton(icon: Icon(Icons.edit), onPressed: (){
-                                editDeviceModalBottomSheet(context,providerDevice,_controllerMacAddress,_formKey,data.deviceDataModel.data[index].id,_controllerMacAddress.text);
+                                //editDeviceModalBottomSheet(context,providerDevice,_controllerMacAddress,_formKey,data.deviceDataModel.data[index].id,_controllerMacAddress.text);
+
+                                showModalBottomSheet(
+                                  isScrollControlled: true,
+                                  context: context,
+
+                                  builder: (context) => Padding(
+                                    padding: MediaQuery.of(context).viewInsets,
+                                    child: Container(
+                                      height: 200.0,
+                                      child: Form(
+                                        key: _formKey,
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            SizedBox(
+                                              height: 10.0,
+                                            ),
+                                            Text("Enter Device Mac Address"),
+                                            Padding(
+                                              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                                              child: TextFormWidget(
+                                                hintText: "device mac address",
+                                                text: data.deviceDataModel.data[index].deviceMacAddress,
+                                                validator: (String value) {
+                                                  if (value.isEmpty) {
+                                                    return "your device mac address";
+                                                  }
+                                                  _formKey.currentState.save();
+                                                  return null;
+                                                },
+                                                onSaved: (String value){
+                                                  _editControllerMacAddress.text=value;
+                                                },
+
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: 15.0,
+                                            ),
+                                            RaisedButton(
+                                              onPressed: () async{
+                                                if (_formKey.currentState.validate()) {
+
+                                               await data.editDevices(_editControllerMacAddress.text,data.deviceDataModel.data[index].id ,context);
+                                               await data.getAddedDevices();
+                                               await data.notifyListeners();
+                                                }
+                                              },
+                                              child: Text("add device"),
+                                            ),
+                                            SizedBox(
+                                              height: 20.0,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                );
 
                               }),
                             ),
@@ -203,7 +280,80 @@ class _HomeScreenState extends State<HomeScreen> {
                         );
                       })),
 
+      /*floatingActionButton: Consumer<ProviderDevice>(
+        builder: (_,data,child)=>data.deviceDataModel==null?Container() :FloatingActionButton.extended(
+          onPressed: () async{
+
+
+            showModalBottomSheet(
+              isScrollControlled: true,
+              context: context,
+
+              builder: (context) => Padding(
+                padding: MediaQuery.of(context).viewInsets,
+                child: Container(
+                  height: 200.0,
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SizedBox(
+                          height: 10.0,
+                        ),
+                        Text("Enter Device Mac Address"),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                          child: TextFormWidget(
+                            hintText: "device mac address",
+                            text: _controllerMacAddress.text,
+                            validator: (String value) {
+                              if (value.isEmpty) {
+                                return "your device mac address";
+                              }
+                              _formKey.currentState.save();
+                              return null;
+                            },
+                            onSaved: (String value){
+                              _controllerMacAddress.text=value;
+                            },
+
+                          ),
+                        ),
+                        SizedBox(
+                          height: 15.0,
+                        ),
+                        RaisedButton(
+                          onPressed: ()async {
+                            if (_formKey.currentState.validate()) {
+
+
+                               await data.addDevices(_controllerMacAddress.text, context);
+                               await data.getAddedDevices();
+                               await data.notifyListeners();
+                            }
+                          },
+                          child: Text("add device"),
+                        ),
+                        SizedBox(
+                          height: 20.0,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );
+          },
+          label: Text('Add Device'),
+          icon: Icon(Icons.devices),
+          backgroundColor: Colors.deepOrange,
+        ),
+      )*/
+
     );
+
+
   }
 
 
@@ -224,7 +374,8 @@ class _HomeScreenState extends State<HomeScreen> {
   _logOutAlert() {
     return showDialog(
         context: context,
-        builder: (context) => AlertDialog(
+        builder: (context) =>
+            AlertDialog(
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
               title: Text("Do you want to logout from the app?"),
               actions: <Widget>[

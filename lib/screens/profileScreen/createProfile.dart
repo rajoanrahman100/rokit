@@ -1,11 +1,20 @@
+import 'dart:convert';
 import 'dart:io';
-
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:progress_dialog/progress_dialog.dart';
+import 'package:rokit/base/all_api.dart';
+import 'package:rokit/base/route.dart';
 import 'package:rokit/utils/styles.dart';
 import 'package:rokit/widget/custom_app_bar.dart';
+import 'package:rokit/widget/custom_progress.dart';
+import 'package:rokit/widget/custom_toast.dart';
 import 'package:rokit/widget/text_formWidget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CreateProfileScreen extends StatefulWidget {
   @override
@@ -17,6 +26,48 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
   final picker = ImagePicker();
 
   final _formKey = GlobalKey<FormState>();
+
+  FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+
+  FirebaseAuth _auth = FirebaseAuth.instance;
+
+  var userID;
+
+  var _nameController=TextEditingController();
+  var _addressController=TextEditingController();
+
+
+  getUserID() async {
+    userID = _auth.currentUser.uid;
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    await prefs.setString(KEY_USER_ID, userID);
+  }
+
+  getTokenID()async{
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+
+    _firebaseMessaging.getToken().then((value)async{
+      print("token value $value");
+      await prefs.setString(KEY_TOKEN_ID, value);
+    });
+  }
+
+
+
+  @override
+  void initState() {
+    // TODO: implement initState
+
+    getUserID();
+
+    getTokenID();
+
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +133,9 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [],
+                                  children: [
+
+                                  ],
                                 ),
                               ),
                             ),
@@ -135,6 +188,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                       ),
                       TextFormWidget(
                         height: 55,
+                        text: _nameController.text,
                         isEmail: true,
                         hintText: "eg. John Wick",
                         inputFormatter: [FilteringTextInputFormatter.allow(RegExp('[ A-Za-z]'))],
@@ -145,6 +199,9 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
 
                           _formKey.currentState.save();
                           return null;
+                        },
+                        onSaved: (String value){
+                          _nameController.text=value;
                         },
                       ),
                       SizedBox(
@@ -159,6 +216,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                       ),
                       TextFormWidget(
                         height: 55,
+                        text: _addressController.text,
                         isEmail: true,
                         hintText: "eg. Dhanmondi,dhaka",
                         validator: (String value) {
@@ -169,13 +227,19 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                           _formKey.currentState.save();
                           return null;
                         },
+
+                        onSaved: (String value){
+                          _addressController.text=value;
+                        },
                       ),
                       SizedBox(
                         height: 30.0,
                       ),
                       GestureDetector(
                         onTap: () {
-                          if (_formKey.currentState.validate()) {}
+                          if (_formKey.currentState.validate()) {
+                            _uploadUserInformation(_nameController.text,_addressController.text);
+                          }
                         },
                         child: Container(
                           height: 50.0,
@@ -207,4 +271,50 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
       ),
     );
   }
+
+  Future<void> _uploadUserInformation( name, address) async {
+
+    final prefs = await SharedPreferences.getInstance();
+
+
+    ProgressDialog pasdr = ProgressDialog(context, type: ProgressDialogType.Normal, isDismissible: false, showLogs: false);
+    setProgressDialog(context, pasdr, "Adding Data...");
+    pasdr.show();
+
+    Map dataInput = {
+      "userName": name,
+      "firebaseId": prefs.getString(KEY_USER_ID),
+      "deviceToken": prefs.getString(KEY_TOKEN_ID),
+      "phone": "",
+      "address": address,
+      "imageUrl": ""
+    };
+    var body = json.encode(dataInput);
+    print("Create profile input =  " + body);
+
+    var res = await http.post(createProfileAPI,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: body);
+
+    print("create profile first time response = " + res.body);
+
+    if (res.statusCode == 201 || res.statusCode == 200) {
+
+
+      showSuccessToast("Profile Created Successfully");
+
+      Future.delayed(const Duration(milliseconds: 100), () {
+        pasdr.hide();
+        Navigator.pushNamedAndRemoveUntil(context, MainScreenRoute, (r) => false);
+        // RouteGenerator.helpMeToNavigatePush(context, MainScreenRoute);
+      });
+    } else {
+      pasdr.hide();
+      showErrorToast("Something went wrong");
+      //pasdr.hide();
+    }
+  }
+
 }

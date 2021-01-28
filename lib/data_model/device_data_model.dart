@@ -1,6 +1,6 @@
 /// isSuccess : true
 /// isFailure : false
-/// data : [{"id":1,"createdDate":"2021-01-25T14:34:43.210Z","updatedDate":"2021-01-25T16:36:25.843Z","deletedDate":null,"userId":"Updated string","deviceMacAddress":"Updated device mac address."},{"id":3,"createdDate":"2021-01-26T09:42:37.018Z","updatedDate":"2021-01-26T09:42:37.018Z","deletedDate":null,"userId":"r9qEpTTSGeVa9xbTofsZWCTBAql1","deviceMacAddress":"120021510"},{"id":4,"createdDate":"2021-01-26T10:33:21.765Z","updatedDate":"2021-01-26T10:33:21.765Z","deletedDate":null,"userId":"1","deviceMacAddress":"3456"},{"id":5,"createdDate":"2021-01-26T10:33:36.053Z","updatedDate":"2021-01-26T10:33:36.053Z","deletedDate":null,"userId":"r9qEpTTSGeVa9xbTofsZWCTBAql1","deviceMacAddress":"101233-faruk"},{"id":6,"createdDate":"2021-01-26T10:36:51.333Z","updatedDate":"2021-01-26T10:36:51.333Z","deletedDate":null,"userId":"r9qEpTTSGeVa9xbTofsZWCTBAql1","deviceMacAddress":"bsrm-tplink2021"}]
+/// data : [{"id":8,"createdDate":"2021-01-28T13:38:14.287Z","updatedDate":"2021-01-28T13:38:14.287Z","deletedDate":null,"firebaseId":"x3nUrfG9Yee6DQa2vqmA43gGVsx1","deviceMacAddress":"Tp link 2021","deviceAuthorizationCode":"11111111","deviceType":"Window","deviceName":"Window 1"}]
 
 class DeviceDataModel {
   bool _isSuccess;
@@ -43,41 +43,56 @@ class DeviceDataModel {
 
 }
 
-/// id : 1
-/// createdDate : "2021-01-25T14:34:43.210Z"
-/// updatedDate : "2021-01-25T16:36:25.843Z"
+/// id : 8
+/// createdDate : "2021-01-28T13:38:14.287Z"
+/// updatedDate : "2021-01-28T13:38:14.287Z"
 /// deletedDate : null
-/// userId : "Updated string"
-/// deviceMacAddress : "Updated device mac address."
+/// firebaseId : "x3nUrfG9Yee6DQa2vqmA43gGVsx1"
+/// deviceMacAddress : "Tp link 2021"
+/// deviceAuthorizationCode : "11111111"
+/// deviceType : "Window"
+/// deviceName : "Window 1"
 
 class Data {
   int _id;
   String _createdDate;
   String _updatedDate;
   dynamic _deletedDate;
-  String _userId;
+  String _firebaseId;
   String _deviceMacAddress;
+  String _deviceAuthorizationCode;
+  String _deviceType;
+  String _deviceName;
 
   int get id => _id;
   String get createdDate => _createdDate;
   String get updatedDate => _updatedDate;
   dynamic get deletedDate => _deletedDate;
-  String get userId => _userId;
+  String get firebaseId => _firebaseId;
   String get deviceMacAddress => _deviceMacAddress;
+  String get deviceAuthorizationCode => _deviceAuthorizationCode;
+  String get deviceType => _deviceType;
+  String get deviceName => _deviceName;
 
   Data({
       int id, 
       String createdDate, 
       String updatedDate, 
       dynamic deletedDate, 
-      String userId, 
-      String deviceMacAddress}){
+      String firebaseId, 
+      String deviceMacAddress, 
+      String deviceAuthorizationCode, 
+      String deviceType, 
+      String deviceName}){
     _id = id;
     _createdDate = createdDate;
     _updatedDate = updatedDate;
     _deletedDate = deletedDate;
-    _userId = userId;
+    _firebaseId = firebaseId;
     _deviceMacAddress = deviceMacAddress;
+    _deviceAuthorizationCode = deviceAuthorizationCode;
+    _deviceType = deviceType;
+    _deviceName = deviceName;
 }
 
   Data.fromJson(dynamic json) {
@@ -85,8 +100,11 @@ class Data {
     _createdDate = json["createdDate"];
     _updatedDate = json["updatedDate"];
     _deletedDate = json["deletedDate"];
-    _userId = json["userId"];
+    _firebaseId = json["firebaseId"];
     _deviceMacAddress = json["deviceMacAddress"];
+    _deviceAuthorizationCode = json["deviceAuthorizationCode"];
+    _deviceType = json["deviceType"];
+    _deviceName = json["deviceName"];
   }
 
   Map<String, dynamic> toJson() {
@@ -95,8 +113,11 @@ class Data {
     map["createdDate"] = _createdDate;
     map["updatedDate"] = _updatedDate;
     map["deletedDate"] = _deletedDate;
-    map["userId"] = _userId;
+    map["firebaseId"] = _firebaseId;
     map["deviceMacAddress"] = _deviceMacAddress;
+    map["deviceAuthorizationCode"] = _deviceAuthorizationCode;
+    map["deviceType"] = _deviceType;
+    map["deviceName"] = _deviceName;
     return map;
   }
 

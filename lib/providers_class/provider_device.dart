@@ -30,15 +30,15 @@ class ProviderDevice extends ChangeNotifier{
     notifyListeners();
   }
 
-  addDevices(deviceMacAddress,context)async{
+  addDevices(deviceMacAddress,context,deviceType,authCode,deviceName)async{
 
     final prefs = await SharedPreferences.getInstance();
 
-    // ProgressDialog pasdr = ProgressDialog(context,
-    //     type: ProgressDialogType.Normal, isDismissible: true, showLogs: false);
-    // setProgressDialog(context, pasdr, "load data...");
-    //
-    // pasdr.show();
+    ProgressDialog pasdr = ProgressDialog(context,
+        type: ProgressDialogType.Normal, isDismissible: true, showLogs: false);
+    setProgressDialog(context, pasdr, "load data...");
+
+    pasdr.show();
 
     var res = await http.post(addDeviceAPI,
         headers: <String, String>{
@@ -46,7 +46,10 @@ class ProviderDevice extends ChangeNotifier{
         },
         body: jsonEncode(<String, dynamic>{
           "userId": prefs.getString(KEY_USER_ID),
-          "deviceMacAddress":deviceMacAddress
+          "deviceMacAddress":deviceMacAddress,
+          "deviceType": deviceType,
+          "deviceAuthorizationCode": authCode,
+          "deviceName": deviceName
         }));
 
     if(res.statusCode==200 || res.statusCode==201){
@@ -55,12 +58,12 @@ class ProviderDevice extends ChangeNotifier{
 
       showSuccessToast("Device added successfully");
 
-     // pasdr.hide();
+      pasdr.hide();
 
 
     }else{
       print("Error Response:"+res.body);
-     // pasdr.hide();
+      pasdr.hide();
 
       showErrorToast("Something went wrong");
 
@@ -72,11 +75,11 @@ class ProviderDevice extends ChangeNotifier{
 
     final prefs = await SharedPreferences.getInstance();
 
-    // ProgressDialog pasdr = ProgressDialog(context,
-    //     type: ProgressDialogType.Normal, isDismissible: true, showLogs: false);
-    // setProgressDialog(context, pasdr, "load data...");
-    //
-    // pasdr.show();
+    ProgressDialog pasdr = ProgressDialog(context,
+        type: ProgressDialogType.Normal, isDismissible: true, showLogs: false);
+    setProgressDialog(context, pasdr, "load data...");
+
+    pasdr.show();
 
     var res = await http.post(editDeviceAPI,
         headers: <String, String>{
@@ -91,13 +94,13 @@ class ProviderDevice extends ChangeNotifier{
 
       print("Success Response:"+res.body);
 
-      //pasdr.hide();
+      pasdr.hide();
 
       showSuccessToast("Device updated successfully");
       return;
     }else{
       print("Error Response:"+res.body);
-     // pasdr.hide();
+      pasdr.hide();
 
       showErrorToast("Something went wrong");
       return;
@@ -122,21 +125,17 @@ class ProviderDevice extends ChangeNotifier{
 
     if (res.statusCode == 201 || res.statusCode==200) {
 
-      print("Response:"+res.body);
-      print("Mac Address:"+res.body);
+      print("Device Response:----------------"+res.body);
 
       var dataMap = jsonDecode(res.body);
 
       deviceDataModel = DeviceDataModel.fromJson(dataMap);
 
-
       notifyListeners();
       return deviceDataModel;
 
     } else {
-
       print("ErrorBody:"+res.body);
-
       showErrorToast ("Something went wrong");
 
 

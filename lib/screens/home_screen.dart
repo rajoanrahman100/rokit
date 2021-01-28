@@ -4,12 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rokit/base/route.dart';
 import 'package:rokit/providers_class/provider_device.dart';
+import 'package:rokit/providers_class/provider_getUser.dart';
 import 'package:rokit/providers_class/provider_sensor_data.dart';
-import 'package:rokit/utils/all_functions.dart';
+import 'package:rokit/screens/deviceScreen/addedDevicesList.dart';
+import 'package:rokit/screens/profileScreen/createProfile.dart';
 import 'package:rokit/utils/styles.dart';
 import 'package:rokit/widget/custom_app_bar.dart';
 import 'package:rokit/widget/loader_widget.dart';
-import 'package:rokit/widget/no_data_found.dart';
 import 'package:rokit/widget/text_formWidget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -20,6 +21,7 @@ class HomeScreenPage extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => ProviderSensorData()),
         ChangeNotifierProvider(create: (_) => ProviderDevice()),
+        ChangeNotifierProvider(create: (_) => ProviderUser()),
       ],
       child: HomeScreen(),
     );
@@ -59,12 +61,10 @@ class _HomeScreenState extends State<HomeScreen> {
     await prefs.setString(KEY_USER_ID, userID);
   }
 
-  getMessage() async{
-
+  getMessage() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-
-    _firebaseMessaging.getToken().then((value)async{
+    _firebaseMessaging.getToken().then((value) async {
       print("token value $value");
       await prefs.setString(KEY_TOKEN_ID, value);
     });
@@ -99,96 +99,119 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     // TODO: implement initState
 
-    getUserID();
-   // getUserToken();
-    getMessage();
+    //getUserID();
+    // getUserToken();
+    // getMessage();
   }
 
   @override
   Widget build(BuildContext context) {
     var providerSensorList = Provider.of<ProviderSensorData>(context, listen: false);
     var providerDevice = Provider.of<ProviderDevice>(context, listen: false);
+    var providerUser = Provider.of<ProviderUser>(context, listen: false);
 
     //providerSensorList.getAllSensorsData();
 
-    providerDevice.getAddedDevices();
+    providerUser.getUserDetails();
+    //providerDevice.getAddedDevices();
 
     return Scaffold(
-      backgroundColor: appBack,
-      appBar: RokkhiAppBar(
-        mTitle: "Home",
-        backColor: appBack,
-        mAction: [
-          IconButton(
-              icon: Icon(Icons.logout),
-              onPressed: () {
-                _logOutAlert();
-              }),
-          IconButton(
-              icon: Icon(Icons.add),
-              onPressed: () {
-
-                showModalBottomSheet(
-                  isScrollControlled: true,
-                  context: context,
-
-                  builder: (context) => Padding(
-                    padding: MediaQuery.of(context).viewInsets,
-                    child: Container(
-                      height: 200.0,
-                      child: Form(
-                        key: _formKey,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            SizedBox(
-                              height: 10.0,
-                            ),
-                            Text("Enter Device Mac Address"),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-                              child: TextFormWidget(
-                                hintText: "device mac address",
-                                text: _controllerMacAddress.text,
-                                validator: (String value) {
-                                  if (value.isEmpty) {
-                                    return "your device mac address";
-                                  }
-                                  _formKey.currentState.save();
-                                  return null;
-                                },
-                                onSaved: (String value){
-                                  _controllerMacAddress.text=value;
-                                },
-
+        backgroundColor: appBack,
+        appBar: RokkhiAppBar(
+          mTitle: "Home",
+          backColor: appBack,
+          mAction: [
+            IconButton(
+                icon: Icon(Icons.logout),
+                onPressed: () {
+                  _logOutAlert();
+                }),
+            IconButton(
+                icon: Icon(Icons.add),
+                onPressed: () {
+                  showModalBottomSheet(
+                    isScrollControlled: true,
+                    context: context,
+                    builder: (context) => Padding(
+                      padding: MediaQuery.of(context).viewInsets,
+                      child: Container(
+                        height: 200.0,
+                        child: Form(
+                          key: _formKey,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              SizedBox(
+                                height: 10.0,
                               ),
-                            ),
-                            SizedBox(
-                              height: 15.0,
-                            ),
-                            RaisedButton(
-                              onPressed: () {
-                                if (_formKey.currentState.validate()) {
-
-                                  providerDevice.addDevices(_controllerMacAddress.text, context);
-                                }
-                              },
-                              child: Text("add device"),
-                            ),
-                            SizedBox(
-                              height: 20.0,
-                            ),
-                          ],
+                              Text("Enter Device Mac Address"),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                                child: TextFormWidget(
+                                  hintText: "device mac address",
+                                  text: _controllerMacAddress.text,
+                                  validator: (String value) {
+                                    if (value.isEmpty) {
+                                      return "your device mac address";
+                                    }
+                                    _formKey.currentState.save();
+                                    return null;
+                                  },
+                                  onSaved: (String value) {
+                                    _controllerMacAddress.text = value;
+                                  },
+                                ),
+                              ),
+                              SizedBox(
+                                height: 15.0,
+                              ),
+                              RaisedButton(
+                                onPressed: () {
+                                  if (_formKey.currentState.validate()) {
+                                    //providerDevice.addDevices(_controllerMacAddress.text, context);
+                                  }
+                                },
+                                child: Text("add device"),
+                              ),
+                              SizedBox(
+                                height: 20.0,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                );
-              }),
-        ],
-      ),
+                  );
+                }),
+          ],
+        ),
+        body: Consumer<ProviderUser>(
+          builder: (_, data, child) => data.userProfileModel != null
+              ? data.userProfileModel.isSuccess == false
+                  ? callCompleteProfileNavigator()
+                  : Container(
+                      padding: EdgeInsets.all(10.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(data.userProfileModel.data.name),
+                          Text(data.userProfileModel.data.address),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text("Total Device: ${data.userProfileModel.data.devices.length}"),
+                              GestureDetector(onTap: (){
+                                RouteGenerator.navigatePush(context, AddedDeviceScreen());
+                              },child: Text("See All"))
+                            ],
+                          ),
+                        ],
+                      ),
+                    )
+              : showLoaderWidget(),
+        ),
 
-      body: Consumer<ProviderDevice>(
+        /*body: Consumer<ProviderDevice>(
           builder: (_, data, child) => data.deviceDataModel == null
               ? showShimmerDesign(context)
               : data.deviceDataModel.data.length == 0
@@ -278,84 +301,93 @@ class _HomeScreenState extends State<HomeScreen> {
                             )
                           ],
                         );
-                      })),
+                      })),*/
 
-      /*floatingActionButton: Consumer<ProviderDevice>(
-        builder: (_,data,child)=>data.deviceDataModel==null?Container() :FloatingActionButton.extended(
-          onPressed: () async{
-
-
-            showModalBottomSheet(
-              isScrollControlled: true,
-              context: context,
-
-              builder: (context) => Padding(
-                padding: MediaQuery.of(context).viewInsets,
-                child: Container(
-                  height: 200.0,
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        SizedBox(
-                          height: 10.0,
-                        ),
-                        Text("Enter Device Mac Address"),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-                          child: TextFormWidget(
-                            hintText: "device mac address",
-                            text: _controllerMacAddress.text,
-                            validator: (String value) {
-                              if (value.isEmpty) {
-                                return "your device mac address";
-                              }
-                              _formKey.currentState.save();
-                              return null;
-                            },
-                            onSaved: (String value){
-                              _controllerMacAddress.text=value;
-                            },
-
-                          ),
-                        ),
-                        SizedBox(
-                          height: 15.0,
-                        ),
-                        RaisedButton(
-                          onPressed: ()async {
-                            if (_formKey.currentState.validate()) {
-
-
-                               await data.addDevices(_controllerMacAddress.text, context);
-                               await data.getAddedDevices();
-                               await data.notifyListeners();
-                            }
-                          },
-                          child: Text("add device"),
-                        ),
-                        SizedBox(
-                          height: 20.0,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            );
-          },
-          label: Text('Add Device'),
-          icon: Icon(Icons.devices),
-          backgroundColor: Colors.deepOrange,
-        ),
-      )*/
-
+        // floatingActionButton: Consumer<ProviderDevice>(
+        //   builder: (_, data, child) => data.deviceDataModel == null
+        //       ? Container()
+        //       : FloatingActionButton.extended(
+        //           onPressed: () async {
+        //             showModalBottomSheet(
+        //               isScrollControlled: true,
+        //               context: context,
+        //               builder: (context) => Padding(
+        //                 padding: MediaQuery.of(context).viewInsets,
+        //                 child: Container(
+        //                   height: 200.0,
+        //                   child: Form(
+        //                     key: _formKey,
+        //                     child: Column(
+        //                       mainAxisSize: MainAxisSize.min,
+        //                       children: [
+        //                         SizedBox(
+        //                           height: 10.0,
+        //                         ),
+        //                         Text("Enter Device Mac Address"),
+        //                         Padding(
+        //                           padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+        //                           child: TextFormWidget(
+        //                             hintText: "device mac address",
+        //                             text: _controllerMacAddress.text,
+        //                             validator: (String value) {
+        //                               if (value.isEmpty) {
+        //                                 return "your device mac address";
+        //                               }
+        //                               _formKey.currentState.save();
+        //                               return null;
+        //                             },
+        //                             onSaved: (String value) {
+        //                               _controllerMacAddress.text = value;
+        //                             },
+        //                           ),
+        //                         ),
+        //                         SizedBox(
+        //                           height: 15.0,
+        //                         ),
+        //                         RaisedButton(
+        //                           onPressed: () async {
+        //                             if (_formKey.currentState.validate()) {
+        //                               await data.addDevices(_controllerMacAddress.text, context);
+        //                               await data.getAddedDevices();
+        //                               await data.notifyListeners();
+        //                             }
+        //                           },
+        //                           child: Text("add device"),
+        //                         ),
+        //                         SizedBox(
+        //                           height: 20.0,
+        //                         ),
+        //                       ],
+        //                     ),
+        //                   ),
+        //                 ),
+        //               ),
+        //             );
+        //           },
+        //           label: Text('Add Device'),
+        //           icon: Icon(Icons.devices),
+        //           backgroundColor: Colors.deepOrange,
+        //         ),
+        // )
     );
-
-
   }
 
+  callCreateProfilePage() {
+    RouteGenerator.navigatePush(context, CreateProfileScreen());
+  }
+
+  Widget callCompleteProfileNavigator() {
+    return new FutureBuilder(
+      future: Future.delayed(const Duration(milliseconds: 0)).then((value) => callCreateProfilePage()),
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        return emptyWidget(context);
+      },
+    );
+  }
+
+  Widget emptyWidget(BuildContext context) {
+    return SizedBox.shrink();
+  }
 
   Future signOut() async {
     FirebaseAuth _auth = FirebaseAuth.instance;
@@ -374,8 +406,7 @@ class _HomeScreenState extends State<HomeScreen> {
   _logOutAlert() {
     return showDialog(
         context: context,
-        builder: (context) =>
-            AlertDialog(
+        builder: (context) => AlertDialog(
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
               title: Text("Do you want to logout from the app?"),
               actions: <Widget>[

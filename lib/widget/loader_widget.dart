@@ -5,7 +5,7 @@ import 'package:shimmer/shimmer.dart';
 showLoaderWidget() {
   return Center(
       child: Image.asset(
-    "assets/spinner.gif",
+    "assets/applogoloadergif.gif",
     height: 60.0,
     width: 60.0,
   ));

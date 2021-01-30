@@ -30,7 +30,7 @@ class ProviderDevice extends ChangeNotifier{
     notifyListeners();
   }
 
-  addDevices(deviceMacAddress,context,deviceType,authCode,deviceName)async{
+  addDevices(context,deviceMacAddress,deviceType,authCode)async{
 
     final prefs = await SharedPreferences.getInstance();
 
@@ -49,7 +49,6 @@ class ProviderDevice extends ChangeNotifier{
           "deviceMacAddress":deviceMacAddress,
           "deviceType": deviceType,
           "deviceAuthorizationCode": authCode,
-          "deviceName": deviceName
         }));
 
     if(res.statusCode==200 || res.statusCode==201){
@@ -144,7 +143,14 @@ class ProviderDevice extends ChangeNotifier{
   }
 
 
-  deleteDevice(deviceID)async{
+  deleteDevice(deviceID,context)async{
+
+    ProgressDialog pasdr = ProgressDialog(context,
+        type: ProgressDialogType.Normal, isDismissible: true, showLogs: false);
+    setProgressDialog(context, pasdr, "load data...");
+
+    pasdr.show();
+
     var res = await http.post(deleteDeviceAPI,
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
@@ -157,10 +163,12 @@ class ProviderDevice extends ChangeNotifier{
 
     if(res.statusCode==201 || res.statusCode==200){
       showSuccessToast("Device deleted");
+      pasdr.hide();
       return;
     }else{
       print(res.body);
       showErrorToast("Something went wrong");
+      pasdr.hide();
       return;
     }
   }

@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:rokit/base/material_app.dart';
 import 'package:rokit/base/static_value.dart';
+import 'package:rokit/screens/deviceScreen/addDevice.dart';
 import 'package:rokit/screens/emailSignInScreen/registerWithEmail.dart';
 import 'package:rokit/screens/emailSignInScreen/signInWithEmail.dart';
 import 'package:rokit/screens/home_screen.dart';
@@ -20,6 +21,7 @@ const String MainScreenRoute = "/mainScreen";
 const String SignWithEmailScreenRoute = "/signInWithEmailScreen";
 const String RegisterWithEmailScreenRoute = "/registerWithEmailScreen";
 const String PhoneLogInScreenRoute = "/phoneLogInScreen";
+const String AddDeviceScreenRoute = "/addDeviceScreen";
 
 class RouteGenerator {
   // this @generateRoute can share dynamic object with another screen
@@ -47,6 +49,9 @@ class RouteGenerator {
 
       case RegisterWithEmailScreenRoute:
         return MaterialPageRoute(builder: (_) => RegisterWithEmail());
+
+      case AddDeviceScreenRoute:
+        return MaterialPageRoute(builder: (_) => AddDeviceScreen());
 
 
       case PhoneLogInScreenRoute:

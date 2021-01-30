@@ -25,6 +25,9 @@ class _SplashScreenState extends State<SplashScreen> {
     auth.onAuthStateChanged.listen((user) async {
       await Future.delayed(Duration(seconds: 1));
       Tag("userData = ${user != null ? user.uid : "\"user not loggedIn\""} ");
+
+      
+
       RouteGenerator.clearBackStack(context, user != null?MainScreenRoute:SignInScreenRoute);
     });
 

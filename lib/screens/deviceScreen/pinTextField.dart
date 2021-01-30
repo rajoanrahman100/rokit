@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:rokit/utils/styles.dart';
 
 enum PinEntryType { underline, boxTight, boxLoose }
 
@@ -156,7 +157,7 @@ class BoxTightDecoration extends PinDecoration {
     this.solidColor,
     this.strokeWidth: 1.0,
     this.radius: const Radius.circular(3.0),
-    this.strokeColor: Colors.deepOrange,
+    this.strokeColor: Colors.deepOrangeAccent,
   }) : super(
     textStyle: textStyle,
     obscureStyle: obscureStyle,
@@ -229,7 +230,7 @@ class BoxLooseDecoration extends PinDecoration {
     this.strokeWidth: 2.0,
     this.gapSpace: 12.0,
     this.gapSpaces,
-    this.strokeColor: Colors.deepOrange,
+    this.strokeColor: Colors.black,
   }) : super(
     textStyle: textStyle,
     obscureStyle: obscureStyle,

@@ -13,8 +13,10 @@ text_StyleRoboto(Color color, double size,FontWeight fontWeight,{decoration}){
 
   );}
 
-  var appBack=Colors.grey[100];
+  var appBack=Color(0xFFF7F7F7);
   var headerColor=Color(0xFF080724);
+  var backColor2=Color(0xFF001E28);
+
   var appName="Rokit";
   var appDefaultColor=Colors.deepOrange;
 

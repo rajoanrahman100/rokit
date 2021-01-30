@@ -36,6 +36,7 @@ dependencies:
   http: ^0.12.2
   lazy_load_scrollview: 1.2.0
   shared_preferences: ^0.5.12+4
+  dropdownfield: ^1.0.3
 
   # firebase_library
   firebase_messaging: ^7.0.3

@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rokit/base/route.dart';
@@ -9,10 +10,10 @@ import 'package:rokit/providers_class/provider_sensor_data.dart';
 import 'package:rokit/screens/deviceScreen/addedDevicesList.dart';
 import 'package:rokit/screens/profileScreen/createProfile.dart';
 import 'package:rokit/utils/styles.dart';
-import 'package:rokit/widget/custom_app_bar.dart';
+import 'package:rokit/widget/home_screen_gridView.dart';
 import 'package:rokit/widget/loader_widget.dart';
-import 'package:rokit/widget/text_formWidget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:rokit/screens/deviceScreen/addDevice.dart';
 
 class HomeScreenPage extends StatelessWidget {
   @override
@@ -100,8 +101,8 @@ class _HomeScreenState extends State<HomeScreen> {
     // TODO: implement initState
 
     //getUserID();
-    // getUserToken();
-    // getMessage();
+     //getUserToken();
+     getMessage();
   }
 
   @override
@@ -115,193 +116,271 @@ class _HomeScreenState extends State<HomeScreen> {
     providerUser.getUserDetails();
     //providerDevice.getAddedDevices();
 
-    return Scaffold(
+    return SafeArea(
+      child: Scaffold(
         backgroundColor: appBack,
-        appBar: RokkhiAppBar(
-          mTitle: "Home",
-          backColor: appBack,
-          mAction: [
-            IconButton(
-                icon: Icon(Icons.logout),
-                onPressed: () {
-                  _logOutAlert();
-                }),
-            IconButton(
-                icon: Icon(Icons.add),
-                onPressed: () {
-                  showModalBottomSheet(
-                    isScrollControlled: true,
-                    context: context,
-                    builder: (context) => Padding(
-                      padding: MediaQuery.of(context).viewInsets,
-                      child: Container(
-                        height: 200.0,
-                        child: Form(
-                          key: _formKey,
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              SizedBox(
-                                height: 10.0,
-                              ),
-                              Text("Enter Device Mac Address"),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-                                child: TextFormWidget(
-                                  hintText: "device mac address",
-                                  text: _controllerMacAddress.text,
-                                  validator: (String value) {
-                                    if (value.isEmpty) {
-                                      return "your device mac address";
-                                    }
-                                    _formKey.currentState.save();
-                                    return null;
-                                  },
-                                  onSaved: (String value) {
-                                    _controllerMacAddress.text = value;
-                                  },
-                                ),
-                              ),
-                              SizedBox(
-                                height: 15.0,
-                              ),
-                              RaisedButton(
-                                onPressed: () {
-                                  if (_formKey.currentState.validate()) {
-                                    //providerDevice.addDevices(_controllerMacAddress.text, context);
-                                  }
-                                },
-                                child: Text("add device"),
-                              ),
-                              SizedBox(
-                                height: 20.0,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  );
-                }),
-          ],
-        ),
         body: Consumer<ProviderUser>(
           builder: (_, data, child) => data.userProfileModel != null
               ? data.userProfileModel.isSuccess == false
                   ? callCompleteProfileNavigator()
-                  : Container(
-                      padding: EdgeInsets.all(10.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(data.userProfileModel.data.name),
-                          Text(data.userProfileModel.data.address),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text("Total Device: ${data.userProfileModel.data.devices.length}"),
-                              GestureDetector(onTap: (){
-                                RouteGenerator.navigatePush(context, AddedDeviceScreen());
-                              },child: Text("See All"))
-                            ],
-                          ),
-                        ],
-                      ),
-                    )
-              : showLoaderWidget(),
-        ),
-
-        /*body: Consumer<ProviderDevice>(
-          builder: (_, data, child) => data.deviceDataModel == null
-              ? showShimmerDesign(context)
-              : data.deviceDataModel.data.length == 0
-                  ? NoDataFoundWidget(
-                      height: 250.0,
-                      width: 250.0,
-                    )
-                  : ListView.builder(
-                      itemCount: data.deviceDataModel.data.length,
-                      itemBuilder: (_, index) {
-                        return Column(
+                  : SingleChildScrollView(
+                    child: Container(
+                        padding: EdgeInsets.all(25.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            ListTile(
-                              leading: IconButton(icon: Icon(Icons.delete_forever), onPressed:()async{
-                               await data.deleteDevice(data.deviceDataModel.data[index].id);
-                               await data.getAddedDevices();
-                               await  data.notifyListeners();
-                              }),
-                              title: Text(data.deviceDataModel.data[index].deviceMacAddress),
-                              trailing: IconButton(icon: Icon(Icons.edit), onPressed: (){
-                                //editDeviceModalBottomSheet(context,providerDevice,_controllerMacAddress,_formKey,data.deviceDataModel.data[index].id,_controllerMacAddress.text);
+                            Container(
+                              height: 100.0,
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Row(
+                                      children: [
+                                        CircleAvatar(
+                                          radius: 30.0,
+                                          backgroundImage: NetworkImage('https://via.placeholder.com/150'),
+                                          backgroundColor: Colors.transparent,
+                                        ),
+                                        SizedBox(
+                                          width: 15.0,
+                                        ),
+                                        Text(
+                                          "Welcome, ${data.userProfileModel.data.name}",
+                                          style: text_StyleRoboto(Colors.deepOrange, 18.0, FontWeight.bold),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                   Container(height: 30.0, width: 30.0,decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Colors.white,
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.grey.withOpacity(0.1),
+                                          spreadRadius: 5,
+                                          blurRadius: 7,
+                                          offset: Offset(0, 3), // changes position of shadow
+                                        ),
+                                      ]
+                                    ),
+                                      child: Center(child: Icon(Icons.notifications,color: headerColor,)),
+                                    ),
 
-                                showModalBottomSheet(
-                                  isScrollControlled: true,
-                                  context: context,
+                                ],
+                              ),
+                            ),
+                            Container(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text("Connected Devices",style: text_StyleRoboto(Colors.black, 16.0, FontWeight.bold),),
+                                      Text("Click to see log and settings",style: text_StyleRoboto(Colors.grey, 14.0, FontWeight.w500),),
+                                    ],
+                                  ),
+                                  IconButton(icon: Icon(Icons.more_horiz), onPressed:(){})
+                                ],
+                              ),
+                            ),
 
-                                  builder: (context) => Padding(
-                                    padding: MediaQuery.of(context).viewInsets,
+                            SizedBox(height: 15.0,),
+
+                            Row(
+                              children: [
+
+                                Expanded(
+
+                                  child: GestureDetector(
+                                    onTap: (){
+                                      RouteGenerator.navigatePush(context, AddedDeviceScreen());
+                                    },
                                     child: Container(
                                       height: 200.0,
-                                      child: Form(
-                                        key: _formKey,
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            SizedBox(
-                                              height: 10.0,
-                                            ),
-                                            Text("Enter Device Mac Address"),
-                                            Padding(
-                                              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-                                              child: TextFormWidget(
-                                                hintText: "device mac address",
-                                                text: data.deviceDataModel.data[index].deviceMacAddress,
-                                                validator: (String value) {
-                                                  if (value.isEmpty) {
-                                                    return "your device mac address";
-                                                  }
-                                                  _formKey.currentState.save();
-                                                  return null;
-                                                },
-                                                onSaved: (String value){
-                                                  _editControllerMacAddress.text=value;
-                                                },
+                                      padding: EdgeInsets.all(15.0),
 
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              height: 15.0,
-                                            ),
-                                            RaisedButton(
-                                              onPressed: () async{
-                                                if (_formKey.currentState.validate()) {
+                                      child: Stack(
+                                        children: [
 
-                                               await data.editDevices(_editControllerMacAddress.text,data.deviceDataModel.data[index].id ,context);
-                                               await data.getAddedDevices();
-                                               await data.notifyListeners();
-                                                }
-                                              },
-                                              child: Text("add device"),
+                                          Container(
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Container(height: 35.0, width: 35.0,decoration: BoxDecoration(
+                                                    shape: BoxShape.circle,
+                                                    color: Color(0xFF3986FB),
+                                                ),
+                                                  child: Center(child: Image.asset("assets/door.png",height: 20.0,width: 20.0,)),
+                                                ),
+
+                                                SizedBox(height: 10.0,),
+
+                                                Text("Door",style: text_StyleRoboto(appBack, 16.0, FontWeight.bold),),
+                                                Text("Sensor",style: text_StyleRoboto(appBack, 16.0, FontWeight.bold),),
+                                              ],
                                             ),
-                                            SizedBox(
-                                              height: 20.0,
+                                          ),
+
+                                          Align(
+                                            alignment: Alignment.bottomCenter,
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                data.userProfileModel.data.doors.isEmpty?Text("${0}",style: text_StyleRoboto(appBack, 12.0, FontWeight.w500)):Text("${data.userProfileModel.data.doors.length}",style: text_StyleRoboto(appBack, 12.0, FontWeight.w500),),
+                                                Icon(Icons.arrow_right_alt,color: appBack,)
+                                              ],
                                             ),
+                                          )
+                                        ],
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: headerColor,
+                                        borderRadius: BorderRadius.circular(10.0),
+                                        gradient: LinearGradient(
+                                          begin: Alignment.topCenter,
+                                          end: Alignment.bottomCenter,
+                                          colors: [
+                                            Color(0xFF0066FF),
+                                            Color(0xFF164DAB),
                                           ],
                                         ),
                                       ),
                                     ),
                                   ),
-                                );
+                                ),
 
-                              }),
+                                SizedBox(width: 15.0,),
+
+                                Expanded(
+
+                                  child: Container(
+                                    height: 200.0,
+                                    padding: EdgeInsets.all(15.0),
+                                    child: Stack(
+                                      children: [
+
+                                        Container(
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Container(height: 35.0, width: 35.0,decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                color: Color(0xFF925FFB),
+                                              ),
+                                                child: Center(child: Image.asset("assets/window.png",height: 20.0,width: 20.0,)),
+                                              ),
+
+                                              SizedBox(height: 10.0,),
+
+                                              Text("Window",style: text_StyleRoboto(appBack, 16.0, FontWeight.bold),),
+                                              Text("Sensor",style: text_StyleRoboto(appBack, 16.0, FontWeight.bold),),
+                                            ],
+                                          ),
+                                        ),
+                                        Align(
+                                          alignment: Alignment.bottomCenter,
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              data.userProfileModel.data.windows.isEmpty?Text("${0}",style: text_StyleRoboto(appBack, 12.0, FontWeight.w500)):Text("${data.userProfileModel.data.windows.length}",style: text_StyleRoboto(appBack, 12.0, FontWeight.w500),),
+
+                                              Icon(Icons.arrow_right_alt,color: appBack,)
+                                            ],
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                    decoration: BoxDecoration(
+                                        color: Colors.white,
+                                      borderRadius: BorderRadius.circular(10.0),
+                                      gradient: LinearGradient(
+                                        begin: Alignment.topCenter,
+                                        end: Alignment.bottomCenter,
+                                        colors: [
+                                          Color(0xFF7836FF),
+                                          Color(0xFF5318CB),
+                                        ],
+                                      ),
+                                    ),
+                                    ),
+                                  ),
+
+
+                              ],
                             ),
-                            Divider(
-                              height: 1.0,
-                              color: headerColor,
+
+                            SizedBox(height: 15.0,),
+
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                GestureDetector(
+                                  onTap: (){
+                                    RouteGenerator.navigatePush(context, AddDeviceScreen());
+                                  },
+                                  child: Container(height: 30.0, width: 30.0,decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: headerColor,
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.grey.withOpacity(0.1),
+                                          spreadRadius: 5,
+                                          blurRadius: 7,
+                                          offset: Offset(0, 3), // changes position of shadow
+                                        ),
+                                      ]
+                                  ),
+                                    child: Center(child: Icon(Icons.add,color: Colors.white,)),
+                                  ),
+                                ),
+                              ],
+                            ),
+
+                            SizedBox(height: 15.0,),
+
+                            Text("Available Devices",style: text_StyleRoboto(Colors.black, 16.0, FontWeight.bold),),
+
+                            SizedBox(height: 15.0,),
+
+
+                            Container(
+                              child: GridView.count(
+                                shrinkWrap: true,
+                                crossAxisCount: 3,
+                                physics: NeverScrollableScrollPhysics(),
+                                childAspectRatio: 1.1,
+                                crossAxisSpacing: 6,
+                                mainAxisSpacing: 6,
+                                children: List.generate(adminItemsGridView.length, (index) {
+                                  return HomeItemsNewUI(
+                                    homeScreenGridView: adminItemsGridView[index],
+                                    callback: () {
+                                      print("Index $index");
+                                    },
+                                  );
+                                }),
+                              ),
                             )
+
+
+                            // Text(data.userProfileModel.data.name),
+                            // Text(data.userProfileModel.data.address),
+                            // Row(
+                            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            //   children: [
+                            //     data.userProfileModel.data.windows.isEmpty?Text("Total Device: ${0}"):Text("Total Device: ${data.userProfileModel.data.windows.length}"),
+                            //     GestureDetector(onTap: (){
+                            //       RouteGenerator.navigatePush(context, AddedDeviceScreen());
+                            //     },child: Text("See All"))
+                            //   ],
+                            // ),
                           ],
-                        );
-                      })),*/
+                        ),
+                      ),
+                  )
+              : showLoaderWidget(),
+        ),
 
         // floatingActionButton: Consumer<ProviderDevice>(
         //   builder: (_, data, child) => data.deviceDataModel == null
@@ -369,6 +448,7 @@ class _HomeScreenState extends State<HomeScreen> {
         //           backgroundColor: Colors.deepOrange,
         //         ),
         // )
+      ),
     );
   }
 

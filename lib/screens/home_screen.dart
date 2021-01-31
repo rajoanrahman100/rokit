@@ -7,13 +7,15 @@ import 'package:rokit/base/route.dart';
 import 'package:rokit/providers_class/provider_device.dart';
 import 'package:rokit/providers_class/provider_getUser.dart';
 import 'package:rokit/providers_class/provider_sensor_data.dart';
-import 'package:rokit/screens/deviceScreen/addedDevicesList.dart';
+import 'package:rokit/screens/deviceScreen/addedDoorDevicesList.dart';
 import 'package:rokit/screens/profileScreen/createProfile.dart';
 import 'package:rokit/utils/styles.dart';
 import 'package:rokit/widget/home_screen_gridView.dart';
 import 'package:rokit/widget/loader_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:rokit/screens/deviceScreen/addDevice.dart';
+
+import 'deviceScreen/addedWindowDevices.dart';
 
 class HomeScreenPage extends StatelessWidget {
   @override
@@ -254,56 +256,61 @@ class _HomeScreenState extends State<HomeScreen> {
 
                                 Expanded(
 
-                                  child: Container(
-                                    height: 200.0,
-                                    padding: EdgeInsets.all(15.0),
-                                    child: Stack(
-                                      children: [
+                                  child: GestureDetector(
+                                    onTap: (){
+                                      RouteGenerator.navigatePush(context, AddedWindowDeviceScreen());
+                                    },
+                                    child: Container(
+                                      height: 200.0,
+                                      padding: EdgeInsets.all(15.0),
+                                      child: Stack(
+                                        children: [
 
-                                        Container(
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Container(height: 35.0, width: 35.0,decoration: BoxDecoration(
-                                                shape: BoxShape.circle,
-                                                color: Color(0xFF925FFB),
-                                              ),
-                                                child: Center(child: Image.asset("assets/window.png",height: 20.0,width: 20.0,)),
-                                              ),
+                                          Container(
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Container(height: 35.0, width: 35.0,decoration: BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  color: Color(0xFF925FFB),
+                                                ),
+                                                  child: Center(child: Image.asset("assets/window.png",height: 20.0,width: 20.0,)),
+                                                ),
 
-                                              SizedBox(height: 10.0,),
+                                                SizedBox(height: 10.0,),
 
-                                              Text("Window",style: text_StyleRoboto(appBack, 16.0, FontWeight.bold),),
-                                              Text("Sensor",style: text_StyleRoboto(appBack, 16.0, FontWeight.bold),),
-                                            ],
+                                                Text("Window",style: text_StyleRoboto(appBack, 16.0, FontWeight.bold),),
+                                                Text("Sensor",style: text_StyleRoboto(appBack, 16.0, FontWeight.bold),),
+                                              ],
+                                            ),
                                           ),
-                                        ),
-                                        Align(
-                                          alignment: Alignment.bottomCenter,
-                                          child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              data.userProfileModel.data.windows.isEmpty?Text("${0}",style: text_StyleRoboto(appBack, 12.0, FontWeight.w500)):Text("${data.userProfileModel.data.windows.length}",style: text_StyleRoboto(appBack, 12.0, FontWeight.w500),),
+                                          Align(
+                                            alignment: Alignment.bottomCenter,
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                data.userProfileModel.data.windows.isEmpty?Text("${0}",style: text_StyleRoboto(appBack, 12.0, FontWeight.w500)):Text("${data.userProfileModel.data.windows.length}",style: text_StyleRoboto(appBack, 12.0, FontWeight.w500),),
 
-                                              Icon(Icons.arrow_right_alt,color: appBack,)
-                                            ],
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                    decoration: BoxDecoration(
-                                        color: Colors.white,
-                                      borderRadius: BorderRadius.circular(10.0),
-                                      gradient: LinearGradient(
-                                        begin: Alignment.topCenter,
-                                        end: Alignment.bottomCenter,
-                                        colors: [
-                                          Color(0xFF7836FF),
-                                          Color(0xFF5318CB),
+                                                Icon(Icons.arrow_right_alt,color: appBack,)
+                                              ],
+                                            ),
+                                          )
                                         ],
                                       ),
-                                    ),
-                                    ),
+                                      decoration: BoxDecoration(
+                                          color: Colors.white,
+                                        borderRadius: BorderRadius.circular(10.0),
+                                        gradient: LinearGradient(
+                                          begin: Alignment.topCenter,
+                                          end: Alignment.bottomCenter,
+                                          colors: [
+                                            Color(0xFF7836FF),
+                                            Color(0xFF5318CB),
+                                          ],
+                                        ),
+                                      ),
+                                      ),
+                                  ),
                                   ),
 
 
@@ -324,7 +331,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       color: headerColor,
                                       boxShadow: [
                                         BoxShadow(
-                                          color: Colors.grey.withOpacity(0.1),
+                                          color: Colors.black.withOpacity(0.1),
                                           spreadRadius: 5,
                                           blurRadius: 7,
                                           offset: Offset(0, 3), // changes position of shadow

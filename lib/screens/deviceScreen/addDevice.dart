@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:rokit/base/route.dart';
 import 'package:rokit/providers_class/provider_device.dart';
 import 'package:rokit/screens/deviceScreen/pinTextField.dart';
 import 'package:rokit/utils/styles.dart';
@@ -23,7 +22,7 @@ class AddDeviceScreen extends StatelessWidget {
 class AddDevice extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
 
-  var _deviceTypeController = TextEditingController();
+  var _deviceNameController = TextEditingController();
   var _deviceMacAddressController = TextEditingController();
   var _deviceAuthorCodeController = TextEditingController();
 
@@ -54,7 +53,7 @@ class AddDevice extends StatelessWidget {
                       color: backColor2,
                     ),
                     Positioned(
-                      top: 80.0,
+                      top: 60.0,
                       bottom: 40.0,
                       left: 20.0,
                       right: 20.0,
@@ -62,7 +61,7 @@ class AddDevice extends StatelessWidget {
                         key: _formKey,
                         child: SingleChildScrollView(
                           child: Container(
-                            height: 550.0,
+                            //height: 550.0,
                             padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
                             decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20.0)),
                             child: Column(
@@ -71,7 +70,6 @@ class AddDevice extends StatelessWidget {
                                 SizedBox(
                                   height: 20.0,
                                 ),
-
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
@@ -94,11 +92,9 @@ class AddDevice extends StatelessWidget {
                                     ),
                                   ],
                                 ),
-
                                 SizedBox(
                                   height: 10.0,
                                 ),
-
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
@@ -108,11 +104,9 @@ class AddDevice extends StatelessWidget {
                                     ),
                                   ],
                                 ),
-
                                 SizedBox(
                                   height: 20.0,
                                 ),
-
                                 Text(
                                   "Device Type",
                                   style: text_StyleRoboto(Colors.black, 16.0, FontWeight.w500),
@@ -120,9 +114,9 @@ class AddDevice extends StatelessWidget {
                                 SizedBox(
                                   height: 10.0,
                                 ),
-
                                 DropDownField(
                                     value: tyName,
+                                    filledColor: backColor2,
                                     hintText: "Select Device Type",
                                     hintStyle: text_StyleRoboto(Colors.white, 16.0, FontWeight.w400),
                                     textStyle: text_StyleRoboto(Colors.white, 16.0, FontWeight.w500),
@@ -132,34 +126,9 @@ class AddDevice extends StatelessWidget {
                                     setter: (newValue) {
                                       tyName = newValue;
                                     }),
-
-                                // SizedBox(height:60.0 ,),
-
-                                // Text("Device Type",style: text_StyleRoboto(Colors.black, 16.0, FontWeight.w500),),
-                                // SizedBox(height:10.0 ,),
-                                //
-                                // TextFormWidget(
-                                //   height: 50,
-                                //   text: _deviceTypeController.text,
-                                //   isEmail: true,
-                                //   hintText: "eg. WINDOW/DOOR",
-                                //   validator: (String value) {
-                                //     if (value.isEmpty) {
-                                //       return "Enter Your Type";
-                                //     }
-                                //     _formKey.currentState.save();
-                                //     return null;
-                                //   },
-                                //
-                                //   onSaved: (String value){
-                                //     _deviceTypeController.text=value;
-                                //   },
-                                // ),
-
                                 SizedBox(
                                   height: 30.0,
                                 ),
-
                                 Text(
                                   "Mac Address",
                                   style: text_StyleRoboto(Colors.black, 16.0, FontWeight.w500),
@@ -167,7 +136,6 @@ class AddDevice extends StatelessWidget {
                                 SizedBox(
                                   height: 10.0,
                                 ),
-
                                 TextFormWidget(
                                   text: _deviceMacAddressController.text,
                                   isEmail: true,
@@ -185,11 +153,9 @@ class AddDevice extends StatelessWidget {
                                     _deviceMacAddressController.text = value;
                                   },
                                 ),
-
                                 SizedBox(
                                   height: 30.0,
                                 ),
-
                                 Text(
                                   "Authorization Code",
                                   style: text_StyleRoboto(Colors.black, 16.0, FontWeight.w500),
@@ -197,7 +163,6 @@ class AddDevice extends StatelessWidget {
                                 SizedBox(
                                   height: 10.0,
                                 ),
-
                                 PinInputTextField(
                                   pinLength: 8,
                                   decoration: _pinDecoration,
@@ -214,11 +179,36 @@ class AddDevice extends StatelessWidget {
                                     }
                                   },
                                 ),
+                                SizedBox(
+                                  height: 20.0,
+                                ),
+                                Text(
+                                  "Device Name",
+                                  style: text_StyleRoboto(Colors.black, 16.0, FontWeight.w500),
+                                ),
+                                SizedBox(
+                                  height: 10.0,
+                                ),
+                                TextFormWidget(
+                                  text: _deviceNameController.text,
+                                  isEmail: true,
+                                  hintText: "eg. door 1",
+                                  hintStyle: text_StyleRoboto(Colors.grey, 16.0, FontWeight.w400),
+                                  validator: (String value) {
+                                    if (value.isEmpty) {
+                                      return "Enter Your Mac Address";
+                                    }
 
+                                    _formKey.currentState.save();
+                                    return null;
+                                  },
+                                  onSaved: (String value) {
+                                    _deviceNameController.text = value;
+                                  },
+                                ),
                                 SizedBox(
                                   height: 20,
                                 ),
-
                                 GestureDetector(
                                   onTap: () {
                                     if (_formKey.currentState.validate()) {
@@ -246,24 +236,25 @@ class AddDevice extends StatelessWidget {
                                     ),
                                   ),
                                 ),
-
                                 SizedBox(
                                   height: 20,
                                 ),
-
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     GestureDetector(
                                         onTap: () {
-                                          Navigator.pop(context,true);
+                                          Navigator.pop(context, true);
                                         },
                                         child: Text(
                                           "Cancel",
                                           style: TextStyle(decoration: TextDecoration.underline, color: headerColor, fontSize: 18.0),
                                         )),
                                   ],
-                                )
+                                ),
+                                SizedBox(
+                                  height: 20,
+                                ),
                               ],
                             ),
                           ),

@@ -55,6 +55,7 @@ class DropDownField extends FormField<String> {
   final ValueChanged<dynamic> onValueChanged;
   final bool strict;
   final int itemsVisibleInDropdown;
+  final Color filledColor;
 
   /// Controls the text being edited.
   ///
@@ -79,7 +80,7 @@ class DropDownField extends FormField<String> {
     this.onValueChanged,
     this.itemsVisibleInDropdown: 3,
     this.enabled: true,
-    this.strict: true,
+    this.strict: true,this.filledColor
   }) : super(
           key: key,
           autovalidate: false,
@@ -143,12 +144,7 @@ class DropDownField extends FormField<String> {
                                 Radius.circular(14.0),
                               ),
                             ),
-                            // errorBorder: OutlineInputBorder(
-                            //   borderSide: BorderSide(color: Colors.red, width: 2.0),
-                            //   borderRadius: BorderRadius.all(
-                            //     Radius.circular(14.0),
-                            //   ),
-                            // ),
+
                             disabledBorder: InputBorder.none,
                             suffixIcon: IconButton(
                                 icon: Icon(Icons.arrow_drop_down, size: 30.0, color: Colors.white),
@@ -160,7 +156,7 @@ class DropDownField extends FormField<String> {
                                 }),
 
                             filled: true,
-                            fillColor: backColor2,
+                            fillColor: filledColor,
 
                             contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
                             //  hintStyle: text_StyleRoboto(Colors.grey, 16.0, FontWeight.w400),
@@ -168,13 +164,7 @@ class DropDownField extends FormField<String> {
                       ),
 
                     ),
-                    // IconButton(
-                    //   icon: Icon(Icons.close),
-                    //   onPressed: () {
-                    //     if (!enabled) return;
-                    //     state.clearValue();
-                    //   },
-                    // )
+
                   ],
                 ),
                 !state._showdropdown

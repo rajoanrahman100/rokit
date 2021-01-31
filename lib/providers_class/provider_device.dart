@@ -17,7 +17,19 @@ class ProviderDevice extends ChangeNotifier{
   DeviceDataModel deviceDataModel;
 
 
-  List<String> _deviceMacAddress;
+  List<String> _items = [
+    "ALL","WINDOW","DOOR"
+  ];
+
+  String _selectedItem;
+
+  List<String> get items => _items;
+  String get selected => _selectedItem;
+
+  void setSelectedItem(String s) {
+    _selectedItem = s;
+    notifyListeners();
+  }
 
 
   String deviceMacAddress(Data data){
@@ -107,7 +119,7 @@ class ProviderDevice extends ChangeNotifier{
 
   }
 
-  Future<DeviceDataModel> getAddedDevices()async{
+  Future<DeviceDataModel> getAddedDevices({deviceType})async{
 
     final prefs = await SharedPreferences.getInstance();
 
@@ -117,7 +129,7 @@ class ProviderDevice extends ChangeNotifier{
         },
         body: jsonEncode(<String, dynamic>{
           "userId": prefs.getString(KEY_USER_ID),
-          "deviceMacAddress":""
+          "deviceType": deviceType
         }
        )
     );

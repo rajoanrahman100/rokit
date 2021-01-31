@@ -20,7 +20,7 @@ class ProviderUser extends ChangeNotifier{
 
     print("USER ID : ${prefs.getString(KEY_USER_ID)}  TOKEN ID: ${prefs.getString(KEY_TOKEN_ID)}");
 
-    var res = await http.post("http://dev.rokkhi.com:5000/user/getUser",
+    var res = await http.post(getUserAPI,
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -37,7 +37,6 @@ class ProviderUser extends ChangeNotifier{
       var dataMap = jsonDecode(res.body);
 
       userProfileModel = UserProfileModel.fromJson(dataMap);
-
       notifyListeners();
       return userProfileModel;
     }else{

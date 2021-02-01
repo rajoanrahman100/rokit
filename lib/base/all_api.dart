@@ -4,7 +4,7 @@
 //const baseUrl="http://192.168.0.105:5000/";
 
 
-const sensorAPI=baseUrl+"sensor";
+const sensorAPI=baseUrl+"sensor/getSensor";
 
 const addDeviceAPI=baseUrl+"device";
 

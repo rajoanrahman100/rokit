@@ -3,7 +3,9 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:rokit/base/all_api.dart';
+import 'package:rokit/base/route.dart';
 import 'package:rokit/data_model/device_data_model.dart';
+import 'package:rokit/screens/deviceScreen/addedDoorDevicesList.dart';
 import 'package:rokit/utils/global_config.dart';
 import 'package:rokit/utils/styles.dart';
 import 'package:rokit/widget/custom_progress.dart';
@@ -20,6 +22,7 @@ class ProviderDevice extends ChangeNotifier{
   List<String> _items = [
     "ALL","WINDOW","DOOR"
   ];
+
 
   String _selectedItem;
 
@@ -142,6 +145,8 @@ class ProviderDevice extends ChangeNotifier{
 
       deviceDataModel = DeviceDataModel.fromJson(dataMap);
 
+
+
       notifyListeners();
       return deviceDataModel;
 
@@ -159,7 +164,7 @@ class ProviderDevice extends ChangeNotifier{
 
     ProgressDialog pasdr = ProgressDialog(context,
         type: ProgressDialogType.Normal, isDismissible: true, showLogs: false);
-    setProgressDialog(context, pasdr, "load data...");
+    setProgressDialog(context, pasdr, "Deleting device...");
 
     pasdr.show();
 
@@ -175,6 +180,7 @@ class ProviderDevice extends ChangeNotifier{
 
     if(res.statusCode==201 || res.statusCode==200){
       showSuccessToast("Device deleted");
+     // RouteGenerator.navigatePush(context, AddedDeviceScreen());
       pasdr.hide();
       return;
     }else{

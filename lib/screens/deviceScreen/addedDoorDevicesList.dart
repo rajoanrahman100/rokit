@@ -6,8 +6,9 @@ import 'package:provider/provider.dart';
 import 'package:rokit/base/route.dart';
 import 'package:rokit/providers_class/provider_device.dart';
 import 'package:rokit/providers_class/provider_sensor_data.dart';
-import 'package:rokit/screens/deviceScreen/deviceNotification.dart';
+import 'package:rokit/screens/deviceScreen/deviceNotificationSettings.dart';
 import 'package:rokit/screens/deviceScreen/doorDeviceLog.dart';
+import 'package:rokit/utils/all_widgetClass.dart';
 import 'package:rokit/utils/styles.dart';
 import 'package:rokit/widget/loader_widget.dart';
 import 'package:rokit/widget/no_data_found.dart';
@@ -76,7 +77,6 @@ class AddedDevice extends StatelessWidget {
                 ],
               ),
             ),
-
             Container(
               padding: EdgeInsets.only(left: 25.0, right: 25.0, top: 20.0),
               child: Row(
@@ -150,7 +150,6 @@ class AddedDevice extends StatelessWidget {
                 ],
               ),
             ),
-
             Expanded(
               child: Consumer<ProviderDevice>(
                 builder: (_, data, child) => data.deviceDataModel == null
@@ -177,65 +176,78 @@ class AddedDevice extends StatelessWidget {
                                       children: [
                                         Expanded(
                                           flex: 2,
-                                          child: Container(
-                                            height: MediaQuery.of(context).size.height,
-                                            padding: EdgeInsets.only(top: 13, left: 12.0),
-                                            decoration: BoxDecoration(color: appBack, borderRadius: BorderRadius.circular(5.0)),
-                                            child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              mainAxisAlignment: MainAxisAlignment.center,
-                                              children: [
-                                                Row(
-                                                  children: [
-                                                    data.deviceDataModel.data[index].deviceType == "WINDOW"
-                                                        ? Image.asset(
-                                                            "assets/window2.png",
-                                                            height: 14.0,
-                                                            width: 14.0,
-                                                          )
-                                                        : Image.asset(
-                                                            "assets/door2.png",
-                                                            height: 14.0,
-                                                            width: 14.0,
-                                                          ),
-                                                    Text(
-                                                      " ${data.deviceDataModel.data[index].deviceMacAddress}",
-                                                      style: text_StyleRoboto(backColor2, 14.0, FontWeight.bold),
-                                                    )
-                                                  ],
-                                                ),
-                                                Row(
-                                                  children: [
-                                                    data.deviceDataModel.data[index].sensorValue.doorStatus == "open"
-                                                        ? Image.asset(
-                                                            "assets/openDoor.png",
-                                                            height: 50.0,
-                                                            width: 50.0,
-                                                          )
-                                                        : Image.asset(
-                                                            "assets/closeDoor.png",
-                                                            height: 50.0,
-                                                            width: 50.0,
-                                                          ),
-                                                    SizedBox(
-                                                      width: 10.0,
-                                                    ),
-                                                    Row(
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              showAlertDialog(context,
+                                                  deviceName: "New Device",
+                                                  deviceNetwork: "Tp Link 20201",
+                                                  deviceMac: data.deviceDataModel.data[index].deviceMacAddress,
+                                                  status: data.deviceDataModel.data[index].sensorValue.doorStatus,
+                                                  batteryStatus: data.deviceDataModel.data[index].sensorValue.batteryStatus);
+                                            },
+                                            child: Container(
+                                              height: MediaQuery.of(context).size.height,
+                                              padding: EdgeInsets.only(top: 13, left: 12.0),
+                                              decoration: BoxDecoration(color: appBack, borderRadius: BorderRadius.circular(5.0)),
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                children: [
+                                                  Row(
+                                                    children: [
+                                                      data.deviceDataModel.data[index].deviceType == "WINDOW"
+                                                          ? Image.asset(
+                                                              "assets/window2.png",
+                                                              height: 14.0,
+                                                              width: 14.0,
+                                                            )
+                                                          : Image.asset(
+                                                              "assets/door2.png",
+                                                              height: 14.0,
+                                                              width: 14.0,
+                                                            ),
+                                                      Text(
+                                                        " ${data.deviceDataModel.data[index].deviceMacAddress}",
+                                                        style: text_StyleRoboto(backColor2, 14.0, FontWeight.bold),
+                                                      )
+                                                    ],
+                                                  ),
+                                                  Padding(
+                                                    padding: const EdgeInsets.only(left: 3.0),
+                                                    child: Row(
                                                       children: [
-                                                        Icon(
-                                                          Icons.battery_charging_full_sharp,
-                                                          color: backColor2,
-                                                          size: 16.0,
+                                                        data.deviceDataModel.data[index].sensorValue.doorStatus == "open"
+                                                            ? Image.asset(
+                                                                "assets/opened.png",
+                                                                height: 50.0,
+                                                                width: 50.0,
+                                                              )
+                                                            : Image.asset(
+                                                                "assets/closed.png",
+                                                                height: 50.0,
+                                                                width: 50.0,
+                                                              ),
+                                                        SizedBox(
+                                                          width: 10.0,
                                                         ),
-                                                        Text(
-                                                          "${data.deviceDataModel.data[index].sensorValue.batteryStatus} v",
-                                                          style: text_StyleRoboto(backColor2, 14.0, FontWeight.bold),
-                                                        ),
+                                                        Row(
+                                                          children: [
+                                                            Icon(
+                                                              Icons.battery_charging_full_sharp,
+                                                              color: backColor2,
+                                                              size: 16.0,
+                                                            ),
+                                                            Text(
+                                                              "${data.deviceDataModel.data[index].sensorValue.batteryStatus} v",
+                                                              style: text_StyleRoboto(backColor2, 14.0, FontWeight.bold),
+                                                            ),
+                                                          ],
+                                                        )
                                                       ],
-                                                    )
-                                                  ],
-                                                )
-                                              ],
+                                                    ),
+                                                  )
+                                                ],
+                                              ),
                                             ),
                                           ),
                                         ),
@@ -249,7 +261,11 @@ class AddedDevice extends StatelessWidget {
                                               children: [
                                                 GestureDetector(
                                                   onTap: () {
-                                                    RouteGenerator.navigatePush(context, DoorDevicesLogScreen(deviceMacAddress:data.deviceDataModel.data[index].sensorValue.deviceMacAddress ,));
+                                                    RouteGenerator.navigatePush(
+                                                        context,
+                                                        DoorDevicesLogScreen(
+                                                          deviceMacAddress: data.deviceDataModel.data[index].sensorValue.deviceMacAddress,
+                                                        ));
                                                   },
                                                   child: Container(
                                                     height: 30.0,
@@ -266,8 +282,8 @@ class AddedDevice extends StatelessWidget {
                                                   height: 12.0,
                                                 ),
                                                 GestureDetector(
-                                                  onTap: (){
-                                                    RouteGenerator.navigatePush(context, DeviceNotificationScreen());
+                                                  onTap: () {
+                                                    RouteGenerator.navigatePush(context, DeviceNotificationScreen(id: data.deviceDataModel.data[index].id,));
                                                   },
                                                   child: Container(
                                                     height: 30.0,
@@ -291,31 +307,10 @@ class AddedDevice extends StatelessWidget {
                           ),
               ),
             )
-
           ],
         ),
       ),
     );
   }
-}
 
-// Consumer<ProviderDevice>(
-// builder: (_, data, child) => data.deviceDataModel == null
-// ? showShimmerDesign(context)
-// : data.deviceDataModel.data.length == 0
-// ? NoDataFoundWidget()
-//     : ListView.builder(
-// itemCount: data.deviceDataModel.data.length,
-// itemBuilder: (_, index) {
-// return ListTile(
-// title: Text("Name: ${data.deviceDataModel.data[index].deviceMacAddress}"),
-// subtitle: Text("Name: ${data.deviceDataModel.data[index].deviceType}"),
-// trailing: IconButton(icon: Icon(Icons.delete_forever), onPressed: ()async{
-// await data.deleteDevice(data.deviceDataModel.data[index].id,context);
-// await data.getAddedDevices();
-//
-// }),
-// );
-// },
-// ),
-// )
+}

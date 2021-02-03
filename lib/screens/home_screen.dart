@@ -4,26 +4,26 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rokit/base/route.dart';
-import 'package:rokit/providers_class/provider_device.dart';
 import 'package:rokit/providers_class/provider_getUser.dart';
-import 'package:rokit/providers_class/provider_sensor_data.dart';
+import 'package:rokit/screens/deviceScreen/addDevice.dart';
 import 'package:rokit/screens/deviceScreen/addedDoorDevicesList.dart';
 import 'package:rokit/screens/profileScreen/createProfile.dart';
+import 'package:rokit/utils/all_widgetClass.dart';
 import 'package:rokit/utils/styles.dart';
 import 'package:rokit/widget/home_screen_gridView.dart';
 import 'package:rokit/widget/loader_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:rokit/screens/deviceScreen/addDevice.dart';
 
 import 'deviceScreen/addedWindowDevices.dart';
+import 'notificationScreen/notificationScreen.dart';
 
 class HomeScreenPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => ProviderSensorData()),
-        ChangeNotifierProvider(create: (_) => ProviderDevice()),
+        // ChangeNotifierProvider(create: (_) => ProviderSensorData()),
+        //  ChangeNotifierProvider(create: (_) => ProviderDevice()),
         ChangeNotifierProvider(create: (_) => ProviderUser()),
       ],
       child: HomeScreen(),
@@ -103,17 +103,13 @@ class _HomeScreenState extends State<HomeScreen> {
     // TODO: implement initState
 
     //getUserID();
-     //getUserToken();
-     getMessage();
+    //getUserToken();
+    getMessage();
   }
 
   @override
   Widget build(BuildContext context) {
-    var providerSensorList = Provider.of<ProviderSensorData>(context, listen: false);
-    var providerDevice = Provider.of<ProviderDevice>(context, listen: false);
     var providerUser = Provider.of<ProviderUser>(context, listen: false);
-
-    //providerSensorList.getAllSensorsData();
 
     providerUser.getUserDetails();
     //providerDevice.getAddedDevices();
@@ -126,7 +122,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ? data.userProfileModel.isSuccess == false
                   ? callCompleteProfileNavigator()
                   : SingleChildScrollView(
-                    child: Container(
+                      child: Container(
                         padding: EdgeInsets.all(25.0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -153,21 +149,29 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ],
                                     ),
                                   ),
-                                   Container(height: 30.0, width: 30.0,decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: Colors.white,
-                                      boxShadow: [
+                                  GestureDetector(
+                                    onTap: (){
+                                      _logOutAlert();
+                                      //RouteGenerator.navigatePush(context, NotificationsScreen());
+                                    },
+                                    child: Container(
+                                      height: 30.0,
+                                      width: 30.0,
+                                      decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white, boxShadow: [
                                         BoxShadow(
                                           color: Colors.grey.withOpacity(0.1),
                                           spreadRadius: 5,
                                           blurRadius: 7,
                                           offset: Offset(0, 3), // changes position of shadow
                                         ),
-                                      ]
+                                      ]),
+                                      child: Center(
+                                          child: Icon(
+                                        Icons.notifications,
+                                        color: headerColor,
+                                      )),
                                     ),
-                                      child: Center(child: Icon(Icons.notifications,color: headerColor,)),
-                                    ),
-
+                                  ),
                                 ],
                               ),
                             ),
@@ -178,179 +182,98 @@ class _HomeScreenState extends State<HomeScreen> {
                                   Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Text("Connected Devices",style: text_StyleRoboto(Colors.black, 16.0, FontWeight.bold),),
-                                      Text("Click to see log and settings",style: text_StyleRoboto(Colors.grey, 14.0, FontWeight.w500),),
+                                      Text(
+                                        "Connected Devices",
+                                        style: text_StyleRoboto(Colors.black, 16.0, FontWeight.bold),
+                                      ),
+                                      Text(
+                                        "Click to see log and settings",
+                                        style: text_StyleRoboto(Colors.grey, 14.0, FontWeight.w500),
+                                      ),
                                     ],
                                   ),
-                                  IconButton(icon: Icon(Icons.more_horiz), onPressed:(){})
+                                  IconButton(icon: Icon(Icons.more_horiz), onPressed: () {})
                                 ],
                               ),
                             ),
-
-                            SizedBox(height: 15.0,),
-
+                            SizedBox(
+                              height: 15.0,
+                            ),
                             Row(
                               children: [
-
-                                Expanded(
-
-                                  child: GestureDetector(
-                                    onTap: (){
-                                      RouteGenerator.navigatePush(context, AddedDeviceScreen());
-                                    },
-                                    child: Container(
-                                      height: 200.0,
-                                      padding: EdgeInsets.all(15.0),
-
-                                      child: Stack(
-                                        children: [
-
-                                          Container(
-                                            child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                Container(height: 35.0, width: 35.0,decoration: BoxDecoration(
-                                                    shape: BoxShape.circle,
-                                                    color: Color(0xFF3986FB),
-                                                ),
-                                                  child: Center(child: Image.asset("assets/door.png",height: 20.0,width: 20.0,)),
-                                                ),
-
-                                                SizedBox(height: 10.0,),
-
-                                                Text("Door",style: text_StyleRoboto(appBack, 16.0, FontWeight.bold),),
-                                                Text("Sensor",style: text_StyleRoboto(appBack, 16.0, FontWeight.bold),),
-                                              ],
-                                            ),
-                                          ),
-
-                                          Align(
-                                            alignment: Alignment.bottomCenter,
-                                            child: Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                              children: [
-                                                data.userProfileModel.data.doors.isEmpty?Text("${0}",style: text_StyleRoboto(appBack, 12.0, FontWeight.w500)):Text("${data.userProfileModel.data.doors.length}",style: text_StyleRoboto(appBack, 12.0, FontWeight.w500),),
-                                                Icon(Icons.arrow_right_alt,color: appBack,)
-                                              ],
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: headerColor,
-                                        borderRadius: BorderRadius.circular(10.0),
-                                        gradient: LinearGradient(
-                                          begin: Alignment.topCenter,
-                                          end: Alignment.bottomCenter,
-                                          colors: [
-                                            Color(0xFF0066FF),
-                                            Color(0xFF164DAB),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
+                                HomeScreenDeviceUI(
+                                  imageAsset: "assets/door.png",
+                                  sensorTypeName: "Door",
+                                  data: data.userProfileModel.data.doors,
+                                  length: data.userProfileModel.data.doors.length,
+                                  callback: () {
+                                    RouteGenerator.navigatePush(context, AddedDeviceScreen());
+                                  },
+                                  backColor: Color(0xFF3986FB),
+                                  colors: [
+                                    Color(0xFF0066FF),
+                                    Color(0xFF164DAB),
+                                  ],
                                 ),
-
-                                SizedBox(width: 15.0,),
-
-                                Expanded(
-
-                                  child: GestureDetector(
-                                    onTap: (){
-                                      RouteGenerator.navigatePush(context, AddedWindowDeviceScreen());
-                                    },
-                                    child: Container(
-                                      height: 200.0,
-                                      padding: EdgeInsets.all(15.0),
-                                      child: Stack(
-                                        children: [
-
-                                          Container(
-                                            child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                Container(height: 35.0, width: 35.0,decoration: BoxDecoration(
-                                                  shape: BoxShape.circle,
-                                                  color: Color(0xFF925FFB),
-                                                ),
-                                                  child: Center(child: Image.asset("assets/window.png",height: 20.0,width: 20.0,)),
-                                                ),
-
-                                                SizedBox(height: 10.0,),
-
-                                                Text("Window",style: text_StyleRoboto(appBack, 16.0, FontWeight.bold),),
-                                                Text("Sensor",style: text_StyleRoboto(appBack, 16.0, FontWeight.bold),),
-                                              ],
-                                            ),
-                                          ),
-                                          Align(
-                                            alignment: Alignment.bottomCenter,
-                                            child: Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                              children: [
-                                                data.userProfileModel.data.windows.isEmpty?Text("${0}",style: text_StyleRoboto(appBack, 12.0, FontWeight.w500)):Text("${data.userProfileModel.data.windows.length}",style: text_StyleRoboto(appBack, 12.0, FontWeight.w500),),
-
-                                                Icon(Icons.arrow_right_alt,color: appBack,)
-                                              ],
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                      decoration: BoxDecoration(
-                                          color: Colors.white,
-                                        borderRadius: BorderRadius.circular(10.0),
-                                        gradient: LinearGradient(
-                                          begin: Alignment.topCenter,
-                                          end: Alignment.bottomCenter,
-                                          colors: [
-                                            Color(0xFF7836FF),
-                                            Color(0xFF5318CB),
-                                          ],
-                                        ),
-                                      ),
-                                      ),
-                                  ),
-                                  ),
-
-
+                                SizedBox(
+                                  width: 15.0,
+                                ),
+                                HomeScreenDeviceUI(
+                                  imageAsset: "assets/window.png",
+                                  sensorTypeName: "Window",
+                                  data: data.userProfileModel.data.windows,
+                                  length: data.userProfileModel.data.windows.length,
+                                  backColor: Color(0xFF925FFB),
+                                  callback: () {
+                                    RouteGenerator.navigatePush(context, AddedWindowDeviceScreen());
+                                  },
+                                  colors: [
+                                    Color(0xFF7836FF),
+                                    Color(0xFF5318CB),
+                                  ],
+                                ),
                               ],
                             ),
-
-                            SizedBox(height: 15.0,),
-
+                            SizedBox(
+                              height: 15.0,
+                            ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 GestureDetector(
-                                  onTap: (){
+                                  onTap: () {
                                     RouteGenerator.navigatePush(context, AddDeviceScreen());
                                   },
-                                  child: Container(height: 30.0, width: 30.0,decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: headerColor,
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black.withOpacity(0.1),
-                                          spreadRadius: 5,
-                                          blurRadius: 7,
-                                          offset: Offset(0, 3), // changes position of shadow
-                                        ),
-                                      ]
-                                  ),
-                                    child: Center(child: Icon(Icons.add,color: Colors.white,)),
+                                  child: Container(
+                                    height: 30.0,
+                                    width: 30.0,
+                                    decoration: BoxDecoration(shape: BoxShape.circle, color: headerColor, boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.1),
+                                        spreadRadius: 5,
+                                        blurRadius: 7,
+                                        offset: Offset(0, 3), // changes position of shadow
+                                      ),
+                                    ]),
+                                    child: Center(
+                                        child: Icon(
+                                      Icons.add,
+                                      color: Colors.white,
+                                    )),
                                   ),
                                 ),
                               ],
                             ),
-
-                            SizedBox(height: 15.0,),
-
-                            Text("Available Devices",style: text_StyleRoboto(Colors.black, 16.0, FontWeight.bold),),
-
-                            SizedBox(height: 15.0,),
-
-
+                            SizedBox(
+                              height: 15.0,
+                            ),
+                            Text(
+                              "Available Devices",
+                              style: text_StyleRoboto(Colors.black, 16.0, FontWeight.bold),
+                            ),
+                            SizedBox(
+                              height: 15.0,
+                            ),
                             Container(
                               child: GridView.count(
                                 shrinkWrap: true,
@@ -369,92 +292,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                 }),
                               ),
                             )
-
-
-                            // Text(data.userProfileModel.data.name),
-                            // Text(data.userProfileModel.data.address),
-                            // Row(
-                            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            //   children: [
-                            //     data.userProfileModel.data.windows.isEmpty?Text("Total Device: ${0}"):Text("Total Device: ${data.userProfileModel.data.windows.length}"),
-                            //     GestureDetector(onTap: (){
-                            //       RouteGenerator.navigatePush(context, AddedDeviceScreen());
-                            //     },child: Text("See All"))
-                            //   ],
-                            // ),
                           ],
                         ),
                       ),
-                  )
+                    )
               : showLoaderWidget(),
         ),
-
-        // floatingActionButton: Consumer<ProviderDevice>(
-        //   builder: (_, data, child) => data.deviceDataModel == null
-        //       ? Container()
-        //       : FloatingActionButton.extended(
-        //           onPressed: () async {
-        //             showModalBottomSheet(
-        //               isScrollControlled: true,
-        //               context: context,
-        //               builder: (context) => Padding(
-        //                 padding: MediaQuery.of(context).viewInsets,
-        //                 child: Container(
-        //                   height: 200.0,
-        //                   child: Form(
-        //                     key: _formKey,
-        //                     child: Column(
-        //                       mainAxisSize: MainAxisSize.min,
-        //                       children: [
-        //                         SizedBox(
-        //                           height: 10.0,
-        //                         ),
-        //                         Text("Enter Device Mac Address"),
-        //                         Padding(
-        //                           padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-        //                           child: TextFormWidget(
-        //                             hintText: "device mac address",
-        //                             text: _controllerMacAddress.text,
-        //                             validator: (String value) {
-        //                               if (value.isEmpty) {
-        //                                 return "your device mac address";
-        //                               }
-        //                               _formKey.currentState.save();
-        //                               return null;
-        //                             },
-        //                             onSaved: (String value) {
-        //                               _controllerMacAddress.text = value;
-        //                             },
-        //                           ),
-        //                         ),
-        //                         SizedBox(
-        //                           height: 15.0,
-        //                         ),
-        //                         RaisedButton(
-        //                           onPressed: () async {
-        //                             if (_formKey.currentState.validate()) {
-        //                               await data.addDevices(_controllerMacAddress.text, context);
-        //                               await data.getAddedDevices();
-        //                               await data.notifyListeners();
-        //                             }
-        //                           },
-        //                           child: Text("add device"),
-        //                         ),
-        //                         SizedBox(
-        //                           height: 20.0,
-        //                         ),
-        //                       ],
-        //                     ),
-        //                   ),
-        //                 ),
-        //               ),
-        //             );
-        //           },
-        //           label: Text('Add Device'),
-        //           icon: Icon(Icons.devices),
-        //           backgroundColor: Colors.deepOrange,
-        //         ),
-        // )
       ),
     );
   }

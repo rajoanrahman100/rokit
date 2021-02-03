@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rokit/base/route.dart';
 import 'package:rokit/base/static_value.dart';
+import 'package:rokit/data_model/firebaseUser_model.dart';
 import 'package:rokit/providers_class/firebase_auth_service.dart';
 import 'package:rokit/utils/styles.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // final GoogleSignIn gSignIn=GoogleSignIn();
 
@@ -17,8 +19,10 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
 
-
-  
+  saveUserUid(userModel)async{
+    SharedPreferences preferences=await SharedPreferences.getInstance();
+    preferences.setString(KEY_USER_ID, userModel);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +30,7 @@ class _SplashScreenState extends State<SplashScreen> {
     final auth = Provider.of<FirebaseAuthService>(context, listen: false);
     auth.onAuthStateChanged.listen((user) async {
       await Future.delayed(Duration(seconds: 1));
-      Tag("userData = ${user != null ? user.uid : "\"user not loggedIn\""} ");
+      Tag("userData = ${user != null ? saveUserUid(user.uid) : "\"user not loggedIn\""} ");
 
       RouteGenerator.clearBackStack(context, user != null?MainScreenRoute:SignInScreenRoute);
     });

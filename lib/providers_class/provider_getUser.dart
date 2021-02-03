@@ -14,6 +14,10 @@ class ProviderUser extends ChangeNotifier{
 
   UserProfileModel userProfileModel;
 
+
+  int itemLength;
+
+
   Future<UserProfileModel> getUserDetails()async{
 
     final prefs = await SharedPreferences.getInstance();

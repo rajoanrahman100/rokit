@@ -1,3 +1,4 @@
+import 'package:circular_profile_avatar/circular_profile_avatar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:rokit/providers_class/provider_device.dart';
@@ -184,13 +185,12 @@ class HomeScreenDeviceUI extends StatelessWidget {
 
   String imageAsset;
   String sensorTypeName;
-  List<dynamic> data;
   int length;
   VoidCallback callback;
   List<Color> colors;
   Color backColor;
 
-  HomeScreenDeviceUI({this.imageAsset,this.sensorTypeName,this.data,this.length,this.callback,this.colors, this.backColor});
+  HomeScreenDeviceUI({this.imageAsset,this.sensorTypeName,this.length,this.callback,this.colors, this.backColor});
 
 
   @override
@@ -217,9 +217,7 @@ class HomeScreenDeviceUI extends StatelessWidget {
                     ),
                       child: Center(child: Image.asset(imageAsset,height: 20.0,width: 20.0,)),
                     ),
-
                     SizedBox(height: 10.0,),
-
                     Text(sensorTypeName,style: text_StyleRoboto(appBack, 16.0, FontWeight.bold),),
                     Text("Sensor",style: text_StyleRoboto(appBack, 16.0, FontWeight.bold),),
                   ],
@@ -231,7 +229,7 @@ class HomeScreenDeviceUI extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    data.isEmpty?Text("${0}",style: text_StyleRoboto(appBack, 12.0, FontWeight.w500)):Text("$length",style: text_StyleRoboto(appBack, 12.0, FontWeight.w500),),
+                    Text(" $length",style: text_StyleRoboto(appBack, 12.0, FontWeight.w500),),
                     Icon(Icons.arrow_right_alt,color: appBack,)
                   ],
                 ),
@@ -252,6 +250,34 @@ class HomeScreenDeviceUI extends StatelessWidget {
     );
   }
 }
+
+///Circle Image with placeholder
+// ignore: must_be_immutable
+class CircleImagePlaceholder extends StatelessWidget {
+
+  String imageData;
+  double radius;
+
+  CircleImagePlaceholder({this.imageData,this.radius});
+
+  @override
+  Widget build(BuildContext context) {
+    return CircularProfileAvatar(
+      imageData, //sets image path, it should be a URL string. default value is empty string, if path is empty it will display only initials
+      radius: radius,
+      placeHolder: (context, url) => Image.asset("assets/spinner.gif",height: 15,),
+      errorWidget: (context,url,error)=>Icon(Icons.error_outline,size: 20.0,),
+      backgroundColor: Colors.white,
+      borderWidth: 1,
+      borderColor: Colors.black54,
+      elevation: 5.0,
+      foregroundColor: Colors.brown.withOpacity(0.5),
+      cacheImage: true,
+      showInitialTextAbovePicture: false, // setting it true will show initials text above profile picture, default false
+    );
+  }
+}
+
 
 
 

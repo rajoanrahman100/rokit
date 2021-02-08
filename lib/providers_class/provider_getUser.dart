@@ -18,25 +18,29 @@ class ProviderUser extends ChangeNotifier{
   int itemLength;
 
 
-  Future<UserProfileModel> getUserDetails()async{
+  getUserDetails()async{
 
     final prefs = await SharedPreferences.getInstance();
 
     print("USER ID : ${prefs.getString(KEY_USER_ID)}  TOKEN ID: ${prefs.getString(KEY_TOKEN_ID)}");
 
+
     var res = await http.post(getUserAPI,
         headers: <String, String>{
+          'firebaseToken': "",
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: jsonEncode(<String, dynamic>{
-          "firebaseId": prefs.getString(KEY_USER_ID),
-          "deviceToken":prefs.getString(KEY_TOKEN_ID),
-        }
-        )
-    );
+          "requesterFirebaseId": "x3nUrfG9Yee6DQa2vqmA43gGVsx1",
+          "deviceToken": "",
+
+        }));
+
+    print("response user " + res.statusCode.toString());
+    print("response user " + res.body);
 
     if(res.statusCode==200 || res.statusCode==201){
-      print("User Details Response-----------------:"+res.body);
+      //print("User Details Response-----------------:"+res.body);
 
       var dataMap = jsonDecode(res.body);
 

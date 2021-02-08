@@ -115,7 +115,7 @@ class AddDevice extends StatelessWidget {
                                   height: 10.0,
                                 ),
                                 DropDownField(
-                                    value: tyName,
+                                    value: tyName.toString(),
                                     filledColor: backColor2,
                                     hintText: "Select Device Type",
                                     hintStyle: text_StyleRoboto(Colors.white, 16.0, FontWeight.w400),
@@ -145,7 +145,6 @@ class AddDevice extends StatelessWidget {
                                     if (value.isEmpty) {
                                       return "Enter Your Mac Address";
                                     }
-
                                     _formKey.currentState.save();
                                     return null;
                                   },
@@ -213,7 +212,7 @@ class AddDevice extends StatelessWidget {
                                   onTap: () {
                                     if (_formKey.currentState.validate()) {
                                       print("Type Name $tyName");
-                                      providerDevice.addDevices(context, _deviceMacAddressController.text, tyName, _pinEditingController.text);
+                                      providerDevice.addDevices(context, _deviceMacAddressController.text, tyName, _pinEditingController.text,_deviceNameController.text);
                                     }
                                   },
                                   child: Container(

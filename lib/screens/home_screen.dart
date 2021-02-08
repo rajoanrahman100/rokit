@@ -1,3 +1,4 @@
+import 'package:circular_profile_avatar/circular_profile_avatar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
@@ -6,7 +7,6 @@ import 'package:provider/provider.dart';
 import 'package:rokit/base/route.dart';
 import 'package:rokit/providers_class/provider_getUser.dart';
 import 'package:rokit/screens/deviceScreen/addDevice.dart';
-import 'package:rokit/screens/deviceScreen/addedDoorDevicesList.dart';
 import 'package:rokit/screens/profileScreen/createProfile.dart';
 import 'package:rokit/utils/all_widgetClass.dart';
 import 'package:rokit/utils/styles.dart';
@@ -14,8 +14,8 @@ import 'package:rokit/widget/home_screen_gridView.dart';
 import 'package:rokit/widget/loader_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'deviceScreen/addedDoorDevicesList.dart';
 import 'deviceScreen/addedWindowDevices.dart';
-import 'notificationScreen/notificationScreen.dart';
 
 class HomeScreenPage extends StatelessWidget {
   @override
@@ -41,6 +41,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   FirebaseAuth _auth = FirebaseAuth.instance;
 
+  //final plainNotificationToken = PlainNotificationToken();
+
   var userID;
 
   final _formKey = GlobalKey<FormState>();
@@ -62,6 +64,10 @@ class _HomeScreenState extends State<HomeScreen> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     await prefs.setString(KEY_USER_ID, userID);
+  }
+
+  getUserToken() async {
+    _auth.currentUser.getIdToken().then((value) => print("auth token-------------------- $value"));
   }
 
   getMessage() async {
@@ -102,6 +108,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     // TODO: implement initState
 
+    getUserToken();
     //getUserID();
     //getUserToken();
     getMessage();
@@ -118,48 +125,132 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Scaffold(
         backgroundColor: appBack,
         body: Consumer<ProviderUser>(
-          builder: (_, data, child) => data.userProfileModel != null
-              ? data.userProfileModel.isSuccess == false
-                  ? callCompleteProfileNavigator()
-                  : SingleChildScrollView(
-                      child: Container(
-                        padding: EdgeInsets.all(25.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              height: 100.0,
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: Row(
+            builder: (_, data, child) => data.userProfileModel != null
+                ? data.userProfileModel.data == null
+                    ? callCompleteProfileNavigator()
+                    : SingleChildScrollView(
+                        child: Container(
+                          padding: EdgeInsets.all(25.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                height: 100.0,
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: Row(
+                                        children: [
+                                          CircleImagePlaceholder(imageData: data.userProfileModel.data.imageUrl,radius: 30.0,),
+                                          SizedBox(
+                                            width: 15.0,
+                                          ),
+                                          Text(
+                                            "Welcome, ${data.userProfileModel.data.name}",
+                                            style: text_StyleRoboto(Colors.deepOrange, 18.0, FontWeight.bold),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    GestureDetector(
+                                      onTap: () {
+                                        _logOutAlert();
+                                        //RouteGenerator.navigatePush(context, NotificationsScreen());
+                                      },
+                                      child: Container(
+                                        height: 30.0,
+                                        width: 30.0,
+                                        decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white, boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.grey.withOpacity(0.1),
+                                            spreadRadius: 5,
+                                            blurRadius: 7,
+                                            offset: Offset(0, 3), // changes position of shadow
+                                          ),
+                                        ]),
+                                        child: Center(
+                                            child: Icon(
+                                          Icons.notifications,
+                                          color: headerColor,
+                                        )),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        CircleAvatar(
-                                          radius: 30.0,
-                                          backgroundImage: NetworkImage('https://via.placeholder.com/150'),
-                                          backgroundColor: Colors.transparent,
-                                        ),
-                                        SizedBox(
-                                          width: 15.0,
+                                        Text(
+                                          "Connected Devices",
+                                          style: text_StyleRoboto(Colors.black, 16.0, FontWeight.bold),
                                         ),
                                         Text(
-                                          "Welcome, ${data.userProfileModel.data.name}",
-                                          style: text_StyleRoboto(Colors.deepOrange, 18.0, FontWeight.bold),
+                                          "Click to see log and settings",
+                                          style: text_StyleRoboto(Colors.grey, 14.0, FontWeight.w500),
                                         ),
                                       ],
                                     ),
+                                    IconButton(icon: Icon(Icons.more_horiz), onPressed: () {})
+                                  ],
+                                ),
+                              ),
+                              SizedBox(
+                                height: 15.0,
+                              ),
+                              Row(
+                                children: [
+                                  HomeScreenDeviceUI(
+                                    imageAsset: "assets/door.png",
+                                    sensorTypeName: "Door",
+                                    length: data.userProfileModel.data.devices.totalDoor,
+                                    callback: () {
+                                      RouteGenerator.navigatePush(context, AddedDeviceScreen());
+                                    },
+                                    backColor: Color(0xFF3986FB),
+                                    colors: [
+                                      Color(0xFF0066FF),
+                                      Color(0xFF164DAB),
+                                    ],
                                   ),
+                                  SizedBox(
+                                    width: 15.0,
+                                  ),
+                                  HomeScreenDeviceUI(
+                                    imageAsset: "assets/window.png",
+                                    sensorTypeName: "Window",
+                                    length: data.userProfileModel.data.devices.totalWindow,
+                                    backColor: Color(0xFF925FFB),
+                                    callback: () {
+                                      RouteGenerator.navigatePush(context, AddedWindowDeviceScreen());
+                                    },
+                                    colors: [
+                                      Color(0xFF7836FF),
+                                      Color(0xFF5318CB),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 15.0,
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
                                   GestureDetector(
-                                    onTap: (){
-                                      _logOutAlert();
-                                      //RouteGenerator.navigatePush(context, NotificationsScreen());
+                                    onTap: () {
+                                      RouteGenerator.navigatePush(context, AddDeviceScreen());
                                     },
                                     child: Container(
                                       height: 30.0,
                                       width: 30.0,
-                                      decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white, boxShadow: [
+                                      decoration: BoxDecoration(shape: BoxShape.circle, color: headerColor, boxShadow: [
                                         BoxShadow(
-                                          color: Colors.grey.withOpacity(0.1),
+                                          color: Colors.black.withOpacity(0.1),
                                           spreadRadius: 5,
                                           blurRadius: 7,
                                           offset: Offset(0, 3), // changes position of shadow
@@ -167,137 +258,49 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ]),
                                       child: Center(
                                           child: Icon(
-                                        Icons.notifications,
-                                        color: headerColor,
+                                        Icons.add,
+                                        color: Colors.white,
                                       )),
                                     ),
                                   ),
                                 ],
                               ),
-                            ),
-                            Container(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "Connected Devices",
-                                        style: text_StyleRoboto(Colors.black, 16.0, FontWeight.bold),
-                                      ),
-                                      Text(
-                                        "Click to see log and settings",
-                                        style: text_StyleRoboto(Colors.grey, 14.0, FontWeight.w500),
-                                      ),
-                                    ],
-                                  ),
-                                  IconButton(icon: Icon(Icons.more_horiz), onPressed: () {})
-                                ],
+                              SizedBox(
+                                height: 15.0,
                               ),
-                            ),
-                            SizedBox(
-                              height: 15.0,
-                            ),
-                            Row(
-                              children: [
-                                HomeScreenDeviceUI(
-                                  imageAsset: "assets/door.png",
-                                  sensorTypeName: "Door",
-                                  data: data.userProfileModel.data.doors,
-                                  length: data.userProfileModel.data.doors.length,
-                                  callback: () {
-                                    RouteGenerator.navigatePush(context, AddedDeviceScreen());
-                                  },
-                                  backColor: Color(0xFF3986FB),
-                                  colors: [
-                                    Color(0xFF0066FF),
-                                    Color(0xFF164DAB),
-                                  ],
-                                ),
-                                SizedBox(
-                                  width: 15.0,
-                                ),
-                                HomeScreenDeviceUI(
-                                  imageAsset: "assets/window.png",
-                                  sensorTypeName: "Window",
-                                  data: data.userProfileModel.data.windows,
-                                  length: data.userProfileModel.data.windows.length,
-                                  backColor: Color(0xFF925FFB),
-                                  callback: () {
-                                    RouteGenerator.navigatePush(context, AddedWindowDeviceScreen());
-                                  },
-                                  colors: [
-                                    Color(0xFF7836FF),
-                                    Color(0xFF5318CB),
-                                  ],
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 15.0,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    RouteGenerator.navigatePush(context, AddDeviceScreen());
-                                  },
-                                  child: Container(
-                                    height: 30.0,
-                                    width: 30.0,
-                                    decoration: BoxDecoration(shape: BoxShape.circle, color: headerColor, boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withOpacity(0.1),
-                                        spreadRadius: 5,
-                                        blurRadius: 7,
-                                        offset: Offset(0, 3), // changes position of shadow
-                                      ),
-                                    ]),
-                                    child: Center(
-                                        child: Icon(
-                                      Icons.add,
-                                      color: Colors.white,
-                                    )),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 15.0,
-                            ),
-                            Text(
-                              "Available Devices",
-                              style: text_StyleRoboto(Colors.black, 16.0, FontWeight.bold),
-                            ),
-                            SizedBox(
-                              height: 15.0,
-                            ),
-                            Container(
-                              child: GridView.count(
-                                shrinkWrap: true,
-                                crossAxisCount: 3,
-                                physics: NeverScrollableScrollPhysics(),
-                                childAspectRatio: 1.1,
-                                crossAxisSpacing: 6,
-                                mainAxisSpacing: 6,
-                                children: List.generate(adminItemsGridView.length, (index) {
-                                  return HomeItemsNewUI(
-                                    homeScreenGridView: adminItemsGridView[index],
-                                    callback: () {
-                                      print("Index $index");
-                                    },
-                                  );
-                                }),
+                              Text(
+                                "Available Devices",
+                                style: text_StyleRoboto(Colors.black, 16.0, FontWeight.bold),
                               ),
-                            )
-                          ],
+                              SizedBox(
+                                height: 15.0,
+                              ),
+                              Container(
+                                child: GridView.count(
+                                  shrinkWrap: true,
+                                  crossAxisCount: 3,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  childAspectRatio: 1.1,
+                                  crossAxisSpacing: 6,
+                                  mainAxisSpacing: 6,
+                                  children: List.generate(adminItemsGridView.length, (index) {
+                                    return HomeItemsNewUI(
+                                      homeScreenGridView: adminItemsGridView[index],
+                                      callback: () {
+                                        print("Index $index");
+                                      },
+                                    );
+                                  }),
+                                ),
+                              )
+                            ],
+                          ),
                         ),
-                      ),
-                    )
-              : showLoaderWidget(),
-        ),
+                      )
+                : showLoaderWidget()
+
+            //: showLoaderWidget(),
+            ),
       ),
     );
   }
@@ -352,3 +355,4 @@ class _HomeScreenState extends State<HomeScreen> {
             ));
   }
 }
+

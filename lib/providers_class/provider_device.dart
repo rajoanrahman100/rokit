@@ -45,9 +45,11 @@ class ProviderDevice extends ChangeNotifier{
     notifyListeners();
   }
 
-  addDevices(context,deviceMacAddress,deviceType,authCode)async{
+  addDevices(context,deviceMacAddress,deviceType,authCode,deviceName)async{
 
     final prefs = await SharedPreferences.getInstance();
+
+    print("UID ${prefs.getString(KEY_USER_ID)}");
 
     ProgressDialog pasdr = ProgressDialog(context,
         type: ProgressDialogType.Normal, isDismissible: true, showLogs: false);
@@ -57,13 +59,17 @@ class ProviderDevice extends ChangeNotifier{
 
     var res = await http.post(addDeviceAPI,
         headers: <String, String>{
+          'firebaseToken': "",
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: jsonEncode(<String, dynamic>{
-          "userId": prefs.getString(KEY_USER_ID),
-          "deviceMacAddress":deviceMacAddress,
+
+          "requesterFirebaseId": prefs.getString(KEY_USER_ID),
+          //"deviceId": 0,
+          "deviceMacAddress": deviceMacAddress,
           "deviceType": deviceType,
-          "deviceAuthorizationCode": authCode,
+          "deviceName": deviceName,
+          "deviceAuthorizationCode": authCode
         }));
 
     if(res.statusCode==200 || res.statusCode==201){
@@ -128,10 +134,11 @@ class ProviderDevice extends ChangeNotifier{
 
     var res = await http.post(getDeviceAPI,
         headers: <String, String>{
+          'firebaseToken': "",
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: jsonEncode(<String, dynamic>{
-          "userId": prefs.getString(KEY_USER_ID),
+          "requesterFirebaseId": prefs.getString(KEY_USER_ID),
           "deviceType": deviceType
         }
        )

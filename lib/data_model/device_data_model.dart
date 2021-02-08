@@ -1,197 +1,118 @@
-/// isSuccess : true
-/// isFailure : false
-/// data : [{"id":23,"createdDate":"2021-01-30T10:47:14.693Z","updatedDate":"2021-01-30T10:47:14.693Z","firebaseId":"x3nUrfG9Yee6DQa2vqmA43gGVsx1","deviceMacAddress":" Hp Probook 440 G2","deviceAuthorizationCode":"12346789","deviceType":"WINDOW","sensorValue":{"id":24,"createdDate":"2021-01-30T13:50:19.056Z","updatedDate":"2021-01-30T13:50:19.056Z","deletedDate":null,"sensorId":"string","sensorData":"string","doorStatus":"string","batteryStatus":"string","deviceMacAddress":" Hp Probook 440 G2","SSID":"string","ipAddress":"string"}}]
+/// status : "success"
+/// statusCode : 200
+/// data : [{"id":1,"createdDate":"2021-02-06T04:03:19.250Z","updatedDate":"2021-02-06T04:03:19.250Z","deletedDate":null,"deviceMacAddress":"AB-BD-GB-HN-B0","deviceAuthorizationCode":"465465464","deviceType":"DOOR","deviceName":"Bedroom Door"}]
+/// errors : []
 
 class DeviceDataModel {
-  bool _isSuccess;
-  bool _isFailure;
+  String _status;
+  int _statusCode;
   List<Data> _data;
+  List<dynamic> _errors;
 
-  bool get isSuccess => _isSuccess;
-  bool get isFailure => _isFailure;
+  String get status => _status;
+  int get statusCode => _statusCode;
   List<Data> get data => _data;
+  List<dynamic> get errors => _errors;
 
   DeviceDataModel({
-      bool isSuccess, 
-      bool isFailure, 
-      List<Data> data}){
-    _isSuccess = isSuccess;
-    _isFailure = isFailure;
+      String status, 
+      int statusCode, 
+      List<Data> data, 
+      List<dynamic> errors}){
+    _status = status;
+    _statusCode = statusCode;
     _data = data;
+    _errors = errors;
 }
 
   DeviceDataModel.fromJson(dynamic json) {
-    _isSuccess = json["isSuccess"];
-    _isFailure = json["isFailure"];
+    _status = json["status"];
+    _statusCode = json["statusCode"];
     if (json["data"] != null) {
       _data = [];
       json["data"].forEach((v) {
         _data.add(Data.fromJson(v));
       });
     }
+    if (json["errors"] != null) {
+      _errors = [];
+      json["errors"].forEach((v) {
+        _errors.add(v);
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
     var map = <String, dynamic>{};
-    map["isSuccess"] = _isSuccess;
-    map["isFailure"] = _isFailure;
+    map["status"] = _status;
+    map["statusCode"] = _statusCode;
     if (_data != null) {
       map["data"] = _data.map((v) => v.toJson()).toList();
+    }
+    if (_errors != null) {
+      map["errors"] = _errors.map((v) => v.toJson()).toList();
     }
     return map;
   }
 
 }
 
-/// id : 23
-/// createdDate : "2021-01-30T10:47:14.693Z"
-/// updatedDate : "2021-01-30T10:47:14.693Z"
-/// firebaseId : "x3nUrfG9Yee6DQa2vqmA43gGVsx1"
-/// deviceMacAddress : " Hp Probook 440 G2"
-/// deviceAuthorizationCode : "12346789"
-/// deviceType : "WINDOW"
-/// sensorValue : {"id":24,"createdDate":"2021-01-30T13:50:19.056Z","updatedDate":"2021-01-30T13:50:19.056Z","deletedDate":null,"sensorId":"string","sensorData":"string","doorStatus":"string","batteryStatus":"string","deviceMacAddress":" Hp Probook 440 G2","SSID":"string","ipAddress":"string"}
+/// id : 1
+/// createdDate : "2021-02-06T04:03:19.250Z"
+/// updatedDate : "2021-02-06T04:03:19.250Z"
+/// deletedDate : null
+/// deviceMacAddress : "AB-BD-GB-HN-B0"
+/// deviceAuthorizationCode : "465465464"
+/// deviceType : "DOOR"
+/// deviceName : "Bedroom Door"
 
 class Data {
   int _id;
   String _createdDate;
   String _updatedDate;
-  String _firebaseId;
+  dynamic _deletedDate;
   String _deviceMacAddress;
   String _deviceAuthorizationCode;
   String _deviceType;
-  SensorValue _sensorValue;
+  String _deviceName;
 
   int get id => _id;
   String get createdDate => _createdDate;
   String get updatedDate => _updatedDate;
-  String get firebaseId => _firebaseId;
+  dynamic get deletedDate => _deletedDate;
   String get deviceMacAddress => _deviceMacAddress;
   String get deviceAuthorizationCode => _deviceAuthorizationCode;
   String get deviceType => _deviceType;
-  SensorValue get sensorValue => _sensorValue;
+  String get deviceName => _deviceName;
 
   Data({
       int id, 
       String createdDate, 
       String updatedDate, 
-      String firebaseId, 
+      dynamic deletedDate, 
       String deviceMacAddress, 
       String deviceAuthorizationCode, 
       String deviceType, 
-      SensorValue sensorValue}){
+      String deviceName}){
     _id = id;
     _createdDate = createdDate;
     _updatedDate = updatedDate;
-    _firebaseId = firebaseId;
+    _deletedDate = deletedDate;
     _deviceMacAddress = deviceMacAddress;
     _deviceAuthorizationCode = deviceAuthorizationCode;
     _deviceType = deviceType;
-    _sensorValue = sensorValue;
+    _deviceName = deviceName;
 }
 
   Data.fromJson(dynamic json) {
     _id = json["id"];
     _createdDate = json["createdDate"];
     _updatedDate = json["updatedDate"];
-    _firebaseId = json["firebaseId"];
+    _deletedDate = json["deletedDate"];
     _deviceMacAddress = json["deviceMacAddress"];
     _deviceAuthorizationCode = json["deviceAuthorizationCode"];
     _deviceType = json["deviceType"];
-    _sensorValue = json["sensorValue"] != null ? SensorValue.fromJson(json["sensorValue"]) : null;
-  }
-
-  Map<String, dynamic> toJson() {
-    var map = <String, dynamic>{};
-    map["id"] = _id;
-    map["createdDate"] = _createdDate;
-    map["updatedDate"] = _updatedDate;
-    map["firebaseId"] = _firebaseId;
-    map["deviceMacAddress"] = _deviceMacAddress;
-    map["deviceAuthorizationCode"] = _deviceAuthorizationCode;
-    map["deviceType"] = _deviceType;
-    if (_sensorValue != null) {
-      map["sensorValue"] = _sensorValue.toJson();
-    }
-    return map;
-  }
-
-}
-
-/// id : 24
-/// createdDate : "2021-01-30T13:50:19.056Z"
-/// updatedDate : "2021-01-30T13:50:19.056Z"
-/// deletedDate : null
-/// sensorId : "string"
-/// sensorData : "string"
-/// doorStatus : "string"
-/// batteryStatus : "string"
-/// deviceMacAddress : " Hp Probook 440 G2"
-/// SSID : "string"
-/// ipAddress : "string"
-
-class SensorValue {
-  int _id;
-  String _createdDate;
-  String _updatedDate;
-  dynamic _deletedDate;
-  String _sensorId;
-  String _sensorData;
-  String _doorStatus;
-  String _batteryStatus;
-  String _deviceMacAddress;
-  String _ssid;
-  String _ipAddress;
-
-  int get id => _id;
-  String get createdDate => _createdDate;
-  String get updatedDate => _updatedDate;
-  dynamic get deletedDate => _deletedDate;
-  String get sensorId => _sensorId;
-  String get sensorData => _sensorData;
-  String get doorStatus => _doorStatus;
-  String get batteryStatus => _batteryStatus;
-  String get deviceMacAddress => _deviceMacAddress;
-  String get ssid => _ssid;
-  String get ipAddress => _ipAddress;
-
-  SensorValue({
-      int id, 
-      String createdDate, 
-      String updatedDate, 
-      dynamic deletedDate, 
-      String sensorId, 
-      String sensorData, 
-      String doorStatus, 
-      String batteryStatus, 
-      String deviceMacAddress, 
-      String ssid, 
-      String ipAddress}){
-    _id = id;
-    _createdDate = createdDate;
-    _updatedDate = updatedDate;
-    _deletedDate = deletedDate;
-    _sensorId = sensorId;
-    _sensorData = sensorData;
-    _doorStatus = doorStatus;
-    _batteryStatus = batteryStatus;
-    _deviceMacAddress = deviceMacAddress;
-    _ssid = ssid;
-    _ipAddress = ipAddress;
-}
-
-  SensorValue.fromJson(dynamic json) {
-    _id = json["id"];
-    _createdDate = json["createdDate"];
-    _updatedDate = json["updatedDate"];
-    _deletedDate = json["deletedDate"];
-    _sensorId = json["sensorId"];
-    _sensorData = json["sensorData"];
-    _doorStatus = json["doorStatus"];
-    _batteryStatus = json["batteryStatus"];
-    _deviceMacAddress = json["deviceMacAddress"];
-    _ssid = json["SSID"];
-    _ipAddress = json["ipAddress"];
+    _deviceName = json["deviceName"];
   }
 
   Map<String, dynamic> toJson() {
@@ -200,13 +121,10 @@ class SensorValue {
     map["createdDate"] = _createdDate;
     map["updatedDate"] = _updatedDate;
     map["deletedDate"] = _deletedDate;
-    map["sensorId"] = _sensorId;
-    map["sensorData"] = _sensorData;
-    map["doorStatus"] = _doorStatus;
-    map["batteryStatus"] = _batteryStatus;
     map["deviceMacAddress"] = _deviceMacAddress;
-    map["SSID"] = _ssid;
-    map["ipAddress"] = _ipAddress;
+    map["deviceAuthorizationCode"] = _deviceAuthorizationCode;
+    map["deviceType"] = _deviceType;
+    map["deviceName"] = _deviceName;
     return map;
   }
 

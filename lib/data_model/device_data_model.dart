@@ -1,6 +1,6 @@
 /// status : "success"
 /// statusCode : 200
-/// data : [{"id":1,"createdDate":"2021-02-06T04:03:19.250Z","updatedDate":"2021-02-06T04:03:19.250Z","deletedDate":null,"deviceMacAddress":"AB-BD-GB-HN-B0","deviceAuthorizationCode":"465465464","deviceType":"DOOR","deviceName":"Bedroom Door"}]
+/// data : [{"id":1,"createdDate":"2021-02-09T16:06:21.521Z","updatedDate":"2021-02-10T07:12:33.092Z","deletedDate":null,"deviceMacAddress":"A0:20:A6:29:F7:DE","deviceAuthorizationCode":"58353","deviceType":"DOOR","deviceName":"Bedroom","status":"open","batteryStatus":"3.72"}]
 /// errors : []
 
 class DeviceDataModel {
@@ -58,13 +58,15 @@ class DeviceDataModel {
 }
 
 /// id : 1
-/// createdDate : "2021-02-06T04:03:19.250Z"
-/// updatedDate : "2021-02-06T04:03:19.250Z"
+/// createdDate : "2021-02-09T16:06:21.521Z"
+/// updatedDate : "2021-02-10T07:12:33.092Z"
 /// deletedDate : null
-/// deviceMacAddress : "AB-BD-GB-HN-B0"
-/// deviceAuthorizationCode : "465465464"
+/// deviceMacAddress : "A0:20:A6:29:F7:DE"
+/// deviceAuthorizationCode : "58353"
 /// deviceType : "DOOR"
-/// deviceName : "Bedroom Door"
+/// deviceName : "Bedroom"
+/// status : "open"
+/// batteryStatus : "3.72"
 
 class Data {
   int _id;
@@ -75,6 +77,8 @@ class Data {
   String _deviceAuthorizationCode;
   String _deviceType;
   String _deviceName;
+  String _status;
+  String _batteryStatus;
 
   int get id => _id;
   String get createdDate => _createdDate;
@@ -84,6 +88,8 @@ class Data {
   String get deviceAuthorizationCode => _deviceAuthorizationCode;
   String get deviceType => _deviceType;
   String get deviceName => _deviceName;
+  String get status => _status;
+  String get batteryStatus => _batteryStatus;
 
   Data({
       int id, 
@@ -93,7 +99,9 @@ class Data {
       String deviceMacAddress, 
       String deviceAuthorizationCode, 
       String deviceType, 
-      String deviceName}){
+      String deviceName, 
+      String status, 
+      String batteryStatus}){
     _id = id;
     _createdDate = createdDate;
     _updatedDate = updatedDate;
@@ -102,6 +110,8 @@ class Data {
     _deviceAuthorizationCode = deviceAuthorizationCode;
     _deviceType = deviceType;
     _deviceName = deviceName;
+    _status = status;
+    _batteryStatus = batteryStatus;
 }
 
   Data.fromJson(dynamic json) {
@@ -113,6 +123,8 @@ class Data {
     _deviceAuthorizationCode = json["deviceAuthorizationCode"];
     _deviceType = json["deviceType"];
     _deviceName = json["deviceName"];
+    _status = json["status"];
+    _batteryStatus = json["batteryStatus"];
   }
 
   Map<String, dynamic> toJson() {
@@ -125,6 +137,8 @@ class Data {
     map["deviceAuthorizationCode"] = _deviceAuthorizationCode;
     map["deviceType"] = _deviceType;
     map["deviceName"] = _deviceName;
+    map["status"] = _status;
+    map["batteryStatus"] = _batteryStatus;
     return map;
   }
 

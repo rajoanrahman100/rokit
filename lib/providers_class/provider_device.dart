@@ -19,6 +19,31 @@ class ProviderDevice extends ChangeNotifier{
   DeviceDataModel deviceDataModel;
 
 
+   int totalWindow;
+
+   int totalDoor;
+
+  //int get totalWindowGet =>totalWindow;
+
+  void setTotalWindow(DeviceDataModel deviceDataModel){
+
+    print("Calling....");
+    totalWindow=deviceDataModel.data.length;
+
+    print("count-------$totalWindow");
+    notifyListeners();
+  }
+
+
+  void setTotalDoor(DeviceDataModel deviceDataModel){
+
+    print("Calling....");
+    totalDoor=deviceDataModel.data.length;
+
+    print("door count-------$totalDoor");
+    notifyListeners();
+  }
+
   List<String> _items = [
     "ALL","WINDOW","DOOR"
   ];
@@ -27,6 +52,7 @@ class ProviderDevice extends ChangeNotifier{
   String _selectedItem;
 
   List<String> get items => _items;
+
   String get selected => _selectedItem;
 
   void setSelectedItem(String s) {
@@ -35,17 +61,7 @@ class ProviderDevice extends ChangeNotifier{
   }
 
 
-  String deviceMacAddress(Data data){
-    return data.deviceMacAddress;
-  }
-
-
-  void updateMacAddress(Data data,macData){
-    macData=data.deviceMacAddress;
-    notifyListeners();
-  }
-
-  addDevices(context,deviceMacAddress,deviceType,authCode,deviceName)async{
+    addDevices(context,deviceMacAddress,deviceType,authCode,deviceName)async{
 
     final prefs = await SharedPreferences.getInstance();
 
@@ -76,15 +92,15 @@ class ProviderDevice extends ChangeNotifier{
 
       print("Success Response:"+res.body);
 
+      //var dataMap = jsonDecode(res.body);
+
+     // deviceDataModel = DeviceDataModel.fromJson(dataMap);
       showSuccessToast("Device added successfully");
-
       pasdr.hide();
-
-
+      return ;
     }else{
       print("Error Response:"+res.body);
       pasdr.hide();
-
       showErrorToast("Something went wrong");
 
     }
@@ -151,9 +167,9 @@ class ProviderDevice extends ChangeNotifier{
       var dataMap = jsonDecode(res.body);
 
       deviceDataModel = DeviceDataModel.fromJson(dataMap);
+      //setTotalWindow(deviceDataModel);
 
-
-
+      setTotalDoor(deviceDataModel);
       notifyListeners();
       return deviceDataModel;
 
@@ -169,6 +185,10 @@ class ProviderDevice extends ChangeNotifier{
 
   deleteDevice(deviceID,context)async{
 
+    final prefs = await SharedPreferences.getInstance();
+
+    print("USER ID : ${prefs.getString(KEY_USER_ID)}  TOKEN ID: ${prefs.getString(KEY_TOKEN_ID)}");
+
     ProgressDialog pasdr = ProgressDialog(context,
         type: ProgressDialogType.Normal, isDismissible: true, showLogs: false);
     setProgressDialog(context, pasdr, "Deleting device...");
@@ -180,7 +200,8 @@ class ProviderDevice extends ChangeNotifier{
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: jsonEncode(<String, dynamic>{
-          "deviceId":deviceID
+          "requesterFirebaseId": prefs.getString(KEY_USER_ID),
+          "deviceId": deviceID
         }
         )
     );

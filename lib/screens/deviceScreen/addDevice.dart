@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rokit/providers_class/provider_device.dart';
+import 'package:rokit/providers_class/provider_getUser.dart';
 import 'package:rokit/screens/deviceScreen/pinTextField.dart';
 import 'package:rokit/utils/styles.dart';
 import 'package:rokit/widget/dop_downList.dart';
@@ -13,6 +14,7 @@ class AddDeviceScreen extends StatelessWidget {
       providers: [
         // ChangeNotifierProvider(create: (_) => ProviderSensorData()),
         ChangeNotifierProvider(create: (_) => ProviderDevice()),
+        ChangeNotifierProvider(create: (_) => ProviderUser()),
       ],
       child: AddDevice(),
     );
@@ -37,6 +39,7 @@ class AddDevice extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var providerDevice = Provider.of<ProviderDevice>(context, listen: false);
+    var providerUser = Provider.of<ProviderUser>(context, listen: false);
 
     return SafeArea(
       child: Scaffold(
@@ -208,11 +211,11 @@ class AddDevice extends StatelessWidget {
                                 SizedBox(
                                   height: 20,
                                 ),
-                                GestureDetector(
+                                Consumer<ProviderDevice>(builder:(_,data,child)=>GestureDetector(
                                   onTap: () {
                                     if (_formKey.currentState.validate()) {
                                       print("Type Name $tyName");
-                                      providerDevice.addDevices(context, _deviceMacAddressController.text, tyName, _pinEditingController.text,_deviceNameController.text);
+                                      data.addDevices(context, _deviceMacAddressController.text, tyName, _pinEditingController.text, _deviceNameController.text);
                                     }
                                   },
                                   child: Container(
@@ -234,7 +237,7 @@ class AddDevice extends StatelessWidget {
                                       style: text_StyleRoboto(Colors.white, 20.0, FontWeight.bold),
                                     ),
                                   ),
-                                ),
+                                ),),
                                 SizedBox(
                                   height: 20,
                                 ),

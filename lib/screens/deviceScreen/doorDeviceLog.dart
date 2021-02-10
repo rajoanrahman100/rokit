@@ -8,16 +8,15 @@ import 'package:rokit/providers_class/provider_sensor_data.dart';
 import 'package:rokit/utils/all_widgetClass.dart';
 import 'package:rokit/utils/styles.dart';
 import 'package:rokit/widget/custom_toast.dart';
-import 'package:rokit/widget/date_picker_dialog.dart';
 import 'package:rokit/widget/loader_widget.dart';
-import 'package:rokit/widget/month_picker_dialog.dart';
 import 'package:rokit/widget/no_data_found.dart';
 
 class DoorDevicesLogScreen extends StatelessWidget {
   String deviceMacAddress;
   String doorStatus;
+  String deviceName;
 
-  DoorDevicesLogScreen({this.deviceMacAddress, this.doorStatus});
+  DoorDevicesLogScreen({this.deviceMacAddress, this.doorStatus, this.deviceName});
 
   @override
   Widget build(BuildContext context) {
@@ -29,36 +28,53 @@ class DoorDevicesLogScreen extends StatelessWidget {
       child: DoorDevicesLog(
         deviceMacAddress: deviceMacAddress,
         doorStatus: doorStatus,
+        deviceName: deviceName,
       ),
     );
   }
 }
 
-class DoorDevicesLog extends StatelessWidget {
+class DoorDevicesLog extends StatefulWidget {
   String deviceMacAddress;
   String doorStatus;
+  String deviceName;
 
-  DoorDevicesLog({this.deviceMacAddress, this.doorStatus});
+  DoorDevicesLog({this.deviceMacAddress, this.doorStatus, this.deviceName});
 
+  @override
+  _DoorDevicesLogState createState() => _DoorDevicesLogState();
+}
+
+class _DoorDevicesLogState extends State<DoorDevicesLog> {
   DateTime selectedMonth = DateTime.now();
 
-  String monthText="";
-  String date_Text="";
+  String monthText = "";
+
+  String endDateText = "";
+  String startDateText = "";
 
   final DateFormat dateFormatMonth = DateFormat('MMM');
+
   final DateFormat dateFormat = DateFormat("d");
 
+  var dateTime = DateTime.now();
 
-  var dateTime=DateTime.now();
+  String currentTime;
 
+  @override
+  void initState() {
+    currentTime = DateFormat.yMd().format(dateTime).toString();
+
+    print("Current Time $currentTime");
+  }
 
   @override
   Widget build(BuildContext context) {
     var providerSensor = Provider.of<ProviderSensorData>(context, listen: false);
 
-    providerSensor.getAllSensorsData(deviceMacAddress, doorStatus);
+    providerSensor.getAllSensorsData(widget.deviceMacAddress, widget.doorStatus, currentTime,currentTime);
 
-    print("$deviceMacAddress  $doorStatus");
+    print("${widget.deviceMacAddress}  ${widget.doorStatus}");
 
     return Scaffold(
       backgroundColor: appBack,
@@ -102,28 +118,32 @@ class DoorDevicesLog extends StatelessWidget {
                   ),
                   SingleChildScrollView(
                     child: Container(
-                      margin: EdgeInsets.only(left: 25.0, right: 25.0, top: 130.0),
-                      padding: EdgeInsets.symmetric(horizontal: 20.0),
+                      margin: EdgeInsets.only(left: 15.0, right: 15.0, top: 130.0),
+                      padding: EdgeInsets.symmetric(horizontal: 10.0),
                       height: MediaQuery.of(context).size.height / 1.2,
                       width: MediaQuery.of(context).size.width,
                       decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20.0)),
                       child: Column(
                         children: [
-
-                          SizedBox(height: 20.0,),
-
-                          Image.asset("assets/logs.png",height: 30.0,),
-
-                          SizedBox(height: 10.0,),
-
-
-                          Text("Dining Room Window Logs",style: text_StyleRoboto(backColor2, 16.0, FontWeight.w500),),
-
-                          SizedBox(height: 20.0,),
-
-
+                          SizedBox(
+                            height: 20.0,
+                          ),
+                          Image.asset(
+                            "assets/logs.png",
+                            height: 30.0,
+                          ),
+                          SizedBox(
+                            height: 10.0,
+                          ),
+                          Text(
+                            " ${widget.deviceName}",
+                            style: text_StyleRoboto(backColor2, 16.0, FontWeight.w500),
+                          ),
+                          SizedBox(
+                            height: 20.0,
+                          ),
                           Consumer<ProviderSensorData>(
-                            builder:(_,data,child)=> Container(
+                            builder: (_, data, child) => Container(
                               height: 60.0,
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -131,79 +151,106 @@ class DoorDevicesLog extends StatelessWidget {
                                   Row(
                                     children: [
                                       Text(
-                                        "Month  ",
+                                        "From  ",
                                         style: text_StyleRoboto(backColor2, 14.0, FontWeight.w500),
                                       ),
                                       Container(
                                         height: 30.0,
                                         child: RaisedButton(
-                                          onPressed: (){
-                                            showMonthPicker(context: context, firstDate: DateTime(DateTime.now().year - 1, 5), lastDate: DateTime(DateTime.now().year + 2, 9), initialDate: selectedMonth)
-                                                .then((date) {
-                                              if (date == null) {
-                                                showErrorToast("No Month Picked");
-                                                return;
-                                              } else {
-                                                monthText = dateFormatMonth.format(date).toString();
-                                                data.setMonthDatePickerValue(monthText);
-                                              }
+                                          onPressed: () {
+
+                                            showDatePicker(
+                                                    context: context,
+                                                    initialDate: DateTime.now(),
+                                                    firstDate: DateTime(2019, 1),
+                                                    lastDate: DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, DateTime.now().hour, DateTime.now().minute))
+                                                .then((value) {
+
+                                                  if(value==null){
+                                                    startDateText=endDateText;
+                                                    data.setStartDate(currentTime);
+                                                    print("Start Date $currentTime");
+                                                    //showErrorToast("No Date Select");
+                                                    return;
+                                                  }else{
+                                                    startDateText = DateFormat.yMd().format(value).toString();
+                                                    data.setStartDate(startDateText);
+
+                                                    data.getAllSensorsData(widget.deviceMacAddress, widget.doorStatus, startDateText, endDateText);
+
+                                                    print("Start Date $startDateText");
+                                                    return;
+                                                  }
+
+
                                             });
                                           },
                                           child: Row(
                                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                             children: [
-                                              data.monthDatePicker==null? Text(dateFormatMonth.format(DateTime.now()).toString()) :Text(data.monthDatePicker),
-                                              Icon(Icons.arrow_drop_down_outlined,color: backColor2,)
+                                              data.startDate == null ? Text(currentTime) : Text(data.startDate),
+                                              Icon(
+                                                Icons.arrow_drop_down_outlined,
+                                                color: backColor2,
+                                              )
                                             ],
                                           ),
                                           color: Colors.white,
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(5.0),
-                                              side:BorderSide(color: backColor2)
-                                          ),
+                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0), side: BorderSide(color: backColor2)),
                                         ),
                                       )
                                     ],
                                   ),
-
-                                  SizedBox(width: 20.0,),
-
-
+                                  SizedBox(
+                                    width: 20.0,
+                                  ),
                                   Row(
                                     children: [
                                       Text(
-                                        "Date  ",
+                                        "To  ",
                                         style: text_StyleRoboto(backColor2, 14.0, FontWeight.w500),
                                       ),
                                       Container(
                                         height: 30.0,
                                         child: RaisedButton(
+                                          onPressed: () {
+                                            showDatePicker(
+                                                    context: context,
+                                                    initialDate: DateTime.now(),
+                                                    firstDate: DateTime(2019, 1),
+                                                    lastDate: DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, DateTime.now().hour, DateTime.now().minute))
+                                                .then((value) {
 
-                                          onPressed: (){
-                                           showDatePicker(
-                                                context: context,
-                                                initialDate: DateTime.now(),
-                                                firstDate: DateTime(2019, 1),
-                                                lastDate: DateTime(DateTime.now().year,DateTime.now().month,DateTime.now().day,DateTime.now().hour,DateTime.now().minute)).then((value) {
-                                                  date_Text=dateFormat.format(value).toString();
+                                                  if(value==null){
+                                                    showErrorToast("No Date Select");
+                                                    return;
+                                                  }else{
+                                                    endDateText = DateFormat.yMd().format(value).toString();
 
-                                                  data.setStartDate(date_Text);
+                                                    data.setEndDate(endDateText);
+                                                    
+                                                    data.getAllSensorsData(widget.deviceMacAddress, widget.doorStatus, startDateText,endDateText);
 
-                                                  print("Date $date_Text");
-                                           });
+                                                    print("End Date $endDateText  Start Date $startDateText");
+
+                                                    return;
+                                                  }
+
+
+                                            });
                                           },
                                           child: Row(
                                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                             children: [
-                                             data.startDate==null ?Text("${DateTime.now().day}"):Text("${data.startDate}"),
-                                              Icon(Icons.arrow_drop_down_outlined,color: backColor2,)
+                                              data.endDate == null ? Text("$currentTime") : Text("${data.endDate}"),
+                                              Icon(
+                                                Icons.arrow_drop_down_outlined,
+                                                color: backColor2,
+                                              )
                                             ],
                                           ),
                                           color: Colors.white,
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(5.0),
-                                              side:BorderSide(color: backColor2)
-                                          ),
+                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0), side: BorderSide(color: backColor2)),
                                         ),
                                       )
                                     ],
@@ -212,9 +259,9 @@ class DoorDevicesLog extends StatelessWidget {
                               ),
                             ),
                           ),
-
-                          Container(height: 10.0,),
-
+                          Container(
+                            height: 10.0,
+                          ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -258,7 +305,7 @@ class DoorDevicesLog extends StatelessWidget {
                                                               style: text_StyleRoboto(backColor2, 14.0, FontWeight.w400),
                                                             ),
                                                             Text(
-                                                              data.sensorsListModel.data[index].doorStatus,
+                                                              data.sensorsListModel.data[index].status,
                                                               style: text_StyleRoboto(backColor2, 14.0, FontWeight.w400),
                                                             ),
                                                             Text(
@@ -281,13 +328,16 @@ class DoorDevicesLog extends StatelessWidget {
                                             ),
                                           )),
                           ),
-
-                          SizedBox(height: 20.0,),
-
-                          ButtonLog(imageData: "assets/clearLog.png",text: "  Clear Log",),
-                          
-                          SizedBox(height: 20.0,),
-
+                          SizedBox(
+                            height: 20.0,
+                          ),
+                          ButtonLog(
+                            imageData: "assets/clearLog.png",
+                            text: "  Clear Log",
+                          ),
+                          SizedBox(
+                            height: 20.0,
+                          ),
                         ],
                       ),
                     ),
@@ -301,4 +351,3 @@ class DoorDevicesLog extends StatelessWidget {
     );
   }
 }
-

@@ -1,8 +1,10 @@
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:rokit/base/all_api.dart';
+import 'package:rokit/data_model/device_data_model.dart';
 import 'package:rokit/data_model/user_profile_model.dart';
 import 'package:rokit/utils/styles.dart';
 import 'package:rokit/widget/custom_progress.dart';
@@ -17,8 +19,21 @@ class ProviderUser extends ChangeNotifier{
 
   int itemLength;
 
+  int doorCount=0;
+  int windowCount;
 
-  getUserDetails()async{
+  void setDoorCount(int doorCount){
+    this.doorCount=doorCount;
+    notifyListeners();
+  }
+
+  void setWindowCount(){
+    this.windowCount=windowCount+1;
+    print("window $windowCount");
+    notifyListeners();
+  }
+
+  Future<UserProfileModel> getUserDetails()async{
 
     final prefs = await SharedPreferences.getInstance();
 
@@ -31,7 +46,7 @@ class ProviderUser extends ChangeNotifier{
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: jsonEncode(<String, dynamic>{
-          "requesterFirebaseId": "x3nUrfG9Yee6DQa2vqmA43gGVsx1",
+          "requesterFirebaseId": prefs.getString(KEY_USER_ID),
           "deviceToken": "",
 
         }));
@@ -45,7 +60,9 @@ class ProviderUser extends ChangeNotifier{
       var dataMap = jsonDecode(res.body);
 
       userProfileModel = UserProfileModel.fromJson(dataMap);
+
       notifyListeners();
+
       return userProfileModel;
     }else{
       print("Error Response:"+res.body);

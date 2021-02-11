@@ -10,8 +10,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 class DeviceNotificationScreen extends StatelessWidget {
 
   var id;
+  var deviceName;
 
-  DeviceNotificationScreen({this.id});
+  DeviceNotificationScreen({this.id,this.deviceName});
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +20,7 @@ class DeviceNotificationScreen extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => ProviderDevice()),
       ],
-      child: DeviceNotification(id:id),
+      child: DeviceNotification(id:id,deviceName:deviceName),
     );
   }
 }
@@ -27,8 +28,9 @@ class DeviceNotificationScreen extends StatelessWidget {
 class DeviceNotification extends StatefulWidget {
 
   var id;
+  var deviceName;
 
-  DeviceNotification({this.id});
+  DeviceNotification({this.id,this.deviceName});
 
   @override
   _DeviceNotificationState createState() => _DeviceNotificationState();
@@ -59,44 +61,47 @@ class _DeviceNotificationState extends State<DeviceNotification> {
       onWillPop: ()=>callBack(),
       child: Scaffold(
         backgroundColor: appBack,
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(80.0),
+
+          child: Padding(
+            padding: const EdgeInsets.only(top: 15.0),
+            child: AppBar(
+              elevation: 0.0,
+              iconTheme: IconThemeData(color: backColor2),
+              title: Text("${widget.deviceName}", style: text_StyleRoboto(backColor2, 18.0, FontWeight.w500),),
+              backgroundColor: appBack,
+              actions: [
+                Container(
+                  height: 25.0,
+                  width: 25.0,
+                  margin: EdgeInsets.only(right: 20.0),
+                  decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white, boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.1),
+                      spreadRadius: 5,
+                      blurRadius: 7,
+                      offset: Offset(0, 3), // changes position of shadow
+                    ),
+                  ]),
+                  child: Center(
+                      child: Icon(
+                        Icons.notifications,
+                        color: Colors.black,
+                      )),
+                ),
+
+              ],
+            ),
+          ),
+        ),
         body: Container(
           height: MediaQuery.of(context).size.height,
           child: Stack(
             children: [
-              Container(
-                height: 170.0,
-                padding: EdgeInsets.symmetric(horizontal: 25.0),
-                decoration: BoxDecoration(color: backColor2, borderRadius: BorderRadius.only(bottomLeft: Radius.circular(20.0), bottomRight: Radius.circular(20.0))),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "Dinning Door",
-                      style: text_StyleRoboto(Colors.white, 18.0, FontWeight.w500),
-                    ),
-                    Container(
-                      height: 25.0,
-                      width: 25.0,
-                      decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white, boxShadow: [
-                        BoxShadow(
-                          color: Colors.black54.withOpacity(0.1),
-                          spreadRadius: 5,
-                          blurRadius: 7,
-                          offset: Offset(0, 3), // changes position of shadow
-                        ),
-                      ]),
-                      child: Center(
-                          child: Icon(
-                        Icons.notifications,
-                        color: Colors.black,
-                      )),
-                    ),
-                  ],
-                ),
-              ),
               SingleChildScrollView(
                 child: Container(
-                  margin: EdgeInsets.only(left: 25.0, right: 25.0, top: 130.0),
+                  margin: EdgeInsets.only(left: 25.0, right: 25.0, top: 20.0),
                   padding: EdgeInsets.symmetric(horizontal: 15.0),
                   height: MediaQuery.of(context).size.height / 1.2,
                   width: MediaQuery.of(context).size.width,

@@ -41,42 +41,45 @@ class AddedDevice extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: appBack,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(80.0),
+        child: Padding(
+          padding: const EdgeInsets.only(top: 15.0),
+          child: AppBar(
+            elevation: 0.0,
+            iconTheme: IconThemeData(color: backColor2),
+            title: Text(
+              "Device List",
+              style: text_StyleRoboto(backColor2, 18.0, FontWeight.w500),
+            ),
+            backgroundColor: appBack,
+            actions: [
+              Container(
+                height: 25.0,
+                width: 25.0,
+                margin: EdgeInsets.only(right: 20.0),
+                decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white, boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.1),
+                    spreadRadius: 5,
+                    blurRadius: 7,
+                    offset: Offset(0, 3), // changes position of shadow
+                  ),
+                ]),
+                child: Center(
+                    child: Icon(
+                  Icons.notifications,
+                  color: Colors.black,
+                )),
+              ),
+            ],
+          ),
+        ),
+      ),
       body: Container(
         height: MediaQuery.of(context).size.height,
         child: Column(
           children: [
-            Container(
-              height: 130.0,
-              alignment: Alignment.bottomCenter,
-              padding: EdgeInsets.only(left: 25.0, right: 25.0, bottom: 30.0),
-              decoration: BoxDecoration(color: backColor2, borderRadius: BorderRadius.only(bottomLeft: Radius.circular(15.0), bottomRight: Radius.circular(15.0))),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Device List",
-                    style: text_StyleRoboto(Colors.white, 18.0, FontWeight.w500),
-                  ),
-                  Container(
-                    height: 25.0,
-                    width: 25.0,
-                    decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white, boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.1),
-                        spreadRadius: 5,
-                        blurRadius: 7,
-                        offset: Offset(0, 3), // changes position of shadow
-                      ),
-                    ]),
-                    child: Center(
-                        child: Icon(
-                      Icons.notifications,
-                      color: Colors.black,
-                    )),
-                  ),
-                ],
-              ),
-            ),
             Container(
               padding: EdgeInsets.only(left: 25.0, right: 25.0, top: 20.0),
               child: Row(
@@ -105,7 +108,6 @@ class AddedDevice extends StatelessWidget {
                                   style: text_StyleRoboto(backColor2, 14.0, FontWeight.bold),
                                   underline: SizedBox(),
                                   onChanged: (String newValue) {
-
                                     data.setSelectedItem(newValue);
 
                                     data.getAddedDevices(deviceType: newValue);
@@ -151,6 +153,9 @@ class AddedDevice extends StatelessWidget {
                 ],
               ),
             ),
+            SizedBox(
+              height: 20.0,
+            ),
             Expanded(
               child: Consumer<ProviderDevice>(
                 builder: (_, data, child) => data.deviceDataModel == null
@@ -184,8 +189,7 @@ class AddedDevice extends StatelessWidget {
                                                   deviceNetwork: "Tp Link 20201",
                                                   deviceMac: data.deviceDataModel.data[index].deviceMacAddress,
                                                   status: data.deviceDataModel.data[index].status,
-                                                  batteryStatus: data.deviceDataModel.data[index].batteryStatus
-                                              );
+                                                  batteryStatus: data.deviceDataModel.data[index].batteryStatus);
                                             },
                                             child: Container(
                                               height: MediaQuery.of(context).size.height,
@@ -286,7 +290,12 @@ class AddedDevice extends StatelessWidget {
                                                 ),
                                                 GestureDetector(
                                                   onTap: () {
-                                                    RouteGenerator.navigatePush(context, DeviceNotificationScreen(id: data.deviceDataModel.data[index].id,));
+                                                    RouteGenerator.navigatePush(
+                                                        context,
+                                                        DeviceNotificationScreen(
+                                                          id: data.deviceDataModel.data[index].id,
+                                                          deviceName: data.deviceDataModel.data[index].deviceName,
+                                                        ));
                                                   },
                                                   child: Container(
                                                     height: 30.0,
@@ -315,5 +324,4 @@ class AddedDevice extends StatelessWidget {
       ),
     );
   }
-
 }

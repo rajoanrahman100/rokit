@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:rokit/base/all_api.dart';
 import 'package:rokit/data_model/sensors_list_model.dart';
@@ -62,8 +63,11 @@ class ProviderSensorData extends ChangeNotifier {
       notifyListeners();
       return sensorsListModel;
     } else {
-      print("Error body: "+res.body);
-      showErrorToast("Something went wrong");
+
+      Map<String, dynamic> responseJson = json.decode(res.body);
+
+      print("Error body: "+responseJson["message"]);
+      showErrorToast(responseJson["message"]);
     }
   }
 }

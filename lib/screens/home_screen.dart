@@ -224,13 +224,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                     imageAsset: "assets/window.png",
                                     sensorTypeName: "Window",
                                     length: data.userProfileModel.data.devices.totalWindow,
-                                    backColor: Color(0xFF925FFB),
+                                    backColor: Color(0xFF0A5771),
                                     callback: () {
                                       RouteGenerator.navigatePush(context, AddedWindowDeviceScreen());
                                     },
                                     colors: [
-                                      Color(0xFF7836FF),
-                                      Color(0xFF5318CB),
+                                      Color(0xFF0A5771),
+                                      Color(0xFF03384A),
                                     ],
                                   ),
                                 ],

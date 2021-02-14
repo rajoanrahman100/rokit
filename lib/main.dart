@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rokit/base/material_app.dart';
+import 'package:rokit/providers_class/apiServiceProvider.dart';
 import 'package:rokit/providers_class/firebase_auth_service.dart';
 import 'package:rokit/screens/splash_screen.dart';
 

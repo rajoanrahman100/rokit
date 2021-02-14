@@ -275,6 +275,7 @@ class _DoorDevicesLogState extends State<DoorDevicesLog> {
                   ),
                 ],
               ),
+              SizedBox(height: 15.0,),
               Expanded(
                 child: Consumer<ProviderSensorData>(
                     builder: (_, data, child) => data.sensorsListModel == null

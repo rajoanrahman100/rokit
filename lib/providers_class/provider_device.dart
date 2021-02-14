@@ -1,53 +1,41 @@
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
+import 'package:http/http.dart' as http;
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:rokit/base/all_api.dart';
-import 'package:rokit/base/route.dart';
 import 'package:rokit/data_model/device_data_model.dart';
-import 'package:rokit/screens/deviceScreen/addedDoorDevicesList.dart';
-import 'package:rokit/utils/global_config.dart';
 import 'package:rokit/utils/styles.dart';
 import 'package:rokit/widget/custom_progress.dart';
-import 'package:http/http.dart' as http;
 import 'package:rokit/widget/custom_toast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ProviderDevice extends ChangeNotifier{
-
-
+class ProviderDevice extends ChangeNotifier {
   DeviceDataModel deviceDataModel;
 
+  int totalWindow;
 
-   int totalWindow;
-
-   int totalDoor;
+  int totalDoor;
 
   //int get totalWindowGet =>totalWindow;
 
-  void setTotalWindow(DeviceDataModel deviceDataModel){
-
+  void setTotalWindow(DeviceDataModel deviceDataModel) {
     print("Calling....");
-    totalWindow=deviceDataModel.data.length;
+    totalWindow = deviceDataModel.data.length;
 
     print("count-------$totalWindow");
     notifyListeners();
   }
 
-
-  void setTotalDoor(DeviceDataModel deviceDataModel){
-
+  void setTotalDoor(DeviceDataModel deviceDataModel) {
     print("Calling....");
-    totalDoor=deviceDataModel.data.length;
+    totalDoor = deviceDataModel.data.length;
 
     print("door count-------$totalDoor");
     notifyListeners();
   }
 
-  List<String> _items = [
-    "ALL","WINDOW","DOOR"
-  ];
-
+  List<String> _items = ["ALL", "WINDOW", "DOOR"];
 
   String _selectedItem;
 
@@ -60,16 +48,13 @@ class ProviderDevice extends ChangeNotifier{
     notifyListeners();
   }
 
-
-    addDevices(context,deviceMacAddress,deviceType,authCode,deviceName)async{
-
+  addDevices(context, deviceMacAddress, deviceType, authCode, deviceName) async {
     final prefs = await SharedPreferences.getInstance();
 
     print("UID ${prefs.getString(KEY_USER_ID)}");
 
-    ProgressDialog pasdr = ProgressDialog(context,
-        type: ProgressDialogType.Normal, isDismissible: true, showLogs: false);
-    setProgressDialog(context, pasdr, "load data...");
+    ProgressDialog pasdr = ProgressDialog(context, type: ProgressDialogType.Normal, isDismissible: true, showLogs: false);
+    setProgressDialog(context, pasdr, "Adding device...");
 
     pasdr.show();
 
@@ -79,7 +64,6 @@ class ProviderDevice extends ChangeNotifier{
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: jsonEncode(<String, dynamic>{
-
           "requesterFirebaseId": prefs.getString(KEY_USER_ID),
           //"deviceId": 0,
           "deviceMacAddress": deviceMacAddress,
@@ -88,31 +72,23 @@ class ProviderDevice extends ChangeNotifier{
           "deviceAuthorizationCode": authCode
         }));
 
-    if(res.statusCode==200 || res.statusCode==201){
-
-      print("Success Response:"+res.body);
-
+    if (res.statusCode == 200 || res.statusCode == 201) {
+      print("Success Response:" + res.body);
       //var dataMap = jsonDecode(res.body);
-
-     // deviceDataModel = DeviceDataModel.fromJson(dataMap);
       showSuccessToast("Device added successfully");
       pasdr.hide();
-      return ;
-    }else{
-      print("Error Response:"+res.body);
+      return;
+    } else {
+      print("Error Response:" + res.body);
       pasdr.hide();
       showErrorToast("Something went wrong");
-
     }
-
   }
 
-  editDevices(deviceMacAddress,deviceId,context)async{
-
+  editDevices(deviceMacAddress, deviceId, context) async {
     final prefs = await SharedPreferences.getInstance();
 
-    ProgressDialog pasdr = ProgressDialog(context,
-        type: ProgressDialogType.Normal, isDismissible: true, showLogs: false);
+    ProgressDialog pasdr = ProgressDialog(context, type: ProgressDialogType.Normal, isDismissible: true, showLogs: false);
     setProgressDialog(context, pasdr, "load data...");
 
     pasdr.show();
@@ -121,31 +97,25 @@ class ProviderDevice extends ChangeNotifier{
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
-        body: jsonEncode(<String, dynamic>{
-          "id":deviceId,
-          "deviceMacAddress":deviceMacAddress
-        }));
+        body: jsonEncode(<String, dynamic>{"id": deviceId, "deviceMacAddress": deviceMacAddress}));
 
-    if(res.statusCode==200 || res.statusCode==201){
-
-      print("Success Response:"+res.body);
+    if (res.statusCode == 200 || res.statusCode == 201) {
+      print("Success Response:" + res.body);
 
       pasdr.hide();
 
       showSuccessToast("Device updated successfully");
       return;
-    }else{
-      print("Error Response:"+res.body);
+    } else {
+      print("Error Response:" + res.body);
       pasdr.hide();
 
       showErrorToast("Something went wrong");
       return;
     }
-
   }
 
-  Future<DeviceDataModel> getAddedDevices({deviceType})async{
-
+  Future<DeviceDataModel> getAddedDevices({deviceType}) async {
     final prefs = await SharedPreferences.getInstance();
 
     var res = await http.post(getDeviceAPI,
@@ -153,16 +123,10 @@ class ProviderDevice extends ChangeNotifier{
           'firebaseToken': "",
           'Content-Type': 'application/json; charset=UTF-8',
         },
-        body: jsonEncode(<String, dynamic>{
-          "requesterFirebaseId": prefs.getString(KEY_USER_ID),
-          "deviceType": deviceType
-        }
-       )
-    );
+        body: jsonEncode(<String, dynamic>{"requesterFirebaseId": prefs.getString(KEY_USER_ID), "deviceType": deviceType}));
 
-    if (res.statusCode == 201 || res.statusCode==200) {
-
-      print("Device Response:----------------"+res.body);
+    if (res.statusCode == 201 || res.statusCode == 200) {
+      print("Device Response:----------------" + res.body);
 
       var dataMap = jsonDecode(res.body);
 
@@ -172,25 +136,18 @@ class ProviderDevice extends ChangeNotifier{
       setTotalDoor(deviceDataModel);
       notifyListeners();
       return deviceDataModel;
-
     } else {
-      print("ErrorBody:"+res.body);
-      showErrorToast ("Something went wrong");
-
-
+      print("ErrorBody:" + res.body);
+      showErrorToast("Something went wrong");
     }
-
   }
 
-
-  deleteDevice(deviceID,context)async{
-
+  deleteDevice(deviceID, context) async {
     final prefs = await SharedPreferences.getInstance();
 
     print("USER ID : ${prefs.getString(KEY_USER_ID)}  TOKEN ID: ${prefs.getString(KEY_TOKEN_ID)}");
 
-    ProgressDialog pasdr = ProgressDialog(context,
-        type: ProgressDialogType.Normal, isDismissible: true, showLogs: false);
+    ProgressDialog pasdr = ProgressDialog(context, type: ProgressDialogType.Normal, isDismissible: true, showLogs: false);
     setProgressDialog(context, pasdr, "Deleting device...");
 
     pasdr.show();
@@ -199,25 +156,18 @@ class ProviderDevice extends ChangeNotifier{
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
-        body: jsonEncode(<String, dynamic>{
-          "requesterFirebaseId": prefs.getString(KEY_USER_ID),
-          "deviceId": deviceID
-        }
-        )
-    );
+        body: jsonEncode(<String, dynamic>{"requesterFirebaseId": prefs.getString(KEY_USER_ID), "deviceId": deviceID}));
 
-    if(res.statusCode==201 || res.statusCode==200){
+    if (res.statusCode == 201 || res.statusCode == 200) {
       showSuccessToast("Device deleted");
-     // RouteGenerator.navigatePush(context, AddedDeviceScreen());
+      // RouteGenerator.navigatePush(context, AddedDeviceScreen());
       pasdr.hide();
       return;
-    }else{
+    } else {
       print(res.body);
       showErrorToast("Something went wrong");
       pasdr.hide();
       return;
     }
   }
-
-
 }

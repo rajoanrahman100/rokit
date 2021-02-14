@@ -7,6 +7,7 @@ import 'package:rokit/base/static_value.dart';
 import 'package:rokit/screens/deviceScreen/addDevice.dart';
 import 'package:rokit/screens/emailSignInScreen/registerWithEmail.dart';
 import 'package:rokit/screens/emailSignInScreen/signInWithEmail.dart';
+import 'package:rokit/screens/homeScreenWithCache.dart';
 import 'package:rokit/screens/home_screen.dart';
 import 'package:rokit/screens/logIn_screen.dart';
 import 'package:rokit/screens/phoneAuthScreen/phoneLogIn.dart';
@@ -58,7 +59,7 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => LogInWithPhone());
 
       case MainScreenRoute:
-        return MaterialPageRoute(builder: (_) => RokkhiMaterialApp(home: HomeScreenPage()));
+        return MaterialPageRoute(builder: (_) => RokkhiMaterialApp(home: HomeScreenPageWithCache()));
       default:
         return ErrorRouteScreen();
     }

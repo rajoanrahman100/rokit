@@ -7,7 +7,7 @@ import 'package:rokit/base/route.dart';
 import 'package:rokit/providers_class/provider_device.dart';
 import 'package:rokit/providers_class/provider_sensor_data.dart';
 import 'package:rokit/screens/deviceScreen/deviceNotificationSettings.dart';
-import 'package:rokit/screens/deviceScreen/doorDeviceLog.dart';
+import 'package:rokit/screens/deviceScreen/deviceLog.dart';
 import 'package:rokit/utils/all_widgetClass.dart';
 import 'package:rokit/utils/styles.dart';
 import 'package:rokit/widget/loader_widget.dart';
@@ -238,15 +238,8 @@ class AddedDevice extends StatelessWidget {
                                                         ),
                                                         Row(
                                                           children: [
-                                                            Icon(
-                                                              Icons.battery_charging_full_sharp,
-                                                              color: backColor2,
-                                                              size: 16.0,
-                                                            ),
-                                                            Text(
-                                                              "${data.deviceDataModel.data[index].batteryStatus} v",
-                                                              style: text_StyleRoboto(backColor2, 14.0, FontWeight.bold),
-                                                            ),
+                                                            Icon(Icons.battery_charging_full_sharp, color: backColor2, size: 16.0,),
+                                                            Text("${data.deviceDataModel.data[index].batteryStatus} v", style: text_StyleRoboto(backColor2, 14.0, FontWeight.bold),),
                                                           ],
                                                         )
                                                       ],

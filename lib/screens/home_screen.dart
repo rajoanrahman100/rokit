@@ -45,11 +45,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   var userID;
 
-  final _formKey = GlobalKey<FormState>();
-
-  var _controllerMacAddress = TextEditingController();
-  var _editControllerMacAddress = TextEditingController();
-
   String _message = "";
 
   // registerToken() {
@@ -67,7 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   getUserToken() async {
-    _auth.currentUser.getIdToken().then((value) => print("auth token-------------------- $value"));
+    _auth.currentUser.getIdToken().then((value) => print("$value"));
   }
 
   getMessage() async {
@@ -114,10 +109,12 @@ class _HomeScreenState extends State<HomeScreen> {
     getMessage();
   }
 
+
+
+
   @override
   Widget build(BuildContext context) {
-    var providerUser = Provider.of<ProviderUser>(context, listen: false);
-
+    var providerUser = Provider.of<ProviderUser>(context, listen: true);
     providerUser.getUserDetails();
     //providerDevice.getAddedDevices();
 
@@ -126,8 +123,8 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: appBack,
         body: Consumer<ProviderUser>(
             builder: (_, data, child) => data.userProfileModel != null
-                ? data.userProfileModel.data == null
-                    ? callCompleteProfileNavigator()
+                ? data.userProfileModel.data.isActive==false
+                    ? CreateProfileScreen()
                     : SingleChildScrollView(
                         child: Container(
                           padding: EdgeInsets.all(25.0),
@@ -207,7 +204,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   HomeScreenDeviceUI(
                                     imageAsset: "assets/door.png",
                                     sensorTypeName: "Door",
-                                    length: data.userProfileModel.data.devices.totalDoor,
+                                    length: data.doorCount,
                                     callback: () {
                                       RouteGenerator.navigatePush(context, AddedDeviceScreen());
                                     },
@@ -236,37 +233,29 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ],
                               ),
                               SizedBox(
-                                height: 15.0,
+                                height: 20.0,
                               ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  GestureDetector(
-                                    onTap: () {
-                                      RouteGenerator.navigatePush(context, AddDeviceScreen());
-                                    },
-                                    child: Container(
-                                      height: 30.0,
-                                      width: 30.0,
-                                      decoration: BoxDecoration(shape: BoxShape.circle, color: headerColor, boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black.withOpacity(0.1),
-                                          spreadRadius: 5,
-                                          blurRadius: 7,
-                                          offset: Offset(0, 3), // changes position of shadow
-                                        ),
-                                      ]),
-                                      child: Center(
-                                          child: Icon(
-                                        Icons.add,
-                                        color: Colors.white,
-                                      )),
-                                    ),
+                              GestureDetector(
+                                onTap: (){
+                                  RouteGenerator.navigatePush(context, AddDeviceScreen());
+                                },
+                                child: Container(
+                                  height: 30,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(Icons.add_circle_outline,size: 25.0,),
+                                      Text(
+                                        " Add a new device",
+                                        style: text_StyleRoboto(Colors.black, 14.0, FontWeight.w500),
+                                      ),
+
+                                    ],
                                   ),
-                                ],
+                                ),
                               ),
                               SizedBox(
-                                height: 15.0,
+                                height: 20.0,
                               ),
                               Text(
                                 "Available Devices",
@@ -310,7 +299,10 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget callCompleteProfileNavigator() {
-    return new FutureBuilder(
+
+    print("-------------calling route------------");
+
+    return  FutureBuilder(
       future: Future.delayed(const Duration(milliseconds: 0)).then((value) => callCreateProfilePage()),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         return emptyWidget(context);

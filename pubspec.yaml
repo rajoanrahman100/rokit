@@ -42,6 +42,8 @@ dependencies:
   cached_network_image: ^2.5.0
   octo_image: ^0.3.0
   circular_profile_avatar: ^1.0.6
+  path_provider:
+  font_awesome_flutter: ^8.11.0
 
 
   # firebase_library

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:progress_dialog/progress_dialog.dart';
@@ -19,7 +20,7 @@ class ProviderUser extends ChangeNotifier{
 
   int itemLength;
 
-  int doorCount=0;
+  int doorCount;
   int windowCount;
 
   void setDoorCount(int doorCount){
@@ -35,9 +36,11 @@ class ProviderUser extends ChangeNotifier{
 
   Future<UserProfileModel> getUserDetails()async{
 
-    final prefs = await SharedPreferences.getInstance();
+    //final prefs = await SharedPreferences.getInstance();
 
-    print("USER ID : ${prefs.getString(KEY_USER_ID)}  TOKEN ID: ${prefs.getString(KEY_TOKEN_ID)}");
+   // print("USER ID : ${prefs.getString(KEY_USER_ID)}  TOKEN ID: ${prefs.getString(KEY_TOKEN_ID)}");
+
+    FirebaseAuth _auth = FirebaseAuth.instance;
 
 
     var res = await http.post(getUserAPI,
@@ -46,7 +49,7 @@ class ProviderUser extends ChangeNotifier{
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: jsonEncode(<String, dynamic>{
-          "requesterFirebaseId": prefs.getString(KEY_USER_ID),
+          "requesterFirebaseId": _auth.currentUser.uid,
           "deviceToken": "",
 
         }));
@@ -60,6 +63,8 @@ class ProviderUser extends ChangeNotifier{
       var dataMap = jsonDecode(res.body);
 
       userProfileModel = UserProfileModel.fromJson(dataMap);
+
+      setDoorCount(userProfileModel.data.devices.totalDoor);
 
       notifyListeners();
 

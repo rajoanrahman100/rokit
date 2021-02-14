@@ -1,10 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:rokit/base/all_api.dart';
@@ -33,9 +34,8 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
 
   var userID;
 
-  var _nameController=TextEditingController();
-  var _addressController=TextEditingController();
-
+  var _nameController = TextEditingController();
+  var _addressController = TextEditingController();
 
   getUserID() async {
     userID = _auth.currentUser.uid;
@@ -45,18 +45,14 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
     await prefs.setString(KEY_USER_ID, userID);
   }
 
-  getTokenID()async{
-
+  getTokenID() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-
-    _firebaseMessaging.getToken().then((value)async{
+    _firebaseMessaging.getToken().then((value) async {
       print("token value $value");
       await prefs.setString(KEY_TOKEN_ID, value);
     });
   }
-
-
 
   @override
   void initState() {
@@ -65,9 +61,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
     getUserID();
 
     getTokenID();
-
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -133,9 +127,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-
-                                  ],
+                                  children: [],
                                 ),
                               ),
                             ),
@@ -200,8 +192,8 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                           _formKey.currentState.save();
                           return null;
                         },
-                        onSaved: (String value){
-                          _nameController.text=value;
+                        onSaved: (String value) {
+                          _nameController.text = value;
                         },
                       ),
                       SizedBox(
@@ -227,9 +219,8 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                           _formKey.currentState.save();
                           return null;
                         },
-
-                        onSaved: (String value){
-                          _addressController.text=value;
+                        onSaved: (String value) {
+                          _addressController.text = value;
                         },
                       ),
                       SizedBox(
@@ -238,7 +229,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                       GestureDetector(
                         onTap: () {
                           if (_formKey.currentState.validate()) {
-                            _uploadUserInformation(_nameController.text,_addressController.text);
+                            _uploadUserInformation(_nameController.text, _addressController.text,context);
                           }
                         },
                         child: Container(
@@ -272,23 +263,15 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
     );
   }
 
-  Future<void> _uploadUserInformation( name, address) async {
+   _uploadUserInformation(name, address,context) async {
 
     final prefs = await SharedPreferences.getInstance();
 
-
     ProgressDialog pasdr = ProgressDialog(context, type: ProgressDialogType.Normal, isDismissible: false, showLogs: false);
-    setProgressDialog(context, pasdr, "Adding Data...");
+    setProgressDialog(context, pasdr, "Creating Profile...");
     pasdr.show();
 
-    Map dataInput = {
-      "userName": name,
-      "firebaseId": prefs.getString(KEY_USER_ID),
-      "deviceToken": prefs.getString(KEY_TOKEN_ID),
-      "phone": "",
-      "address": address,
-      "imageUrl": ""
-    };
+    Map dataInput = {"name": name, "requesterFirebaseId": prefs.getString(KEY_USER_ID), "deviceToken": prefs.getString(KEY_TOKEN_ID), "phone": "", "address": address, "imageUrl": ""};
     var body = json.encode(dataInput);
     print("Create profile input =  " + body);
 
@@ -301,7 +284,6 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
     print("create profile first time response = " + res.body);
 
     if (res.statusCode == 201 || res.statusCode == 200) {
-
 
       showSuccessToast("Profile Created Successfully");
 
@@ -316,5 +298,4 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
       //pasdr.hide();
     }
   }
-
 }

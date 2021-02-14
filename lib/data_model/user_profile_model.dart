@@ -1,6 +1,6 @@
 /// status : "success"
 /// statusCode : 200
-/// data : {"id":1,"createdDate":"2021-02-06T04:02:19.040Z","updatedDate":"2021-02-06T04:02:19.040Z","deletedDate":null,"firebaseId":"x3nUrfG9Yee6DQa2vqmA43gGVsx1","name":"Shahin Mahmud","phone":"01744789996","address":"Banani","imageUrl":"https://static.toiimg.com/photo/76729750.cms","devices":{"totalDevice":1,"totalDoor":1,"totalWindow":0}}
+/// data : {"id":1,"createdDate":"2021-02-09T05:05:46.755Z","updatedDate":"2021-02-13T00:34:17.113Z","deletedDate":null,"firebaseId":"x3nUrfG9Yee6DQa2vqmA43gGVsx1","name":"John Wick","phone":"01744789996","address":"Banani","imageUrl":"https://i.imgur.com/jSwubQO.png","isActive":true,"devices":{"totalDevice":11,"totalDoor":6,"totalWindow":5}}
 /// errors : []
 
 class UserProfileModel {
@@ -53,15 +53,16 @@ class UserProfileModel {
 }
 
 /// id : 1
-/// createdDate : "2021-02-06T04:02:19.040Z"
-/// updatedDate : "2021-02-06T04:02:19.040Z"
+/// createdDate : "2021-02-09T05:05:46.755Z"
+/// updatedDate : "2021-02-13T00:34:17.113Z"
 /// deletedDate : null
 /// firebaseId : "x3nUrfG9Yee6DQa2vqmA43gGVsx1"
-/// name : "Shahin Mahmud"
+/// name : "John Wick"
 /// phone : "01744789996"
 /// address : "Banani"
-/// imageUrl : "https://static.toiimg.com/photo/76729750.cms"
-/// devices : {"totalDevice":1,"totalDoor":1,"totalWindow":0}
+/// imageUrl : "https://i.imgur.com/jSwubQO.png"
+/// isActive : true
+/// devices : {"totalDevice":11,"totalDoor":6,"totalWindow":5}
 
 class Data {
   int _id;
@@ -73,6 +74,7 @@ class Data {
   String _phone;
   String _address;
   String _imageUrl;
+  bool _isActive;
   Devices _devices;
 
   int get id => _id;
@@ -84,6 +86,7 @@ class Data {
   String get phone => _phone;
   String get address => _address;
   String get imageUrl => _imageUrl;
+  bool get isActive => _isActive;
   Devices get devices => _devices;
 
   Data({
@@ -96,6 +99,7 @@ class Data {
       String phone, 
       String address, 
       String imageUrl, 
+      bool isActive, 
       Devices devices}){
     _id = id;
     _createdDate = createdDate;
@@ -106,6 +110,7 @@ class Data {
     _phone = phone;
     _address = address;
     _imageUrl = imageUrl;
+    _isActive = isActive;
     _devices = devices;
 }
 
@@ -119,6 +124,7 @@ class Data {
     _phone = json["phone"];
     _address = json["address"];
     _imageUrl = json["imageUrl"];
+    _isActive = json["isActive"];
     _devices = json["devices"] != null ? Devices.fromJson(json["devices"]) : null;
   }
 
@@ -133,6 +139,7 @@ class Data {
     map["phone"] = _phone;
     map["address"] = _address;
     map["imageUrl"] = _imageUrl;
+    map["isActive"] = _isActive;
     if (_devices != null) {
       map["devices"] = _devices.toJson();
     }
@@ -141,9 +148,9 @@ class Data {
 
 }
 
-/// totalDevice : 1
-/// totalDoor : 1
-/// totalWindow : 0
+/// totalDevice : 11
+/// totalDoor : 6
+/// totalWindow : 5
 
 class Devices {
   int _totalDevice;

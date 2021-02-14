@@ -15,7 +15,7 @@ const editDeviceAPI=baseUrl+"device/updateDevice";
 
 const deleteDeviceAPI=baseUrl+"v1/device/deleteDevice";
 
-const createProfileAPI=baseUrl+"user/createUser";
+const createProfileAPI=baseUrl+"v1/user/registerOrUpdate";
 
 const getUserAPI=baseUrl+"v1/user/getUserDetails";
 

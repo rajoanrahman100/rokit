@@ -1,6 +1,6 @@
 /// status : "success"
 /// statusCode : 200
-/// data : {"id":1,"createdDate":"2021-02-09T05:05:46.755Z","updatedDate":"2021-02-13T00:34:17.113Z","deletedDate":null,"firebaseId":"x3nUrfG9Yee6DQa2vqmA43gGVsx1","name":"John Wick","phone":"01744789996","address":"Banani","imageUrl":"https://i.imgur.com/jSwubQO.png","isActive":true,"devices":{"totalDevice":11,"totalDoor":6,"totalWindow":5}}
+/// data : {"id":5,"createdDate":"2021-02-13T23:39:29.297Z","updatedDate":"2021-02-13T23:39:29.297Z","deletedDate":null,"firebaseId":"OUqdqGbNd6PId8gqvYV8acTibXB2","name":"Baba Yaga","phone":"","address":"Saydabad,Dhaka","imageUrl":"","isActive":true,"devices":{"totalDevice":3,"totalDoor":3,"totalWindow":0}}
 /// errors : []
 
 class UserProfileModel {
@@ -52,17 +52,17 @@ class UserProfileModel {
 
 }
 
-/// id : 1
-/// createdDate : "2021-02-09T05:05:46.755Z"
-/// updatedDate : "2021-02-13T00:34:17.113Z"
+/// id : 5
+/// createdDate : "2021-02-13T23:39:29.297Z"
+/// updatedDate : "2021-02-13T23:39:29.297Z"
 /// deletedDate : null
-/// firebaseId : "x3nUrfG9Yee6DQa2vqmA43gGVsx1"
-/// name : "John Wick"
-/// phone : "01744789996"
-/// address : "Banani"
-/// imageUrl : "https://i.imgur.com/jSwubQO.png"
+/// firebaseId : "OUqdqGbNd6PId8gqvYV8acTibXB2"
+/// name : "Baba Yaga"
+/// phone : ""
+/// address : "Saydabad,Dhaka"
+/// imageUrl : ""
 /// isActive : true
-/// devices : {"totalDevice":11,"totalDoor":6,"totalWindow":5}
+/// devices : {"totalDevice":3,"totalDoor":3,"totalWindow":0}
 
 class Data {
   int _id;
@@ -148,9 +148,9 @@ class Data {
 
 }
 
-/// totalDevice : 11
-/// totalDoor : 6
-/// totalWindow : 5
+/// totalDevice : 3
+/// totalDoor : 3
+/// totalWindow : 0
 
 class Devices {
   int _totalDevice;

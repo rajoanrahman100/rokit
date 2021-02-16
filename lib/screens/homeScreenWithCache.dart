@@ -16,7 +16,6 @@ import 'package:rokit/utils/styles.dart';
 import 'package:rokit/widget/home_screen_gridView.dart';
 import 'package:rokit/widget/loader_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'deviceScreen/addedDoorDevicesList.dart';
 import 'deviceScreen/addedWindowDevices.dart';
 
@@ -34,12 +33,15 @@ class _HomeScreenPageWithCacheState extends State<HomeScreenPageWithCache> {
   String _message = "";
   String authToken;
 
+
+  ///Initialize refresh indicator
+  GlobalKey<RefreshIndicatorState> refreshKey;
+
   @override
   void initState() {
-    // TODO: implement initState
-
-   // getUserToken();
     getMessage();
+    refreshKey = GlobalKey<RefreshIndicatorState>();
+
   }
 
   getUserID() async {
@@ -48,11 +50,6 @@ class _HomeScreenPageWithCacheState extends State<HomeScreenPageWithCache> {
     await prefs.setString(KEY_USER_ID, userID);
   }
 
-  getUserToken() async {
-
-   await _auth.currentUser.getIdToken().then((value) => debugPrint("$value"));
-
-  }
   getMessage() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
@@ -90,198 +87,184 @@ class _HomeScreenPageWithCacheState extends State<HomeScreenPageWithCache> {
   ///Declare Api Provider for getting User
   ApiServiceProvider apiServiceProvider=ApiServiceProvider();
 
-  /// data==null route to profile screen
-  callCreateProfilePage() {
-    RouteGenerator.navigatePush(context, CreateProfileScreen());
-  }
 
-  ///data==null call this widget
-  Widget callCompleteProfileNavigator() {
-    return new FutureBuilder(
-      future: Future.delayed(const Duration(milliseconds: 0)).then((value) => callCreateProfilePage()),
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        return emptyWidget(context);
-      },
-    );
-  }
-
-  Widget emptyWidget(BuildContext context) {
-    return SizedBox.shrink();
-  }
 
   @override
   Widget build(BuildContext context) {
-
-
     print("Route Back");
-
     return Scaffold(
       backgroundColor: appBack,
       body: FutureBuilder<UserProfileModel>(
-        future: apiServiceProvider.getUser(),
+        //future: apiServiceProvider.getUser(context),
         builder: (context,snapshot){
 
           if(snapshot.hasData){
             Data data=snapshot.data.data;
             if(data.isActive==true){
-              return SingleChildScrollView(
-                child: Container(
-                  padding: EdgeInsets.all(25.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        height: 100.0,
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Row(
+              return RefreshIndicator(
+                key: refreshKey,
+                onRefresh: ()async{
+                  //await apiServiceProvider.getUser(context);
+                },
+                child: SingleChildScrollView(
+                  child: Container(
+                    padding: EdgeInsets.all(25.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          height: 100.0,
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Row(
+                                  children: [
+                                    CircleImagePlaceholder(imageData: data.imageUrl,radius: 30.0,),
+                                    SizedBox(
+                                      width: 15.0,
+                                    ),
+                                    Text(
+                                      "Welcome, ${data.name}",
+                                      style: text_StyleRoboto(Colors.deepOrange, 18.0, FontWeight.bold),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  //_logOutAlert();
+                                  //RouteGenerator.navigatePush(context, NotificationsScreen());
+                                },
+                                child: Container(
+                                  height: 30.0,
+                                  width: 30.0,
+                                  decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white, boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.withOpacity(0.1),
+                                      spreadRadius: 5,
+                                      blurRadius: 7,
+                                      offset: Offset(0, 3), // changes position of shadow
+                                    ),
+                                  ]),
+                                  child: Center(
+                                      child: Icon(
+                                        Icons.notifications,
+                                        color: headerColor,
+                                      )),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  CircleImagePlaceholder(imageData: data.imageUrl,radius: 30.0,),
-                                  SizedBox(
-                                    width: 15.0,
+                                  Text(
+                                    "Installed Devices",
+                                    style: text_StyleRoboto(Colors.black, 16.0, FontWeight.bold),
                                   ),
                                   Text(
-                                    "Welcome, ${data.name}",
-                                    style: text_StyleRoboto(Colors.deepOrange, 18.0, FontWeight.bold),
+                                    "Click to see log and settings",
+                                    style: text_StyleRoboto(Colors.grey, 14.0, FontWeight.w500),
                                   ),
                                 ],
                               ),
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                //_logOutAlert();
-                                //RouteGenerator.navigatePush(context, NotificationsScreen());
-                              },
-                              child: Container(
-                                height: 30.0,
-                                width: 30.0,
-                                decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white, boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.grey.withOpacity(0.1),
-                                    spreadRadius: 5,
-                                    blurRadius: 7,
-                                    offset: Offset(0, 3), // changes position of shadow
-                                  ),
-                                ]),
-                                child: Center(
-                                    child: Icon(
-                                      Icons.notifications,
-                                      color: headerColor,
-                                    )),
-                              ),
-                            ),
-                          ],
+                              IconButton(icon: Icon(Icons.more_horiz), onPressed: () {})
+                            ],
+                          ),
                         ),
-                      ),
-                      Container(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        SizedBox(
+                          height: 15.0,
+                        ),
+                        Row(
                           children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Installed Devices",
-                                  style: text_StyleRoboto(Colors.black, 16.0, FontWeight.bold),
-                                ),
-                                Text(
-                                  "Click to see log and settings",
-                                  style: text_StyleRoboto(Colors.grey, 14.0, FontWeight.w500),
-                                ),
+                            HomeScreenDeviceUI(
+                              imageAsset: "assets/door.png",
+                              sensorTypeName: "Door",
+                              length: data.devices.totalDoor??0,
+                              callback: () {
+                                RouteGenerator.navigatePush(context, AddedDeviceScreen());
+                              },
+                              backColor: Color(0xFF3986FB),
+                              colors: [
+                                Color(0xFF0066FF),
+                                Color(0xFF164DAB),
                               ],
                             ),
-                            IconButton(icon: Icon(Icons.more_horiz), onPressed: () {})
+                            SizedBox(
+                              width: 15.0,
+                            ),
+                            HomeScreenDeviceUI(
+                              imageAsset: "assets/window.png",
+                              sensorTypeName: "Window",
+                              length: data.devices.totalWindow??0,
+                              backColor: Color(0xFF0A5771),
+                              callback: () {
+                                RouteGenerator.navigatePush(context, AddedWindowDeviceScreen());
+                              },
+                              colors: [
+                                Color(0xFF0A5771),
+                                Color(0xFF03384A),
+                              ],
+                            ),
                           ],
                         ),
-                      ),
-                      SizedBox(
-                        height: 15.0,
-                      ),
-                      Row(
-                        children: [
-                          HomeScreenDeviceUI(
-                            imageAsset: "assets/door.png",
-                            sensorTypeName: "Door",
-                            length: data.devices.totalDoor??0,
-                            callback: () {
-                              RouteGenerator.navigatePush(context, AddedDeviceScreen());
-                            },
-                            backColor: Color(0xFF3986FB),
-                            colors: [
-                              Color(0xFF0066FF),
-                              Color(0xFF164DAB),
-                            ],
-                          ),
-                          SizedBox(
-                            width: 15.0,
-                          ),
-                          HomeScreenDeviceUI(
-                            imageAsset: "assets/window.png",
-                            sensorTypeName: "Window",
-                            length: data.devices.totalWindow??0,
-                            backColor: Color(0xFF0A5771),
-                            callback: () {
-                              RouteGenerator.navigatePush(context, AddedWindowDeviceScreen());
-                            },
-                            colors: [
-                              Color(0xFF0A5771),
-                              Color(0xFF03384A),
-                            ],
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 20.0,
-                      ),
-                      GestureDetector(
-                        onTap: (){
-                          RouteGenerator.navigatePush(context, AddDeviceScreen());
-                        },
-                        child: Container(
-                          height: 30,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.add_circle_outline,size: 25.0,),
-                              Text(
-                                " Add a new device",
-                                style: text_StyleRoboto(Colors.black, 14.0, FontWeight.w500),
-                              ),
+                        SizedBox(
+                          height: 20.0,
+                        ),
+                        GestureDetector(
+                          onTap: (){
+                            RouteGenerator.navigatePush(context, AddDeviceScreen());
+                          },
+                          child: Container(
+                            height: 30,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.add_circle_outline,size: 25.0,),
+                                Text(
+                                  " Add a new device",
+                                  style: text_StyleRoboto(Colors.black, 14.0, FontWeight.w500),
+                                ),
 
-                            ],
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                      SizedBox(
-                        height: 20.0,
-                      ),
-                      Text(
-                        "Available Devices",
-                        style: text_StyleRoboto(Colors.black, 16.0, FontWeight.bold),
-                      ),
-                      SizedBox(
-                        height: 15.0,
-                      ),
-                      Container(
-                        child: GridView.count(
-                          shrinkWrap: true,
-                          crossAxisCount: 3,
-                          physics: NeverScrollableScrollPhysics(),
-                          childAspectRatio: 1.1,
-                          crossAxisSpacing: 6,
-                          mainAxisSpacing: 6,
-                          children: List.generate(adminItemsGridView.length, (index) {
-                            return HomeItemsNewUI(
-                              homeScreenGridView: adminItemsGridView[index],
-                              callback: () {
-                                print("Index $index");
-                              },
-                            );
-                          }),
+                        SizedBox(
+                          height: 20.0,
                         ),
-                      )
-                    ],
+                        Text(
+                          "Available Devices",
+                          style: text_StyleRoboto(Colors.black, 16.0, FontWeight.bold),
+                        ),
+                        SizedBox(
+                          height: 15.0,
+                        ),
+                        Container(
+                          child: GridView.count(
+                            shrinkWrap: true,
+                            crossAxisCount: 3,
+                            physics: NeverScrollableScrollPhysics(),
+                            childAspectRatio: 1.1,
+                            crossAxisSpacing: 6,
+                            mainAxisSpacing: 6,
+                            children: List.generate(adminItemsGridView.length, (index) {
+                              return HomeItemsNewUI(
+                                homeScreenGridView: adminItemsGridView[index],
+                                callback: () {
+                                  print("Index $index");
+                                },
+                              );
+                            }),
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 ),
               );

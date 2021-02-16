@@ -1,53 +1,58 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:rokit/base/all_api.dart';
 import 'package:rokit/data_model/user_profile_model.dart';
+import 'package:rokit/utils/getTokenId.dart';
+import 'package:rokit/utils/styles.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class ApiServiceProvider{
+class ApiServiceProvider extends ChangeNotifier{
 
+  UserProfileModel userProfileModel=UserProfileModel();
 
-  num totalDoor;
+  Future<UserProfileModel> getUser(context) async {
 
-  void setTotalDoor(num doorCount){
-    totalDoor=doorCount;
+    UserProfileModel _userProfileModel;
 
-    print("total door:-- $totalDoor");
-   // notifyListeners();
-  }
+    SharedPreferences sharedPreferences=await SharedPreferences.getInstance();
 
+    var tokenID =await getAuthIDToken();
+    var deviceToken=await getDeviceToken();
 
-  Future<UserProfileModel> getUser() async {
+    await sharedPreferences.setString(KEY_TOKEN_ID, deviceToken);
+    await sharedPreferences.setString(KEY_AUTH_ID, tokenID);
 
-    var authToken;
-
-    FirebaseAuth _auth = FirebaseAuth.instance;
-
-    await _auth.currentUser.getIdToken().then((value) {
-      authToken = value;
-      print("authToken $authToken");
-    });
+    print("token ID: $tokenID");
+    print("Device token: $deviceToken");
 
     var res = await http.post(getUserAPI,
         headers: <String, String>{
-          'firebaseToken': "",
-          'Content-Type': 'application/json; charset=UTF-8',
+          'firebaseToken': tokenID,
+           HttpHeaders.contentTypeHeader: "application/json",
         },
         body: jsonEncode(<String, dynamic>{
-          "requesterFirebaseId": _auth.currentUser.uid,
-          "deviceToken": authToken,
+          "deviceToken": deviceToken
         }));
-
     if (res.statusCode == 200 || res.statusCode == 201) {
       print("Users Info ${res.body}");
-
       var jsonResponse = res.body;
-
-      var response = UserProfileModel.fromJson(json.decode(jsonResponse));
-
-      return response;
+       _userProfileModel = UserProfileModel.fromJson(json.decode(jsonResponse));
+      return userProfileModel;
     }
   }
+
+  getPostData(context) async {
+    userProfileModel = await getUser(context);
+    notifyListeners();
+  }
+
+
 }
+
+
+
+

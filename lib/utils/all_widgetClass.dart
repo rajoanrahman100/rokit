@@ -1,7 +1,9 @@
 import 'package:circular_profile_avatar/circular_profile_avatar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:rokit/base/route.dart';
 import 'package:rokit/providers_class/provider_device.dart';
+import 'package:rokit/screens/profileScreen/createProfile.dart';
 import 'package:rokit/utils/styles.dart';
 import 'package:rokit/widget/text_formWidget.dart';
 
@@ -276,6 +278,26 @@ class CircleImagePlaceholder extends StatelessWidget {
       showInitialTextAbovePicture: false, // setting it true will show initials text above profile picture, default false
     );
   }
+}
+
+
+///data==null call this widget
+Widget callCompleteProfileNavigator() {
+  return new FutureBuilder(
+    future: Future.delayed(const Duration(milliseconds: 0)).then((value) => callCreateProfilePage()),
+    builder: (BuildContext context, AsyncSnapshot snapshot) {
+      return emptyWidget(context);
+    },
+  );
+}
+
+Widget emptyWidget(BuildContext context) {
+  return SizedBox.shrink();
+}
+
+/// data==null route to profile screen
+callCreateProfilePage() {
+  RouteGenerator.navigatePush(context, CreateProfileScreen());
 }
 
 

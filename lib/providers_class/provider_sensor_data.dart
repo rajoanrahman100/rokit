@@ -39,16 +39,14 @@ class ProviderSensorData extends ChangeNotifier {
 
     final prefs = await SharedPreferences.getInstance();
 
-    print("UID ${prefs.getString(KEY_USER_ID)}");
-    print("start call");
 
     var res = await http.post(sensorAPI,
         headers: <String, String>{
+          'firebaseToken':prefs.getString(KEY_AUTH_ID),
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: jsonEncode(<String, dynamic>{
 
-          "requesterFirebaseId": prefs.getString(KEY_USER_ID),
           "deviceMacAddress": deviceMacAddress,
           "fromDate": startDate,
           "toDate": endDate

@@ -4,9 +4,12 @@ import 'package:rokit/base/route.dart';
 import 'package:rokit/base/static_value.dart';
 import 'package:rokit/data_model/firebaseUser_model.dart';
 import 'package:rokit/providers_class/firebase_auth_service.dart';
+import 'package:rokit/screens/home_screen.dart';
 import 'package:rokit/utils/styles.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'logIn_screen.dart';
 
 // final GoogleSignIn gSignIn=GoogleSignIn();
 
@@ -19,9 +22,14 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
 
-  saveUserUid(userModel)async{
-    SharedPreferences preferences=await SharedPreferences.getInstance();
-    preferences.setString(KEY_USER_ID, userModel);
+
+  callHomeScreen()async{
+     RouteGenerator.navigatePush(context, HomeScreenPage());
+  }
+
+  callSignInScreen()async{
+    RouteGenerator.navigatePush(context, MainLogInPage());
+
   }
 
   @override
@@ -29,10 +37,10 @@ class _SplashScreenState extends State<SplashScreen> {
 
     final auth = Provider.of<FirebaseAuthService>(context, listen: false);
     auth.onAuthStateChanged.listen((user) async {
-     // saveUserUid(user.uid);
-      await Future.delayed(Duration(seconds: 1));
 
       Tag("userData = ${user != null ? user.uid : "\"user not loggedIn\""} ");
+
+      //user !=null? callHomeScreen():callSignInScreen();
 
       RouteGenerator.clearBackStack(context, user != null?MainScreenRoute:SignInScreenRoute);
     });

@@ -19,21 +19,7 @@ class ProviderDevice extends ChangeNotifier {
 
   //int get totalWindowGet =>totalWindow;
 
-  void setTotalWindow(DeviceDataModel deviceDataModel) {
-    print("Calling....");
-    totalWindow = deviceDataModel.data.length;
 
-    print("count-------$totalWindow");
-    notifyListeners();
-  }
-
-  void setTotalDoor(DeviceDataModel deviceDataModel) {
-    print("Calling....");
-    totalDoor = deviceDataModel.data.length;
-
-    print("door count-------$totalDoor");
-    notifyListeners();
-  }
 
   List<String> _items = ["ALL", "WINDOW", "DOOR"];
 
@@ -51,7 +37,6 @@ class ProviderDevice extends ChangeNotifier {
   addDevices(context, deviceMacAddress, deviceType, authCode, deviceName) async {
     final prefs = await SharedPreferences.getInstance();
 
-    print("UID ${prefs.getString(KEY_USER_ID)}");
 
     ProgressDialog pasdr = ProgressDialog(context, type: ProgressDialogType.Normal, isDismissible: true, showLogs: false);
     setProgressDialog(context, pasdr, "Adding device...");
@@ -60,12 +45,10 @@ class ProviderDevice extends ChangeNotifier {
 
     var res = await http.post(addDeviceAPI,
         headers: <String, String>{
-          'firebaseToken': "",
+          'firebaseToken': prefs.getString(KEY_AUTH_ID),
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: jsonEncode(<String, dynamic>{
-          "requesterFirebaseId": prefs.getString(KEY_USER_ID),
-          //"deviceId": 0,
           "deviceMacAddress": deviceMacAddress,
           "deviceType": deviceType,
           "deviceName": deviceName,
@@ -74,7 +57,6 @@ class ProviderDevice extends ChangeNotifier {
 
     if (res.statusCode == 200 || res.statusCode == 201) {
       print("Success Response:" + res.body);
-      //var dataMap = jsonDecode(res.body);
       showSuccessToast("Device added successfully");
       pasdr.hide();
       return;
@@ -120,10 +102,10 @@ class ProviderDevice extends ChangeNotifier {
 
     var res = await http.post(getDeviceAPI,
         headers: <String, String>{
-          'firebaseToken': "",
+          'firebaseToken': prefs.getString(KEY_AUTH_ID),
           'Content-Type': 'application/json; charset=UTF-8',
         },
-        body: jsonEncode(<String, dynamic>{"requesterFirebaseId": prefs.getString(KEY_USER_ID), "deviceType": deviceType}));
+        body: jsonEncode(<String, dynamic>{"deviceType": deviceType}));
 
     if (res.statusCode == 201 || res.statusCode == 200) {
       print("Device Response:----------------" + res.body);
@@ -133,7 +115,6 @@ class ProviderDevice extends ChangeNotifier {
       deviceDataModel = DeviceDataModel.fromJson(dataMap);
       //setTotalWindow(deviceDataModel);
 
-      setTotalDoor(deviceDataModel);
       notifyListeners();
       return deviceDataModel;
     } else {
@@ -145,7 +126,7 @@ class ProviderDevice extends ChangeNotifier {
   deleteDevice(deviceID, context) async {
     final prefs = await SharedPreferences.getInstance();
 
-    print("USER ID : ${prefs.getString(KEY_USER_ID)}  TOKEN ID: ${prefs.getString(KEY_TOKEN_ID)}");
+    print("AUTH ID: ${prefs.getString(KEY_AUTH_ID)}");
 
     ProgressDialog pasdr = ProgressDialog(context, type: ProgressDialogType.Normal, isDismissible: true, showLogs: false);
     setProgressDialog(context, pasdr, "Deleting device...");
@@ -154,9 +135,10 @@ class ProviderDevice extends ChangeNotifier {
 
     var res = await http.post(deleteDeviceAPI,
         headers: <String, String>{
+          'firebaseToken':prefs.getString(KEY_AUTH_ID),
           'Content-Type': 'application/json; charset=UTF-8',
         },
-        body: jsonEncode(<String, dynamic>{"requesterFirebaseId": prefs.getString(KEY_USER_ID), "deviceId": deviceID}));
+        body: jsonEncode(<String, dynamic>{"deviceId": deviceID}));
 
     if (res.statusCode == 201 || res.statusCode == 200) {
       showSuccessToast("Device deleted");

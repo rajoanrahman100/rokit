@@ -42,11 +42,6 @@ class AddDevice extends StatelessWidget {
 
     var providerUser = Provider.of<ProviderUser>(context, listen: true);
 
-
-    Future<bool> callBack(){
-      RouteGenerator.helpMeToNavigatePush(context,MainScreenRoute);
-    }
-
     return SafeArea(
       child: Scaffold(
         backgroundColor: appBack,

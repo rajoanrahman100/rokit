@@ -1,5 +1,5 @@
 import 'dart:ui';
-
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -35,9 +35,6 @@ class AddedDevice extends StatelessWidget {
 
     providerDevice.getAddedDevices(deviceType: "DOOR");
 
-    final _formKey = GlobalKey<FormState>();
-
-    var _controllerMacAddress = TextEditingController();
 
     return Scaffold(
       backgroundColor: appBack,
@@ -166,147 +163,165 @@ class AddedDevice extends StatelessWidget {
                             child: ListView.builder(
                               itemCount: data.deviceDataModel.data.length,
                               itemBuilder: (_, index) {
-                                return Container(
-                                    padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
-                                    height: 100.0,
-                                    margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 7.0),
-                                    decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10.0), boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.grey.withOpacity(0.1),
-                                        spreadRadius: 5,
-                                        blurRadius: 7,
-                                        offset: Offset(0, 3), // changes position of shadow
-                                      ),
-                                    ]),
-                                    child: Row(
-                                      children: [
-                                        Expanded(
-                                          flex: 2,
-                                          child: GestureDetector(
-                                            onTap: () {
-                                              showAlertDialog(context,
-                                                  deviceName: data.deviceDataModel.data[index].deviceName,
-                                                  deviceNetwork: "Tp Link 20201",
-                                                  deviceMac: data.deviceDataModel.data[index].deviceMacAddress,
-                                                  status: data.deviceDataModel.data[index].status,
-                                                  batteryStatus: data.deviceDataModel.data[index].batteryStatus);
-                                            },
-                                            child: Container(
-                                              height: MediaQuery.of(context).size.height,
-                                              padding: EdgeInsets.only(top: 13, left: 12.0),
-                                              decoration: BoxDecoration(color: appBack, borderRadius: BorderRadius.circular(5.0)),
-                                              child: Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                children: [
-                                                  Row(
-                                                    children: [
-                                                      data.deviceDataModel.data[index].deviceType == "WINDOW"
-                                                          ? Image.asset(
-                                                              "assets/window2.png",
-                                                              height: 14.0,
-                                                              width: 14.0,
-                                                            )
-                                                          : Image.asset(
-                                                              "assets/door2.png",
-                                                              height: 14.0,
-                                                              width: 14.0,
-                                                            ),
-                                                      Text(
-                                                        " ${data.deviceDataModel.data[index].deviceMacAddress}",
-                                                        style: text_StyleRoboto(backColor2, 14.0, FontWeight.bold),
-                                                      )
-                                                    ],
-                                                  ),
-                                                  Padding(
-                                                    padding: const EdgeInsets.only(left: 3.0),
-                                                    child: Row(
+                                return Dismissible(
+                                  background: stackBehindDismiss(),
+                                  key: ObjectKey(data.deviceDataModel.data[index]),
+                                  onDismissed: (direction)async{
+                                   await data.deleteDevice(data.deviceDataModel.data[index].id, context);
+                                   await data.getAddedDevices(deviceType: "DOOR");
+                                   // Scaffold.of(context).showSnackBar(SnackBar(
+                                   //     content: Text("Item deleted"),
+                                   //     action: SnackBarAction(
+                                   //         label: "UNDO",
+                                   //         onPressed: () {
+                                   //           //To undo deletion
+                                   //          // undoDeletion(index, item);
+                                   //         })
+                                   // ));
+                                  },
+
+                                  child: Container(
+                                      padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
+                                      height: 100.0,
+                                      margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 7.0),
+                                      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10.0), boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.grey.withOpacity(0.1),
+                                          spreadRadius: 5,
+                                          blurRadius: 7,
+                                          offset: Offset(0, 3), // changes position of shadow
+                                        ),
+                                      ]),
+                                      child: Row(
+                                        children: [
+                                          Expanded(
+                                            flex: 2,
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                showAlertDialog(context,
+                                                    deviceName: data.deviceDataModel.data[index].deviceName,
+                                                    deviceNetwork: "Tp Link 20201",
+                                                    deviceMac: data.deviceDataModel.data[index].deviceMacAddress,
+                                                    status: data.deviceDataModel.data[index].status,
+                                                    batteryStatus: data.deviceDataModel.data[index].batteryStatus);
+                                              },
+                                              child: Container(
+                                                height: MediaQuery.of(context).size.height,
+                                                padding: EdgeInsets.only(top: 13, left: 12.0),
+                                                decoration: BoxDecoration(color: appBack, borderRadius: BorderRadius.circular(5.0)),
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  children: [
+                                                    Row(
                                                       children: [
-                                                        data.deviceDataModel.data[index].status == "open"
+                                                        data.deviceDataModel.data[index].deviceType == "WINDOW"
                                                             ? Image.asset(
-                                                                "assets/opened.png",
-                                                                height: 50.0,
-                                                                width: 50.0,
+                                                                "assets/window2.png",
+                                                                height: 14.0,
+                                                                width: 14.0,
                                                               )
                                                             : Image.asset(
-                                                                "assets/closed.png",
-                                                                height: 50.0,
-                                                                width: 50.0,
+                                                                "assets/door2.png",
+                                                                height: 14.0,
+                                                                width: 14.0,
                                                               ),
-                                                        SizedBox(
-                                                          width: 10.0,
-                                                        ),
-                                                        Row(
-                                                          children: [
-                                                            Icon(Icons.battery_charging_full_sharp, color: backColor2, size: 16.0,),
-                                                            Text("${data.deviceDataModel.data[index].batteryStatus} v", style: text_StyleRoboto(backColor2, 14.0, FontWeight.bold),),
-                                                          ],
+                                                        Text(
+                                                          " ${data.deviceDataModel.data[index].deviceMacAddress}",
+                                                          style: text_StyleRoboto(backColor2, 14.0, FontWeight.bold),
                                                         )
                                                       ],
                                                     ),
-                                                  )
-                                                ],
+                                                    Padding(
+                                                      padding: const EdgeInsets.only(left: 3.0),
+                                                      child: Row(
+                                                        children: [
+                                                          data.deviceDataModel.data[index].status == "open"
+                                                              ? Image.asset(
+                                                                  "assets/opened.png",
+                                                                  height: 50.0,
+                                                                  width: 50.0,
+                                                                )
+                                                              : Image.asset(
+                                                                  "assets/closed.png",
+                                                                  height: 50.0,
+                                                                  width: 50.0,
+                                                                ),
+                                                          SizedBox(
+                                                            width: 10.0,
+                                                          ),
+                                                          Row(
+                                                            children: [
+                                                              Icon(Icons.battery_charging_full_sharp, color: backColor2, size: 16.0,),
+                                                              Text("${data.deviceDataModel.data[index].batteryStatus} v", style: text_StyleRoboto(backColor2, 14.0, FontWeight.bold),),
+                                                            ],
+                                                          )
+                                                        ],
+                                                      ),
+                                                    )
+                                                  ],
+                                                ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                        SizedBox(
-                                          width: 10.0,
-                                        ),
-                                        Expanded(
-                                          child: Container(
-                                            child: Column(
-                                              mainAxisAlignment: MainAxisAlignment.center,
-                                              children: [
-                                                GestureDetector(
-                                                  onTap: () {
-                                                    RouteGenerator.navigatePush(
-                                                        context,
-                                                        DoorDevicesLogScreen(
-                                                          deviceMacAddress: data.deviceDataModel.data[index].deviceMacAddress,
-                                                          deviceName: data.deviceDataModel.data[index].deviceName,
-                                                        ));
-                                                  },
-                                                  child: Container(
-                                                    height: 30.0,
-                                                    decoration: BoxDecoration(color: appBack, borderRadius: BorderRadius.circular(5.0)),
-                                                    child: Center(
-                                                      child: Text(
-                                                        "Log",
-                                                        style: text_StyleRoboto(backColor2, 14.0, FontWeight.w500),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                  height: 12.0,
-                                                ),
-                                                GestureDetector(
-                                                  onTap: () {
-                                                    RouteGenerator.navigatePush(
-                                                        context,
-                                                        DeviceNotificationScreen(
-                                                          id: data.deviceDataModel.data[index].id,
-                                                          deviceName: data.deviceDataModel.data[index].deviceName,
-                                                        ));
-                                                  },
-                                                  child: Container(
-                                                    height: 30.0,
-                                                    decoration: BoxDecoration(color: appBack, borderRadius: BorderRadius.circular(5.0)),
-                                                    child: Center(
-                                                      child: Text(
-                                                        "Setting",
-                                                        style: text_StyleRoboto(backColor2, 14.0, FontWeight.w500),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
+                                          SizedBox(
+                                            width: 10.0,
                                           ),
-                                        )
-                                      ],
-                                    ));
+                                          Expanded(
+                                            child: Container(
+                                              child: Column(
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                children: [
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      RouteGenerator.navigatePush(
+                                                          context,
+                                                          DoorDevicesLogScreen(
+                                                            deviceMacAddress: data.deviceDataModel.data[index].deviceMacAddress,
+                                                            deviceName: data.deviceDataModel.data[index].deviceName,
+                                                          ));
+                                                    },
+                                                    child: Container(
+                                                      height: 30.0,
+                                                      decoration: BoxDecoration(color: appBack, borderRadius: BorderRadius.circular(5.0)),
+                                                      child: Center(
+                                                        child: Text(
+                                                          "Log",
+                                                          style: text_StyleRoboto(backColor2, 14.0, FontWeight.w500),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    height: 12.0,
+                                                  ),
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      RouteGenerator.navigatePush(
+                                                          context,
+                                                          DeviceNotificationScreen(
+                                                            id: data.deviceDataModel.data[index].id,
+                                                            deviceName: data.deviceDataModel.data[index].deviceName,
+                                                          ));
+                                                    },
+                                                    child: Container(
+                                                      height: 30.0,
+                                                      decoration: BoxDecoration(color: appBack, borderRadius: BorderRadius.circular(5.0)),
+                                                      child: Center(
+                                                        child: Text(
+                                                          "Setting",
+                                                          style: text_StyleRoboto(backColor2, 14.0, FontWeight.w500),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          )
+                                        ],
+                                      )),
+                                );
                               },
                             ),
                           ),
@@ -314,6 +329,20 @@ class AddedDevice extends StatelessWidget {
             )
           ],
         ),
+      ),
+    );
+  }
+
+  Widget stackBehindDismiss() {
+    return Container(
+      height: 90,
+      color: Colors.red,
+      margin: EdgeInsets.only(right: 10.0),
+      alignment: Alignment.centerRight,
+      padding: EdgeInsets.only(right: 20.0),
+      child: Icon(
+        Icons.delete,
+        color: Colors.white,
       ),
     );
   }

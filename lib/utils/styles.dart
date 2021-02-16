@@ -22,7 +22,8 @@ text_StyleRoboto(Color color, double size,FontWeight fontWeight,{decoration}){
   var appDefaultColor=Colors.deepOrange;
 
   const String KEY_USER_ID = "KEY_USER_ID";
-  const String KEY_TOKEN_ID = "KEY_FIREBASE_TOKEN";
+  const String KEY_TOKEN_ID = "KEY_DEVICE_TOKEN";
+  const String KEY_AUTH_ID = "KEY_FIREBASE_TOKEN";
 
   BuildContext context;
 

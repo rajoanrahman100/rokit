@@ -10,6 +10,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:rokit/base/all_api.dart';
 import 'package:rokit/base/route.dart';
+import 'package:rokit/utils/getTokenId.dart';
 import 'package:rokit/utils/styles.dart';
 import 'package:rokit/widget/custom_app_bar.dart';
 import 'package:rokit/widget/custom_progress.dart';
@@ -58,9 +59,9 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
   void initState() {
     // TODO: implement initState
 
-    getUserID();
+   // getUserID();
 
-    getTokenID();
+   // getTokenID();
   }
 
   @override
@@ -265,18 +266,20 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
 
    _uploadUserInformation(name, address,context) async {
 
-    final prefs = await SharedPreferences.getInstance();
+     var tokenID=await getAuthIDToken();
+     var deviceToken=await getDeviceToken();
 
     ProgressDialog pasdr = ProgressDialog(context, type: ProgressDialogType.Normal, isDismissible: false, showLogs: false);
     setProgressDialog(context, pasdr, "Creating Profile...");
     pasdr.show();
 
-    Map dataInput = {"name": name, "requesterFirebaseId": prefs.getString(KEY_USER_ID), "deviceToken": prefs.getString(KEY_TOKEN_ID), "phone": "", "address": address, "imageUrl": ""};
+    Map dataInput = {"name": name,"deviceToken": deviceToken, "phone": "", "address": address, "imageUrl": ""};
     var body = json.encode(dataInput);
     print("Create profile input =  " + body);
 
     var res = await http.post(createProfileAPI,
         headers: <String, String>{
+          'firebaseToken':tokenID,
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: body);
@@ -290,7 +293,6 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
       Future.delayed(const Duration(milliseconds: 100), () {
         pasdr.hide();
         Navigator.pushNamedAndRemoveUntil(context, MainScreenRoute, (r) => false);
-        // RouteGenerator.helpMeToNavigatePush(context, MainScreenRoute);
       });
     } else {
       pasdr.hide();

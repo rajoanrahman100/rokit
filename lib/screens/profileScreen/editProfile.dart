@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:rokit/utils/all_widgetClass.dart';
 import 'package:rokit/utils/styles.dart';
+import 'package:rokit/widget/text_formWidget.dart';
 
 class EditProfileScreen extends StatefulWidget {
   @override
@@ -7,41 +11,175 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
+
+  final _formKey = GlobalKey<FormState>();
+
+  var nameTextController=TextEditingController();
+  var addressTextController=TextEditingController();
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: appBack,
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(80.0),
-        child: Padding(
-          padding: const EdgeInsets.only(top: 15.0),
-          child: AppBar(
-            elevation: 0.0,
-            iconTheme: IconThemeData(color: backColor2),
-            title: Text(
-              "Edit Profile",
-              style: text_StyleRoboto(backColor2, 18.0, FontWeight.w500),
-            ),
-            backgroundColor: appBack,
-            actions: [
-              Container(
-                height: 25.0,
-                width: 25.0,
-                margin: EdgeInsets.only(right: 20.0),
-                decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white, boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.1),
-                    spreadRadius: 5,
-                    blurRadius: 7,
-                    offset: Offset(0, 3), // changes position of shadow
+      body: Center(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Form(
+                key: _formKey,
+                child: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 20.0),
+                  padding: EdgeInsets.symmetric(horizontal: 20.0),
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height / 1.2,
+                  decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20.0)),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+
+                      SizedBox(
+                        height: 30.0,
+                      ),
+
+                      CircleImagePlaceholder(
+                        imageData: "",
+                        radius: 40.0,
+                      ),
+
+                      SizedBox(
+                        height: 20.0,
+                      ),
+
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(FontAwesomeIcons.upload,size: 14.0,),
+                          SizedBox(width: 5.0,),
+                          Text("Change Photo",style: text_StyleRoboto(Colors.black, 14.0, FontWeight.w500),)
+                        ],
+                      ),
+
+                      SizedBox(
+                        height: 20.0,
+                      ),
+
+                      Divider(indent: 30.0,endIndent: 30.0,color: Colors.grey,thickness: 0.2),
+
+                      SizedBox(
+                        height: 20.0,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text('Edit Profile',style: text_StyleRoboto(headerColor, 20.0, FontWeight.w500)),
+                        ],
+                      ),
+
+                      SizedBox(
+                        height: 20.0,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text('Name',style: text_StyleRoboto(headerColor, 16.0, FontWeight.w500)),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 10.0,
+                      ),
+
+                      TextFormWidget(
+                        height: 55,
+                        text:nameTextController.text,
+                        isEmail: true,
+                        hintText: "eg. John Wick",
+                        inputFormatter: [FilteringTextInputFormatter.allow(RegExp('[ A-Za-z]'))],
+                        validator: (String value) {
+                          if (value.isEmpty) {
+                            return "Enter Your Name";
+                          }
+
+                          _formKey.currentState.save();
+                          return null;
+                        },
+                        onSaved: (String value) {
+                          nameTextController.text = value;
+                        },
+                      ),
+
+                      SizedBox(
+                        height: 20.0,
+                      ),
+
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text('Address',style: text_StyleRoboto(headerColor, 16.0, FontWeight.w500)),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 10.0,
+                      ),
+
+                      TextFormWidget(
+                        height: 55,
+                        text:addressTextController.text,
+                        isEmail: true,
+                        hintText: "eg. John Wick",
+                        inputFormatter: [FilteringTextInputFormatter.allow(RegExp('[ A-Za-z]'))],
+                        validator: (String value) {
+                          if (value.isEmpty) {
+                            return "Enter Your Name";
+                          }
+
+                          _formKey.currentState.save();
+                          return null;
+                        },
+                        onSaved: (String value) {
+                          addressTextController.text = value;
+                        },
+                      ),
+
+                      SizedBox(
+                        height: 20.0,
+                      ),
+
+                      GestureDetector(
+                        onTap: () {
+                          if (_formKey.currentState.validate()) {
+                          }
+                        },
+                        child: Container(
+                          height: 50.0,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(14.0),
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Color(0xFFFF7957),
+                                Color(0xFFEF2F00),
+                              ],
+                            ),
+                          ),
+                          child: Text(
+                            "SAVE CHANGES",
+                            style: text_StyleRoboto(Colors.white, 20.0, FontWeight.bold),
+                          ),
+                        ),
+                      ),
+
+
+                      SizedBox(height: 20.0,),
+
+                      Text("Cancel",style: TextStyle(decoration: TextDecoration.underline,fontWeight: FontWeight.w500,fontSize: 16.0),)
+
+                    ],
                   ),
-                ]),
-                child: Center(
-                    child: Icon(
-                  Icons.notifications,
-                  color: Colors.black,
-                )),
-              ),
+                ),
+              )
             ],
           ),
         ),

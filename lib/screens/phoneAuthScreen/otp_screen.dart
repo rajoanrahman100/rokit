@@ -4,10 +4,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:rokit/base/route.dart';
+import 'package:rokit/screens/homeScreenWithCache.dart';
 import 'package:rokit/screens/splash_screen.dart';
 import 'package:rokit/utils/styles.dart';
 import 'package:rokit/widget/custom_toast.dart';
-import 'package:rokit/widget/widgets.dart';
 
 import './otp_input.dart';
 
@@ -41,7 +41,7 @@ class _OTPScreenState extends State<OTPScreen> {
   @override
   void initState() {
     super.initState();
-   // FocusScope.of(context).unfocus(); //hide keyboard
+    // FocusScope.of(context).unfocus(); //hide keyboard
 
     _startTimer();
     _onVerifyCode();
@@ -53,7 +53,6 @@ class _OTPScreenState extends State<OTPScreen> {
     if (_timer != null) _timer.cancel();
 
     _timer = Timer.periodic(Duration(seconds: 1), (_timer) {
-
       if (!mounted) return;
 
       setState(() {
@@ -75,20 +74,17 @@ class _OTPScreenState extends State<OTPScreen> {
         backgroundColor: Colors.grey[100],
         elevation: 0.0,
         centerTitle: true,
-        title:Image.asset(
+        title: Image.asset(
           "assets/rokitLogo.png",
           height: 40.0,
-
-        ) ,
+        ),
       ),
-
       body: Container(
         height: MediaQuery.of(context).size.height,
         padding: EdgeInsets.symmetric(horizontal: 22),
         child: SingleChildScrollView(
           child: Column(
             children: [
-
               SizedBox(
                 height: 60,
               ),
@@ -151,13 +147,14 @@ class _OTPScreenState extends State<OTPScreen> {
                     SizedBox(
                       height: 30.0,
                     ),
-
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         (_counter > 0)
-                            ? Text('0:$_counter',
-                          style: text_StyleRoboto(Colors.deepOrange, 18.0, FontWeight.w500),)
+                            ? Text(
+                                '0:$_counter',
+                                style: text_StyleRoboto(Colors.deepOrange, 18.0, FontWeight.w500),
+                              )
                             : Text(
                                 "Did not get an SMS? ",
                                 style: text_StyleRoboto(Colors.black, 16.0, FontWeight.w400),
@@ -181,10 +178,15 @@ class _OTPScreenState extends State<OTPScreen> {
                     ),
                     _pinEditingController.text.length == 6
                         ? GestureDetector(
-                      onTap: (){
-                        _onFormSubmitted();
-                      },
-                          child: Container(
+                            onTap: () {
+                              if (_pinEditingController.text.length == 6) {
+                                _onFormSubmitted();
+                              } else {
+                                showErrorToast("Invalid OTP");
+                              }
+                              //_onFormSubmitted();
+                            },
+                            child: Container(
                               height: 55.0,
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
@@ -203,7 +205,7 @@ class _OTPScreenState extends State<OTPScreen> {
                                 style: text_StyleRoboto(Colors.white, 20.0, FontWeight.bold),
                               ),
                             ),
-                        )
+                          )
                         : Container(
                             height: 55.0,
                             alignment: Alignment.center,
@@ -239,9 +241,6 @@ class _OTPScreenState extends State<OTPScreen> {
   }
 
   void _onVerifyCode() async {
-
-
-
     setState(() {
       isCodeSent = true;
     });
@@ -300,9 +299,11 @@ class _OTPScreenState extends State<OTPScreen> {
   void _onFormSubmitted() async {
     AuthCredential _authCredential = PhoneAuthProvider.credential(verificationId: _verificationId, smsCode: _pinEditingController.text);
 
-    _firebaseAuth.signInWithCredential(_authCredential).then((value) {
+   await  _firebaseAuth.signInWithCredential(_authCredential).then((value) {
       if (value.user != null) {
         print(value.user.phoneNumber);
+
+        //RouteGenerator.navigatePush(context, SplashScreen());
 
         Navigator.pushAndRemoveUntil(
             context,

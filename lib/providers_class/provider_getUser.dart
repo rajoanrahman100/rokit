@@ -7,6 +7,7 @@ import 'package:progress_dialog/progress_dialog.dart';
 import 'package:rokit/base/all_api.dart';
 import 'package:rokit/data_model/device_data_model.dart';
 import 'package:rokit/data_model/user_profile_model.dart';
+import 'package:rokit/utils/getTokenId.dart';
 import 'package:rokit/utils/styles.dart';
 import 'package:rokit/widget/custom_progress.dart';
 import 'package:rokit/widget/custom_toast.dart';
@@ -36,25 +37,23 @@ class ProviderUser extends ChangeNotifier{
 
   Future<UserProfileModel> getUserDetails()async{
 
-    //final prefs = await SharedPreferences.getInstance();
+    SharedPreferences prefe=await SharedPreferences.getInstance();
 
-   // print("USER ID : ${prefs.getString(KEY_USER_ID)}  TOKEN ID: ${prefs.getString(KEY_TOKEN_ID)}");
+    var authId=await getAuthIDToken();
+    var deviceToken= await getDeviceToken();
 
-    FirebaseAuth _auth = FirebaseAuth.instance;
-
+    await prefe.setString(KEY_AUTH_ID, authId);
+    await prefe.setString(KEY_TOKEN_ID, deviceToken);
 
     var res = await http.post(getUserAPI,
         headers: <String, String>{
-          'firebaseToken': "",
+          'firebaseToken': authId,
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: jsonEncode(<String, dynamic>{
-          "requesterFirebaseId": _auth.currentUser.uid,
-          "deviceToken": "",
-
+          "deviceToken": deviceToken,
         }));
 
-    print("response user " + res.statusCode.toString());
     print("response user " + res.body);
 
     if(res.statusCode==200 || res.statusCode==201){
@@ -64,7 +63,7 @@ class ProviderUser extends ChangeNotifier{
 
       userProfileModel = UserProfileModel.fromJson(dataMap);
 
-      setDoorCount(userProfileModel.data.devices.totalDoor);
+      //setDoorCount(userProfileModel.data.devices.totalDoor);
 
       notifyListeners();
 

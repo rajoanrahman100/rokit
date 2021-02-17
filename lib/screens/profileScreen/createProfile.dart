@@ -31,6 +31,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
 
   FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
+
   FirebaseAuth _auth = FirebaseAuth.instance;
 
   var userID;
@@ -79,7 +80,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
             children: [
               Container(
                 width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height / 1.1,
+                height: MediaQuery.of(context).size.height / 1.4,
                 margin: EdgeInsets.symmetric(horizontal: 25.0, vertical: 25.0),
                 padding: EdgeInsets.symmetric(
                   horizontal: 20.0,
@@ -230,6 +231,8 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
                       GestureDetector(
                         onTap: () {
                           if (_formKey.currentState.validate()) {
+
+
                             _uploadUserInformation(_nameController.text, _addressController.text,context);
                           }
                         },
@@ -265,6 +268,11 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
   }
 
    _uploadUserInformation(name, address,context) async {
+
+     SharedPreferences prefs=await SharedPreferences.getInstance();
+
+     await prefs.setString("name", name);
+     await prefs.setString("address", address);
 
      var tokenID=await getAuthIDToken();
      var deviceToken=await getDeviceToken();

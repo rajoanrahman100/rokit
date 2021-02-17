@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:rokit/utils/all_widgetClass.dart';
 import 'package:rokit/utils/styles.dart';
 import 'package:rokit/widget/text_formWidget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class EditProfileScreen extends StatefulWidget {
   @override
@@ -16,6 +17,27 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   var nameTextController=TextEditingController();
   var addressTextController=TextEditingController();
+
+
+
+  var name;
+
+  getUserNameAddress()async{
+    SharedPreferences pref; pref=await SharedPreferences.getInstance();
+    print("${pref.getString("name")}");
+
+    name=pref.getString("name");
+    nameTextController.text=name;
+
+    print("name controller ${nameTextController.text}");
+
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    getUserNameAddress();
+  }
 
 
   @override
@@ -32,7 +54,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   margin: EdgeInsets.symmetric(horizontal: 20.0),
                   padding: EdgeInsets.symmetric(horizontal: 20.0),
                   width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height / 1.2,
+                  height: MediaQuery.of(context).size.height / 1.4,
                   decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20.0)),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -69,6 +91,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       SizedBox(
                         height: 20.0,
                       ),
+
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
@@ -79,12 +102,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       SizedBox(
                         height: 20.0,
                       ),
+
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Text('Name',style: text_StyleRoboto(headerColor, 16.0, FontWeight.w500)),
                         ],
                       ),
+
                       SizedBox(
                         height: 10.0,
                       ),
@@ -92,7 +117,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       TextFormWidget(
                         height: 55,
                         text:nameTextController.text,
-                        isEmail: true,
+                        isEmail: false,
                         hintText: "eg. John Wick",
                         inputFormatter: [FilteringTextInputFormatter.allow(RegExp('[ A-Za-z]'))],
                         validator: (String value) {
@@ -126,13 +151,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         height: 55,
                         text:addressTextController.text,
                         isEmail: true,
-                        hintText: "eg. John Wick",
+                        hintText: "eg. Dhanmondi",
                         inputFormatter: [FilteringTextInputFormatter.allow(RegExp('[ A-Za-z]'))],
                         validator: (String value) {
                           if (value.isEmpty) {
                             return "Enter Your Name";
                           }
-
                           _formKey.currentState.save();
                           return null;
                         },
@@ -142,7 +166,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       ),
 
                       SizedBox(
-                        height: 20.0,
+                        height: 25.0,
                       ),
 
                       GestureDetector(
@@ -172,7 +196,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       ),
 
 
-                      SizedBox(height: 20.0,),
+                      SizedBox(height: 30.0,),
 
                       Text("Cancel",style: TextStyle(decoration: TextDecoration.underline,fontWeight: FontWeight.w500,fontSize: 16.0),)
 

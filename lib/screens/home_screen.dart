@@ -9,6 +9,7 @@ import 'package:rokit/screens/deviceScreen/addDevice.dart';
 import 'package:rokit/screens/profileScreen/createProfile.dart';
 import 'package:rokit/screens/profileScreen/editProfile.dart';
 import 'package:rokit/utils/all_widgetClass.dart';
+import 'package:rokit/utils/firebaseNotification.dart';
 import 'package:rokit/utils/styles.dart';
 import 'package:rokit/widget/home_screen_gridView.dart';
 import 'package:rokit/widget/loader_widget.dart';
@@ -70,7 +71,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
     _firebaseMessaging.getToken().then((value) async {
       print("token value $value");
-      await prefs.setString(KEY_TOKEN_ID, value);
     });
 
     _firebaseMessaging.configure(
@@ -106,7 +106,9 @@ class _HomeScreenState extends State<HomeScreen> {
     // TODO: implement initState
 
     getUserToken();
-    getMessage();
+
+    FirebaseNotifications.setup(context);
+    //getMessage();
   }
 
   @override

@@ -42,6 +42,8 @@ class ProviderUser extends ChangeNotifier{
     var authId=await getAuthIDToken();
     var deviceToken= await getDeviceToken();
 
+    print("Device Token $deviceToken");
+
     await prefe.setString(KEY_AUTH_ID, authId);
     await prefe.setString(KEY_TOKEN_ID, deviceToken);
 

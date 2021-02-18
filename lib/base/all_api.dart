@@ -1,8 +1,10 @@
 
 
-const baseUrl="http://dev.rokkhi.com:5000/api/";
+//const baseUrl="http://dev.rokkhi.com:5000/api/";
 //const baseUrl="http://localhost:5000/api/";
-//const baseUrl="http://192.168.0.105:5000/api/";
+const baseUrl="http://192.168.0.105:5000/api/";
+
+const uploadImageUrl = baseUrl + "v1/image/uploadSingle";
 
 
 const sensorAPI=baseUrl+"v1/door-sensor/getDeviceSensors";

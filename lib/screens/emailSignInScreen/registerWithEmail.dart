@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:rokit/base/route.dart';
+import 'package:rokit/screens/homeScreenWithCache.dart';
 import 'package:rokit/screens/splash_screen.dart';
 import 'package:rokit/utils/styles.dart';
 import 'package:rokit/widget/custom_progress.dart';
@@ -182,7 +183,7 @@ class _RegisterWithEmailState extends State<RegisterWithEmail> {
                               showErrorToast("Password does not not match");
                               return;
                             }else{
-                              registerAccount(emailEditingController.text,passwordEditingController.text);
+                              registerAccount(emailEditingController.text,passwordEditingController.text,context);
                             }
 
                           }
@@ -223,7 +224,7 @@ class _RegisterWithEmailState extends State<RegisterWithEmail> {
     );
   }
 
-  void registerAccount(email,pass)async{
+  void registerAccount(email,pass,context)async{
 
     ProgressDialog pasdr = ProgressDialog(context,
         type: ProgressDialogType.Normal, isDismissible: true, showLogs: false);
@@ -240,7 +241,7 @@ class _RegisterWithEmailState extends State<RegisterWithEmail> {
          // user.sendEmailVerification().then((value) => print("A verification link has sent to your email id"));
           pasdr.hide();
           showSuccessToast("account created successfully");
-          RouteGenerator.navigatePush(context, SplashScreen());
+          RouteGenerator.clearBackStack(context, MainScreenRoute);
 
         }
         return;

@@ -23,15 +23,6 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
 
 
-  callHomeScreen()async{
-     RouteGenerator.navigatePush(context, HomeScreenPage());
-  }
-
-  callSignInScreen()async{
-    RouteGenerator.navigatePush(context, MainLogInPage());
-
-  }
-
   @override
   Widget build(BuildContext context) {
 
@@ -39,8 +30,6 @@ class _SplashScreenState extends State<SplashScreen> {
     auth.onAuthStateChanged.listen((user) async {
 
       Tag("userData = ${user != null ? user.uid : "\"user not loggedIn\""} ");
-
-      //user !=null? callHomeScreen():callSignInScreen();
 
       RouteGenerator.clearBackStack(context, user != null?MainScreenRoute:SignInScreenRoute);
     });

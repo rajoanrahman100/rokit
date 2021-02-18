@@ -74,6 +74,8 @@ class _DoorDevicesLogState extends State<DoorDevicesLog> {
 
     providerSensor.getAllSensorsData(widget.deviceMacAddress, widget.doorStatus, currentTime, currentTime);
 
+
+
     print("${widget.deviceMacAddress}  ${widget.doorStatus}");
 
     return Scaffold(
@@ -322,13 +324,7 @@ class _DoorDevicesLogState extends State<DoorDevicesLog> {
                       ),
                     )),
               ),
-              // SizedBox(
-              //   height: 20.0,
-              // ),
-              // ButtonLog(
-              //   imageData: "assets/clearLog.png",
-              //   text: "  Clear Log",
-              // ),
+
               SizedBox(
                 height: 20.0,
               ),

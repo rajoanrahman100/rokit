@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
@@ -107,20 +108,28 @@ class ProviderDevice extends ChangeNotifier {
         },
         body: jsonEncode(<String, dynamic>{"deviceType": deviceType}));
 
-    if (res.statusCode == 201 || res.statusCode == 200) {
-      print("Device Response:----------------" + res.body);
 
-      var dataMap = jsonDecode(res.body);
+    try{
+      if (res.statusCode == 201 || res.statusCode == 200) {
+        print("Device Response:----------------" + res.body);
 
-      deviceDataModel = DeviceDataModel.fromJson(dataMap);
-      //setTotalWindow(deviceDataModel);
+        var dataMap = jsonDecode(res.body);
 
-      notifyListeners();
-      return deviceDataModel;
-    } else {
-      print("ErrorBody:" + res.body);
-      showErrorToast("Something went wrong");
+        deviceDataModel = DeviceDataModel.fromJson(dataMap);
+        //setTotalWindow(deviceDataModel);
+
+        notifyListeners();
+        return deviceDataModel;
+      } else {
+        print("ErrorBody:" + res.body);
+        showErrorToast("Something went wrong");
+      }
+    } catch(e){
+      showErrorToast(e.toString());
+      return null;
     }
+
+
   }
 
   deleteDevice(deviceID, context) async {

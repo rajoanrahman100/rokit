@@ -308,7 +308,7 @@ class _OTPScreenState extends State<OTPScreen> {
         Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
-              builder: (context) => SplashScreen(),
+              builder: (context) => HomeScreenPageWithCache(),
             ),
             (Route<dynamic> route) => false);
       } else {

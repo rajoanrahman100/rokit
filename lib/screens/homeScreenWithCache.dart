@@ -12,7 +12,9 @@ import 'package:rokit/providers_class/provider_getUser.dart';
 import 'package:rokit/screens/deviceScreen/addDevice.dart';
 import 'package:rokit/screens/profileScreen/createProfile.dart';
 import 'package:rokit/utils/all_widgetClass.dart';
+import 'package:rokit/utils/firebaseNotification.dart';
 import 'package:rokit/utils/styles.dart';
+import 'package:rokit/widget/homeAppBarWidget.dart';
 import 'package:rokit/widget/home_screen_gridView.dart';
 import 'package:rokit/widget/loader_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -39,9 +41,9 @@ class _HomeScreenPageWithCacheState extends State<HomeScreenPageWithCache> {
 
   @override
   void initState() {
-    getMessage();
-    refreshKey = GlobalKey<RefreshIndicatorState>();
 
+    FirebaseNotifications.setup(context);
+    refreshKey = GlobalKey<RefreshIndicatorState>();
   }
 
   getUserID() async {
@@ -88,14 +90,13 @@ class _HomeScreenPageWithCacheState extends State<HomeScreenPageWithCache> {
   ApiServiceProvider apiServiceProvider=ApiServiceProvider();
 
 
-
   @override
   Widget build(BuildContext context) {
     print("Route Back");
     return Scaffold(
       backgroundColor: appBack,
       body: FutureBuilder<UserProfileModel>(
-        //future: apiServiceProvider.getUser(context),
+        future: apiServiceProvider.getUser(context),
         builder: (context,snapshot){
 
           if(snapshot.hasData){
@@ -104,7 +105,7 @@ class _HomeScreenPageWithCacheState extends State<HomeScreenPageWithCache> {
               return RefreshIndicator(
                 key: refreshKey,
                 onRefresh: ()async{
-                  //await apiServiceProvider.getUser(context);
+                  await apiServiceProvider.getUser(context);
                 },
                 child: SingleChildScrollView(
                   child: Container(
@@ -130,28 +131,23 @@ class _HomeScreenPageWithCacheState extends State<HomeScreenPageWithCache> {
                                   ],
                                 ),
                               ),
+
+                              GestureDetector(
+                                onTap: () {
+                                  _logOutAlert(context);
+                                  //RouteGenerator.navigatePush(context, NotificationsScreen());
+                                },
+                                child: HomeAppBarWidgets(iconData: Icons.logout,),
+                              ),
+
+                              SizedBox(width: 10.0,),
+
                               GestureDetector(
                                 onTap: () {
                                   //_logOutAlert();
                                   //RouteGenerator.navigatePush(context, NotificationsScreen());
                                 },
-                                child: Container(
-                                  height: 30.0,
-                                  width: 30.0,
-                                  decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white, boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.grey.withOpacity(0.1),
-                                      spreadRadius: 5,
-                                      blurRadius: 7,
-                                      offset: Offset(0, 3), // changes position of shadow
-                                    ),
-                                  ]),
-                                  child: Center(
-                                      child: Icon(
-                                        Icons.notifications,
-                                        color: headerColor,
-                                      )),
-                                ),
+                                child: HomeAppBarWidgets(iconData: Icons.notifications,),
                               ),
                             ],
                           ),
@@ -243,7 +239,7 @@ class _HomeScreenPageWithCacheState extends State<HomeScreenPageWithCache> {
                           style: text_StyleRoboto(Colors.black, 16.0, FontWeight.bold),
                         ),
                         SizedBox(
-                          height: 15.0,
+                          height: 10.0,
                         ),
                         Container(
                           child: GridView.count(
@@ -280,4 +276,28 @@ class _HomeScreenPageWithCacheState extends State<HomeScreenPageWithCache> {
       ),
     );
   }
+
+  _logOutAlert(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+          title: Text("Do you want to logout from the app?"),
+          actions: <Widget>[
+            FlatButton(onPressed: () => Navigator.pop(context, false), child: Text("No")),
+            FlatButton(
+                onPressed: () {
+                  Navigator.pop(context, true);
+                  signOut(context);
+                },
+                child: Text("Yes")),
+          ],
+        ));
+  }
+
+  Future signOut(BuildContext context) async {
+    FirebaseAuth _auth = FirebaseAuth.instance;
+    await _auth.signOut().whenComplete(() => RouteGenerator.clearBackStack(context, MainScreenRoute));
+  }
 }
+

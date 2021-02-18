@@ -10,13 +10,11 @@ import 'package:rokit/utils/getTokenId.dart';
 import 'package:rokit/utils/styles.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ApiServiceProvider extends ChangeNotifier{
+class ApiServiceProvider{
 
   UserProfileModel userProfileModel=UserProfileModel();
 
   Future<UserProfileModel> getUser(context) async {
-
-    UserProfileModel _userProfileModel;
 
     SharedPreferences sharedPreferences=await SharedPreferences.getInstance();
 
@@ -37,18 +35,19 @@ class ApiServiceProvider extends ChangeNotifier{
         body: jsonEncode(<String, dynamic>{
           "deviceToken": deviceToken
         }));
+
+
     if (res.statusCode == 200 || res.statusCode == 201) {
       print("Users Info ${res.body}");
+
       var jsonResponse = res.body;
-       _userProfileModel = UserProfileModel.fromJson(json.decode(jsonResponse));
-      return userProfileModel;
+
+      var response = UserProfileModel.fromJson(json.decode(jsonResponse));
+
+      return response;
     }
   }
 
-  getPostData(context) async {
-    userProfileModel = await getUser(context);
-    notifyListeners();
-  }
 
 
 }

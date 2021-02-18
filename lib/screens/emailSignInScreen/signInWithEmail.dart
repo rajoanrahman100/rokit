@@ -136,7 +136,7 @@ class _SignInWithEmailState extends State<SignInWithEmail> {
                       GestureDetector(
                         onTap: () {
                           if (_formKey.currentState.validate()) {
-                            signInWIthEmail(emailEditingController.text,passwordEditingController.text);
+                            signInWIthEmail(emailEditingController.text,passwordEditingController.text,context);
                           }
                         },
                         child: Container(
@@ -230,7 +230,7 @@ class _SignInWithEmailState extends State<SignInWithEmail> {
     );
   }
 
-  void signInWIthEmail(email,password)async{
+  void signInWIthEmail(email,password,context)async{
 
     ProgressDialog pasdr = ProgressDialog(context, type: ProgressDialogType.Normal, isDismissible: true, showLogs: false);
     setProgressDialog(context, pasdr, "Sign in...");
@@ -244,7 +244,7 @@ class _SignInWithEmailState extends State<SignInWithEmail> {
       ).then((value){
         if(value!=null){
           pasdr.hide();
-          RouteGenerator.navigatePush(context, SplashScreen());
+          RouteGenerator.clearBackStack(context, MainScreenRoute);
 
         }
         return;

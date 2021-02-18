@@ -82,7 +82,6 @@ class FirebaseNotifications {
 
     showNotificationIcon(message, title, body);
 
-
   }
 
   static getData(message, String field) {
@@ -95,6 +94,7 @@ class FirebaseNotifications {
     if (payload != null) {
       debugPrint('notification payload: $payload');
     }
+
   }
 
   static Future onDidReceiveLocalNotification(int id, String title, String body, String payload) {}

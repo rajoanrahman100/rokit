@@ -1,3 +1,4 @@
+import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
@@ -8,11 +9,10 @@ import 'package:rokit/utils/styles.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DeviceNotificationScreen extends StatelessWidget {
-
   var id;
   var deviceName;
 
-  DeviceNotificationScreen({this.id,this.deviceName});
+  DeviceNotificationScreen({this.id, this.deviceName});
 
   @override
   Widget build(BuildContext context) {
@@ -20,17 +20,16 @@ class DeviceNotificationScreen extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => ProviderDevice()),
       ],
-      child: DeviceNotification(id:id,deviceName:deviceName),
+      child: DeviceNotification(id: id, deviceName: deviceName),
     );
   }
 }
 
 class DeviceNotification extends StatefulWidget {
-
   var id;
   var deviceName;
 
-  DeviceNotification({this.id,this.deviceName});
+  DeviceNotification({this.id, this.deviceName});
 
   @override
   _DeviceNotificationState createState() => _DeviceNotificationState();
@@ -44,32 +43,54 @@ class _DeviceNotificationState extends State<DeviceNotification> {
 
   var startTime;
   var endTime;
+
+  var sharedStart;
+  var sharedEnd;
+
   DateTime selectedTimeDateTime;
   DateTime endTimeDateTime;
 
+
+  showSharedPrefData()async{
+    var prefs=await SharedPreferences.getInstance();
+
+    setState(() {
+      sharedStart=prefs.get("start time");
+      sharedEnd=prefs.get("end time");
+      print("start time ${prefs.get("start time")}") ;
+    });
+
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    showSharedPrefData();
+  }
+
   @override
   Widget build(BuildContext context) {
-
-    Future<bool> callBack(){
-      Navigator.pop(context,true);
+    Future<bool> callBack() {
+      Navigator.pop(context, true);
     }
 
-
-    var providerDevice= Provider.of<ProviderDevice>(context, listen: false);
+    var providerDevice = Provider.of<ProviderDevice>(context, listen: false);
 
     return WillPopScope(
-      onWillPop: ()=>callBack(),
+      onWillPop: () => callBack(),
       child: Scaffold(
         backgroundColor: appBack,
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(80.0),
-
           child: Padding(
             padding: const EdgeInsets.only(top: 15.0),
             child: AppBar(
               elevation: 0.0,
               iconTheme: IconThemeData(color: backColor2),
-              title: Text("${widget.deviceName}", style: text_StyleRoboto(backColor2, 18.0, FontWeight.w500),),
+              title: Text(
+                "${widget.deviceName}",
+                style: text_StyleRoboto(backColor2, 18.0, FontWeight.w500),
+              ),
               backgroundColor: appBack,
               actions: [
                 Container(
@@ -86,11 +107,10 @@ class _DeviceNotificationState extends State<DeviceNotification> {
                   ]),
                   child: Center(
                       child: Icon(
-                        Icons.notifications,
-                        color: Colors.black,
-                      )),
+                    Icons.notifications,
+                    color: Colors.black,
+                  )),
                 ),
-
               ],
             ),
           ),
@@ -103,7 +123,7 @@ class _DeviceNotificationState extends State<DeviceNotification> {
                 child: Container(
                   margin: EdgeInsets.only(left: 25.0, right: 25.0, top: 20.0),
                   padding: EdgeInsets.symmetric(horizontal: 15.0),
-                  height: MediaQuery.of(context).size.height / 1.2,
+                  //height: MediaQuery.of(context).size.height / 1.2,
                   width: MediaQuery.of(context).size.width,
                   decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20.0)),
                   child: Column(
@@ -211,21 +231,27 @@ class _DeviceNotificationState extends State<DeviceNotification> {
                                             style: text_StyleRoboto(backColor2, 14.0, FontWeight.w500),
                                           ),
                                           GestureDetector(
-                                            onTap: () {
+                                            onTap: () async{
                                               startPressed = true;
+
+                                              var prefs=await SharedPreferences.getInstance();
 
                                               DatePicker.showTime12hPicker(context, showTitleActions: true, onChanged: (date) {}, onConfirm: (date) {
                                                 setState(() {
                                                   selectedTimeDateTime = date;
+                                                  var fromTime=DateFormat.jm().format(selectedTimeDateTime).toString();
+                                                  startTime = DateFormat('Hms').format(selectedTimeDateTime).toString();
+                                                  prefs.setString("start time", fromTime);
+                                                  print("Start Time $fromTime");
                                                 });
                                               }, currentTime: DateTime(2008, 12, 31, 23, 12, 34));
                                             },
                                             child: Container(
                                               height: 25.0,
-                                              width: 65.0,
+                                              width: 70.0,
                                               padding: EdgeInsets.symmetric(horizontal: 2.0),
                                               color: Colors.grey[200],
-                                              child: Center(child: startPressed ? Text("${DateFormat.jm().format(selectedTimeDateTime)}") : Text("${DateFormat.jm().format(DateTime.now())}")),
+                                              child: Center(child:  Text(" $sharedStart ")),
                                             ),
                                           ),
                                         ],
@@ -237,21 +263,32 @@ class _DeviceNotificationState extends State<DeviceNotification> {
                                             style: text_StyleRoboto(backColor2, 14.0, FontWeight.w500),
                                           ),
                                           GestureDetector(
-                                            onTap: () {
+                                            onTap: () async{
                                               endPressed = true;
+
+                                              var prefs=await SharedPreferences.getInstance();
+
+
                                               DatePicker.showTime12hPicker(context, showTitleActions: true, onChanged: (date) {}, onConfirm: (date) {
                                                 setState(() {
                                                   endTimeDateTime = date;
+                                                  var toTime=DateFormat.jm().format(endTimeDateTime).toString();
+
+                                                  endTime = DateFormat('Hms').format(endTimeDateTime).toString();
+
+                                                  prefs.setString("end time", toTime);
+                                                  print("End Time $endTime");
+                                                  providerDevice.setNotificationTime(startTime, endTime);
                                                 });
                                               }, currentTime: DateTime(2008, 12, 31, 23, 12, 34));
                                             },
                                             child: Container(
                                               height: 25.0,
-                                              width: 65.0,
+                                              width: 70.0,
                                               padding: EdgeInsets.symmetric(horizontal: 2.0),
                                               color: Colors.grey[200],
                                               child: Center(
-                                                child: endPressed ? Text("${DateFormat.jm().format(endTimeDateTime)}") : Text("${DateFormat.jm().format(DateTime.now())}"),
+                                                child: Text("$sharedEnd"),
                                               ),
                                             ),
                                           )
@@ -343,22 +380,17 @@ class _DeviceNotificationState extends State<DeviceNotification> {
                           ],
                         ),
                       ),
-                      SizedBox(
-                        height: 20.0,
-                      ),
 
-                      Consumer<ProviderDevice>(
-                        builder: (_,data,child)=>ButtonLog(
-                          onTap:(){
-                            data.deleteDevice(widget.id, context);
-                            print("Device ID: ${widget.id}");
-                          },
-                          imageData: "assets/deletDevice.png",
-                          text: "  Delete This Device",
-                        ),
-                      ),
-
-
+                      // Consumer<ProviderDevice>(
+                      //   builder: (_, data, child) => ButtonLog(
+                      //     onTap: () {
+                      //       data.deleteDevice(widget.id, context);
+                      //       print("Device ID: ${widget.id}");
+                      //     },
+                      //     imageData: "assets/deletDevice.png",
+                      //     text: "  Delete This Device",
+                      //   ),
+                      // ),
                       SizedBox(
                         height: 20.0,
                       ),

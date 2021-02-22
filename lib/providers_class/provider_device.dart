@@ -1,6 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:progress_dialog/progress_dialog.dart';
@@ -13,14 +11,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class ProviderDevice extends ChangeNotifier {
   DeviceDataModel deviceDataModel;
-
-  int totalWindow;
-
-  int totalDoor;
-
-  //int get totalWindowGet =>totalWindow;
-
-
 
   List<String> _items = ["ALL", "WINDOW", "DOOR"];
 
@@ -160,5 +150,37 @@ class ProviderDevice extends ChangeNotifier {
       pasdr.hide();
       return;
     }
+  }
+
+
+  Future setNotificationTime(startTime,endTime)async{
+
+    final prefs = await SharedPreferences.getInstance();
+
+
+    var res = await http.post(startEndNotification,
+        headers: <String, String>{
+          'firebaseToken':prefs.getString(KEY_AUTH_ID),
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, dynamic>{
+          "notifyStartTime": startTime,
+          "notifyEndTime": endTime
+        }));
+
+    if(res.statusCode==200 || res.statusCode==201){
+
+      print("response ${res.body}");
+
+      showSuccessToast("Time Set Successfully");
+      return;
+    }else{
+      Map<String, dynamic> responseJson = json.decode(res.body);
+
+      print("Error body: "+responseJson["message"]);
+      showErrorToast(responseJson["message"]);
+    }
+
+
   }
 }

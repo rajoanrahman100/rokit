@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 /// status : "success"
 /// statusCode : 200
 /// data : [{"id":1,"createdDate":"2021-02-09T16:06:21.521Z","updatedDate":"2021-02-10T07:12:33.092Z","deletedDate":null,"deviceMacAddress":"A0:20:A6:29:F7:DE","deviceAuthorizationCode":"58353","deviceType":"DOOR","deviceName":"Bedroom","status":"open","batteryStatus":"3.72"}]
@@ -142,4 +144,9 @@ class Data {
     return map;
   }
 
+
+
 }
+
+List<DeviceDataModel> deviceFromJson(String str) =>
+    List<DeviceDataModel>.from(json.decode(str).map((x) => DeviceDataModel.fromJson(x)));

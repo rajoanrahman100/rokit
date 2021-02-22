@@ -52,39 +52,6 @@ class _HomeScreenPageWithCacheState extends State<HomeScreenPageWithCache> {
     await prefs.setString(KEY_USER_ID, userID);
   }
 
-  getMessage() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    _firebaseMessaging.getToken().then((value) async {
-      print("token value $value");
-      await prefs.setString(KEY_TOKEN_ID, value);
-    });
-
-    _firebaseMessaging.configure(
-      onMessage: (Map<String, dynamic> message) async {
-        print("onMessage: $message");
-        setState(() {
-          _message = message["notification"]["title"];
-        });
-      },
-      onLaunch: (Map<String, dynamic> message) async {
-        print("onLaunch: $message");
-        setState(() {
-          _message = message["notification"]["title"];
-        });
-      },
-      onResume: (Map<String, dynamic> message) async {
-        print("onResume: $message");
-        setState(() {
-          _message = message["notification"]["title"];
-        });
-      },
-    );
-    _firebaseMessaging.requestNotificationPermissions(const IosNotificationSettings(sound: true, badge: true, alert: true, provisional: true));
-    _firebaseMessaging.onIosSettingsRegistered.listen((IosNotificationSettings settings) {
-      print("Settings registered: $settings");
-    });
-  }
 
   ///Declare Api Provider for getting User
   ApiServiceProvider apiServiceProvider=ApiServiceProvider();
@@ -281,8 +248,8 @@ class _HomeScreenPageWithCacheState extends State<HomeScreenPageWithCache> {
     return showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
-          title: Text("Do you want to logout from the app?"),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
+          title: Text("Do you want to logout from the app?",style: text_StyleRoboto(headerColor, 15.0, FontWeight.w500),),
           actions: <Widget>[
             FlatButton(onPressed: () => Navigator.pop(context, false), child: Text("No")),
             FlatButton(
@@ -297,7 +264,7 @@ class _HomeScreenPageWithCacheState extends State<HomeScreenPageWithCache> {
 
   Future signOut(BuildContext context) async {
     FirebaseAuth _auth = FirebaseAuth.instance;
-    await _auth.signOut().whenComplete(() => RouteGenerator.clearBackStack(context, MainScreenRoute));
+    await _auth.signOut().whenComplete(() => RouteGenerator.clearBackStack(context, SignInScreenRoute));
   }
 }
 

@@ -23,3 +23,5 @@ const getUserAPI=baseUrl+"v1/user/getUserDetails";
 
 const updateUserAPI=baseUrl+"user/updateUser";
 
+const startEndNotification=baseUrl+"v1/user/updateUserDetails";
+

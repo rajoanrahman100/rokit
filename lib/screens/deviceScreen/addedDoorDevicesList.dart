@@ -1,19 +1,17 @@
 import 'dart:ui';
-import 'package:flutter_slidable/flutter_slidable.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rokit/base/route.dart';
 import 'package:rokit/providers_class/provider_device.dart';
 import 'package:rokit/providers_class/provider_sensor_data.dart';
-import 'package:rokit/screens/deviceScreen/deviceNotificationSettings.dart';
 import 'package:rokit/screens/deviceScreen/deviceLog.dart';
+import 'package:rokit/screens/deviceScreen/deviceNotificationSettings.dart';
 import 'package:rokit/utils/all_widgetClass.dart';
 import 'package:rokit/utils/styles.dart';
 import 'package:rokit/widget/loader_widget.dart';
 import 'package:rokit/widget/no_data_found.dart';
-
-import 'addDevice.dart';
 
 class AddedDeviceScreen extends StatelessWidget {
   @override
@@ -34,7 +32,6 @@ class AddedDevice extends StatelessWidget {
     var providerDevice = Provider.of<ProviderDevice>(context, listen: false);
 
     providerDevice.getAddedDevices(deviceType: "DOOR");
-
 
     return Scaffold(
       backgroundColor: appBack,
@@ -125,28 +122,6 @@ class AddedDevice extends StatelessWidget {
                       ),
                     ),
                   ),
-                  GestureDetector(
-                    onTap: () {
-                      RouteGenerator.navigatePush(context, AddDeviceScreen());
-                    },
-                    child: Container(
-                      height: 25.0,
-                      width: 25.0,
-                      decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.deepOrange, boxShadow: [
-                        BoxShadow(
-                          color: Colors.deepOrange.withOpacity(0.1),
-                          spreadRadius: 8,
-                          blurRadius: 7,
-                          offset: Offset(0, 3), // changes position of shadow
-                        ),
-                      ]),
-                      child: Center(
-                          child: Icon(
-                        Icons.add,
-                        color: Colors.white,
-                      )),
-                    ),
-                  ),
                 ],
               ),
             ),
@@ -166,20 +141,10 @@ class AddedDevice extends StatelessWidget {
                                 return Dismissible(
                                   background: stackBehindDismiss(),
                                   key: ObjectKey(data.deviceDataModel.data[index]),
-                                  onDismissed: (direction)async{
-                                   await data.deleteDevice(data.deviceDataModel.data[index].id, context);
-                                   await data.getAddedDevices(deviceType: "DOOR");
-                                   // Scaffold.of(context).showSnackBar(SnackBar(
-                                   //     content: Text("Item deleted"),
-                                   //     action: SnackBarAction(
-                                   //         label: "UNDO",
-                                   //         onPressed: () {
-                                   //           //To undo deletion
-                                   //          // undoDeletion(index, item);
-                                   //         })
-                                   // ));
+                                  onDismissed: (direction) async {
+                                    await data.deleteDevice(data.deviceDataModel.data[index].id, context);
+                                    await data.getAddedDevices(deviceType: "DOOR");
                                   },
-
                                   child: Container(
                                       padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
                                       height: 100.0,
@@ -252,8 +217,15 @@ class AddedDevice extends StatelessWidget {
                                                           ),
                                                           Row(
                                                             children: [
-                                                              Icon(Icons.battery_charging_full_sharp, color: backColor2, size: 16.0,),
-                                                              Text("${data.deviceDataModel.data[index].batteryStatus} v", style: text_StyleRoboto(backColor2, 14.0, FontWeight.bold),),
+                                                              Icon(
+                                                                Icons.battery_charging_full_sharp,
+                                                                color: backColor2,
+                                                                size: 16.0,
+                                                              ),
+                                                              Text(
+                                                                "${data.deviceDataModel.data[index].batteryStatus} v",
+                                                                style: text_StyleRoboto(backColor2, 14.0, FontWeight.bold),
+                                                              ),
                                                             ],
                                                           )
                                                         ],
@@ -332,6 +304,8 @@ class AddedDevice extends StatelessWidget {
       ),
     );
   }
+
+
 
   Widget stackBehindDismiss() {
     return Container(

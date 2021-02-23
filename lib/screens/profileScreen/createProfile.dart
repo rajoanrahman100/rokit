@@ -282,10 +282,6 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
   }
 
   _uploadUserInformation(name, address, context,imageUrl) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    await prefs.setString("name", name);
-    await prefs.setString("address", address);
 
     var tokenID = await getAuthIDToken();
     var deviceToken = await getDeviceToken();
@@ -317,7 +313,6 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
     } else {
       pasdr.hide();
       showErrorToast("Something went wrong");
-      //pasdr.hide();
     }
   }
 

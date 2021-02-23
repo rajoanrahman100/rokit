@@ -300,6 +300,17 @@ callCreateProfilePage() {
   RouteGenerator.navigatePush(context, CreateProfileScreen());
 }
 
+SnackBar buildSnackBar() {
+  return SnackBar(
+      content: Text("Item deleted"),
+      action: SnackBarAction(
+          label: "UNDO",
+          onPressed: () {
+            //To undo deletion
+            // undoDeletion(index, item);
+          }));
+}
+
 
 
 

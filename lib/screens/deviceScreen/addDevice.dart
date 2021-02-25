@@ -1,9 +1,11 @@
+import 'package:ars_progress_dialog/ars_progress_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rokit/base/route.dart';
 import 'package:rokit/providers_class/provider_device.dart';
 import 'package:rokit/providers_class/provider_getUser.dart';
 import 'package:rokit/screens/deviceScreen/pinTextField.dart';
+import 'package:rokit/utils/all_widgetClass.dart';
 import 'package:rokit/utils/styles.dart';
 import 'package:rokit/widget/dop_downList.dart';
 import 'package:rokit/widget/text_formWidget.dart';
@@ -37,10 +39,17 @@ class AddDevice extends StatelessWidget {
 
   List<String> types = ["WINDOW", "DOOR"];
 
+
+  ArsProgressDialog _progressDialog;
+
+
   @override
   Widget build(BuildContext context) {
 
     var providerUser = Provider.of<ProviderUser>(context, listen: true);
+
+    _progressDialog=showProgressArs(context,"Adding device");
+
 
     return SafeArea(
       child: Scaffold(
@@ -237,6 +246,7 @@ class AddDevice extends StatelessWidget {
                       onTap: () {
                         if (_formKey.currentState.validate()) {
                           print("Type Name $tyName");
+                          _progressDialog.show();
                           data.addDevices(context, _deviceMacAddressController.text, tyName, _pinEditingController.text, _deviceNameController.text);
                         }
                       },

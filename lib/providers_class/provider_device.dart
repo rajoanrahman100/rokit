@@ -25,7 +25,7 @@ class ProviderDevice extends ChangeNotifier {
     notifyListeners();
   }
 
-  addDevices(context, deviceMacAddress, deviceType, authCode, deviceName) async {
+   addDevices(context, deviceMacAddress, deviceType, authCode, deviceName) async {
     final prefs = await SharedPreferences.getInstance();
 
 

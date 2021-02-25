@@ -1,3 +1,4 @@
+import 'package:ars_progress_dialog/ars_progress_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 
@@ -10,3 +11,5 @@ setProgressDialog(BuildContext context,ProgressDialog pr , String message) {
       elevation: 10,
       insetAnimCurve: Curves.easeInOut);
 }
+
+

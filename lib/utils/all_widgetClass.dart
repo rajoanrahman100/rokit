@@ -1,3 +1,4 @@
+import 'package:ars_progress_dialog/ars_progress_dialog.dart';
 import 'package:circular_profile_avatar/circular_profile_avatar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -309,6 +310,39 @@ SnackBar buildSnackBar() {
             //To undo deletion
             // undoDeletion(index, item);
           }));
+}
+
+
+ArsProgressDialog buildArsProgressDialog(BuildContext context) {
+  return ArsProgressDialog(context,
+      blur: 2,
+      backgroundColor: Color(0x33000000),
+      animationDuration: Duration(milliseconds: 500));
+}
+
+
+ArsProgressDialog showProgressArs(context,textContent) {
+  return ArsProgressDialog(context,
+      blur: 2,
+      backgroundColor: Colors.transparent,
+      loadingWidget: Container(
+        width: 150,
+        height: 150,
+        color: Colors.transparent,
+        child: Column(
+          children: [
+            Image.asset(
+              "assets/applogoloadergif.gif",
+              height: 60.0,
+              width: 60.0,
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Text(textContent,style: text_StyleRoboto(headerColor, 16.0, FontWeight.w500),)
+          ],
+        ),
+      ));
 }
 
 

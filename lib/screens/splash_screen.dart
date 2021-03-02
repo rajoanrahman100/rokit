@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
 import 'package:rokit/base/route.dart';
 import 'package:rokit/base/static_value.dart';
@@ -31,7 +32,11 @@ class _SplashScreenState extends State<SplashScreen> {
 
       Tag("userData = ${user != null ? user.uid : "\"user not loggedIn\""} ");
 
-      RouteGenerator.clearBackStack(context, user != null?MainScreenRoute:SignInScreenRoute);
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        // Navigator.of(context).pushReplacementNamed(MainScreen.routeName);
+        RouteGenerator.clearBackStack(context, user != null ? MainScreenRoute : SignInScreenRoute);
+      });
+
     });
 
     return SafeArea(

@@ -17,7 +17,6 @@ getAuthIDToken() async {
 
 getDeviceToken()async{
 
-
   return _firebaseMessaging.getToken().then((value) async {
     return value;
   });

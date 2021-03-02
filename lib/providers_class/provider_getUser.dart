@@ -59,16 +59,9 @@ class ProviderUser extends ChangeNotifier{
     print("response user " + res.body);
 
     if(res.statusCode==200 || res.statusCode==201){
-      //print("User Details Response-----------------:"+res.body);
-
       var dataMap = jsonDecode(res.body);
-
       userProfileModel = UserProfileModel.fromJson(dataMap);
-
-      //setDoorCount(userProfileModel.data.devices.totalDoor);
-
       notifyListeners();
-
       return userProfileModel;
     }else{
       print("Error Response:"+res.body);

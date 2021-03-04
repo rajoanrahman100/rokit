@@ -139,16 +139,25 @@ class _HomeScreenState extends State<HomeScreen> {
                                   height: 100.0,
                                   child: Row(
                                     children: [
+                                      Padding(
+                                        padding: const EdgeInsets.only(right: 20.0),
+                                        child: CircleImagePlaceholder(
+                                          imageData: data.userProfileModel.data.imageUrl,
+                                          radius: 30.0,
+                                        ),
+                                      ),
                                       Expanded(
                                         child: Row(
                                           children: [
-                                            CircleImagePlaceholder(
-                                              imageData: data.userProfileModel.data.imageUrl,
-                                              radius: 30.0,
-                                            ),
-                                            SizedBox(
-                                              width: 15.0,
-                                            ),
+
+                                            // Text(
+                                            //   "${data.userProfileModel.data.name}",
+                                            //   maxLines: 1,
+                                            //   overflow: TextOverflow.ellipsis,
+                                            //   softWrap: false,
+                                            //   style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                                            // ),
+
                                             Text(
                                               "Welcome, ${data.userProfileModel.data.name}",
                                               style: text_StyleRoboto(Colors.deepOrange, 18.0, FontWeight.bold),
